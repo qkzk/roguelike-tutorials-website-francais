@@ -1,0 +1,34 @@
+baseURL = "http://rogueliketutorials.com/"
+languageCode = "en-us"
+title = "Roguelike Tutorials"
+
+theme = "bootstrap"
+pygmentsCodeFences = true
+pygmentsCodeFencesGuessSyntax = true
+
+[languages.en]
+  languageName = "English"
+
+  copyright = "Last updated June 14th, 2019"
+
+  [[languages.en.menu.main]]
+    url = "/"
+    name = "Home"
+    weight = 1
+  [[languages.en.menu.main]]
+    url = "/tutorials/tcod/"
+    name = "TCOD Tutorial"
+    weight = 2
+  [[languages.en.menu.main]]
+    url = "/about/"
+    name = "About"
+    weight = 3
+
+[params]
+  mainSections = ["post"]
+
+  [params.sidebar]
+    showRecent = false
+  
+  [params.header]
+    colorScheme = "dark"
