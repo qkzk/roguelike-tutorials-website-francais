@@ -4,17 +4,16 @@ date: 2019-03-30T09:33:44-07:00
 draft: false
 ---
 
-We have a dungeon now, and we can move about it freely. But are we
-really *exploring* the dungeon if we can just see it all from the
-beginning?
+Nous avons un donjon maintenant et on peut s'y déplacer librement mais est-ce
+vraiment de l'*exploration* si on peut le voir entièrement dès le départ ?
 
-Most roguelikes (not all\!) only let you see within a certain range of
-your character, and our will be no different. We need to implement a way
-to calculate the "Field of View" for our adventurer, and fortunately,
-libtcod makes that easy\!
+La plupart des roguelikes (pas tous \!) ne vous laissent voir qu'un certain
+espace autour de votre personnage et le notre va respecter ce principe. Nous
+devons implémenter une manière de calculer le "champ de vision" (FOV) de notre
+aventurier et, heureusement, libtcod rend les choses aisées \!
 
-We'll need to define a few variables before we get started. Add these in
-the same section as our screen and map variables:
+Nous devons définir quelques variables avant d'avancer. Ajoutez les à la même
+section que votre variable d'écran et de carte :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -41,16 +40,16 @@ the same section as our screen and map variables:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-'0' is just the default algorithm that libtcod uses; it has more, and I
-encourage you to experiment with them later. `fov_light_walls` just
-tells us whether or not to 'light up' the walls we see; you can change
-it if you don't like the way it looks. `fov_radius` is somewhat obvious,
-it tells us how far we can actually see.
+'0' est juste l'algorithme utilisé par libtcod, il y en a d'autres et je vous
+invite à les essayer plus tard. `fov_light_walls` nous indique s'il faut
+éclairer ('light_up') les murs que nous voyons. Vous pouvez les changer si vous
+n'aimez pas ce que vous voyez. `fov_radius` est plutôt évident et nous indique
+à quelle distance on peut voir.
 
-We also need to update the `colors` dictionary, because now we need two
-more colors for the 'light' versions of both walls and floors. Walls and
-floors in our fov will be 'lit', distinguishing them from the ones
-outside what we can see.
+On doit aussi mettre à jour le dictionnaire `colors` parce que nous avons deux
+couleurs supplémentaires pour la version éclairée ('light') des murs et du sol.
+Les murs et le sol dans notre champ de vision seront éclairés de façon à les
+distinguer de ceux qu'on ne peut voir.
 
 {{< highlight py3 >}}
     colors = {
@@ -61,18 +60,18 @@ outside what we can see.
     }
 {{</ highlight >}}
 
-*\* Don't forget to add the comma after the 'dark\_ground' entry; Python
-will throw an error without it\!*
+*\* N'oubliez pas d'ajouter la virgule apres le 'dark\_ground' sinon Python va
+renvoyer une erreur !*
 
-If you don't like these colors, feel free to change them to your liking.
+Si vous n'aimez pas ces couleurs, n'hésitez pas à les changer selon vos gouts.
 
-The thing about field of view is that it doesn't need to be computed
-every turn. In fact, it would be quite a waste to do so\! We really only
-need change it when the player moves. Attacking, using an item, or just
-standing still for a turn doesn't alter FOV. We can handle this by
-having a boolean variable, which we'll call `fov_recompute`, which tells
-us if we need to recompute. We can define it somewhere above our game
-loop (I put mine right after the map initialization).
+Les choses à savoir à propos du champ de vision est qu'il n'a pas besoin d'être
+calculé à chaque tour. Ce serait du gachis \! Nous devons seulement le changer
+quand le joueur se déplace. Attaquer, utiliser un item ou seulement rester sur
+place pour un tour ne change pas le FOV. Nous pouvons mettre ça en place avec
+un booléen qu'on appellera `fov_recompute` et qui nous dira s'il faut recalculer.
+On peut ensuite le définir quelque part avant la boucle de jeu (j'ai ajouté le
+mien juste après l'initialisation de la carte).
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -95,14 +94,14 @@ loop (I put mine right after the map initialization).
 {{</ original-tab >}}
 {{</ codetab >}}
 
-It's `True` by default, because we have to compute it right when the
-game starts.
+C'est `True` par défaut parce nous devons le calculer juste après le lancement
+du jeu.
 
-Now let's initialize our field of view, which we'll store in a variable
-called `fov_map`. `fov_map` will need to not only be initialized, but
-recomputed when the player moves. Let's keep these functions out of
-`engine.py`, and instead, put them in a new file, called
-`fov_functions.py`. In that file, put the following:
+Maintenant initialisons notre champ de vision, que nous garderons dans une
+variable appelée `fov_map`. `fov_map` devra non seulement être initialisée mais
+recalculée quand le joueur se déplace. Conservons ces fonctions hors de
+`engine.py` et ajoutons les à un nouveau fichier, appelé `fov_functions.py`.
+Dans ce fichier ajouter les éléments suivants :
 
 {{< highlight py3 >}}
 import tcod as libtcod
@@ -119,7 +118,8 @@ def initialize_fov(game_map):
     return fov_map
 {{</ highlight >}}
 
-Call this function in `engine.py` and store the result in `fov_map`.
+Appelons cette fonction dans `engine.py` et conservons ce résultat dans
+`fov_map`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -142,7 +142,7 @@ Call this function in `engine.py` and store the result in `fov_map`.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Don't forget the import for the function.
+N'oubliez pas d'importer cette fonction.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -161,8 +161,8 @@ from input_handlers import handle_keys
 {{</ original-tab >}}
 {{</ codetab >}}
 
-While we're at it, let's modify the section where we move the player to
-set `fov_recompute` to True.
+Tant qu'on s'occupe de ça, modifiez la section où le joueur se déplace pour
+régler `fov_recompute` à True.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                 ...
@@ -179,18 +179,18 @@ set `fov_recompute` to True.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-But where does the recompute actually *happen*? For that, let's add a
-new function to `fov_functions.py` to do the recomputing. The recompute
-function will modify the `fov_map` variable based on where the player
-is, what the radius for lighting is, whether or not to light the walls,
-and what algorithm we're using.
+Mais *où* se déroule ce calcul ? Pour ça, ajoutons une nouvelle fonction à
+`fov_functions.py` pour faire ce recalcul. La fonction de recalcul va modifier
+la variable `fov_map` en fonction de la position du joueur, du rayon de la
+lumière ambiente, du fait d'éclairer les murs ou non et de l'algorithme qu'on
+utilise.
 
-That's a lot of variables, but consider this: in your game, you'll
-probably pick one FOV algorithm and stick with it. Also, whether or not
-you light the walls probably won't change during the course of the game.
-So why not create our function with default arguments? That way, we can
-pass the `light_walls` and `algorithm` variables if we want to, but if
-not, a default is chosen. That looks like this:
+Cela fait beaucoup de variables mais considérons ceci, dans votre jeu vous allez
+choisir un algorithme de FOV et le conserver. Aussi, éclairer les murs ou non
+ne changera pas durant le cours du jeu. Pourquoi ne pas créer notre fonction
+avec des arguments par défaut ? Ainsi nous pourrons passer les variables
+`light_walls` et `algorithm` si on le souhaite mais sinon, une valeur par défaut
+est choisie. Cela ressemble à ça :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def initialize_fov(game_map):
@@ -209,13 +209,14 @@ def initialize_fov(game_map):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So when we call the function, we have to give fov\_map, x, y, and
-radius, but we don't necessarily have to pass in light\_walls or
-algorithm. In my `engine.py` file, I'll pass them in anyway, but you
-don't have to if you don't want to (you can also change the defaults I
-gave above to whatever you prefer).
+Aussi quand on appelle la fonction, nous devons lui passer fov\_map, x, y et le
+rayon mais il n'est pas indispensable de lui passer light\_walls ou algirithm.
+Dans mon fichier `engine.py`, je lui passe néanmoins mais n'y êtes pas tenu
+(vous pouvez aussi changer les valeurs par défaut pour celles que vous
+souhatiez)
 
-Whatever you decide, put your fov recomputation in `engine.py` like so:
+Quel que soit votre choix, mettez à jour votre recalcul du FOV dans `engine.py`
+ainsi
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -240,7 +241,7 @@ Whatever you decide, put your fov recomputation in `engine.py` like so:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-... And, of course, we have to import that function:
+... Et, bien sûr, nous devons importer cette fonction :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -260,13 +261,13 @@ from input_handlers import handle_keys
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now, after the player successfully moves, the field of view will be set
-to recalculate, but it won't if we do something else.
+Maintenant, une fois que le joueur se déplace convenablement, le champ de vision
+sera réglé pour être recalculé mais rien ne se produira si nous n'ajoutons pas
+quelque chose.
 
-With our field of view calculated, we need to actually *display* it (if
-you run the code now, you won't notice any visible change). Open up
-`render_functions.py` and modify the `render_all` function like
-    this:
+Notre champ de vision étant recalculé, nous devons *l'afficher* (si vous
+exécutez le code maintenant, vous ne remarquerez aucun changement visible).
+Ouvrez `render_functions.py` et changez la fonction `render_all` ainsi :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def render_all(con, entities, game_map, screen_width, screen_height, colors):
@@ -276,7 +277,7 @@ def render_all(con, entities, game_map, screen_width, screen_height, colors):
 -       for x in range(game_map.width):
 +       for y in range(game_map.height):
 -           wall = game_map.tiles[x][y].block_sight
-- 
+-
 -           if wall:
 -               libtcod.console_set_char_background(con, x, y, colors.get('dark_wall'), libtcod.BKGND_SET)
 -           else:
@@ -331,19 +332,19 @@ def render_all(con, entities, game_map, screen_width, screen_height, colors):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-*\* Note: Blue denotes lines that are exactly the same as before, expect
-for their indentation. The if statements for `fov_recompute` and
-`visible` force certain lines to be indented farther than they were
-before. Remember, this is Python, indentation matters\!*
+*\*Remarque : le bleu est la couleur des lignes qui sont identiques aux
+précédentes mais qui ont été indentées différemment. Les blocs if du
+`fov_recompute` et `visible` augmentent l'indentation. Souvenez-vous, en Python
+l'indentation est indispensable. \!*
 
-Now our `render_all` function will display tiles differently, depending
-on if they're in our field of view or not. If a tile falls in the
-`fov_map`, we draw it with the 'light' colors, and if not, we draw the
-'dark' version.
+Maintenant notre fonction `render_all` va afficher les tuiles différemment,
+selon qu'elles soient dans notre champ de vision  ou non. Si une tuile est dans
+`fov_map`, on la dessine avec la couleur `light` et sinon on la dessine avec la
+version `dark`.
 
-The definition of `render_all` has changed, so be sure to update it in
-`engine.py`. While we're at it, let's set `fov_recompute` to `False`
-after we call `render_all`.
+La définition de `render_all` a changé aussi assurez-vous de la mettre à jour
+dans `engine.py`. Tant qu'on y est, réglons `fov_recompute à `False` après avoir
+appelé `render_all`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -367,9 +368,14 @@ despite being able to "see" the FOV, it still doesn't really *do*
 anything. We can still see the entire map, along with our NPC. Luckily,
 the changes we have to make to fix this are fairly minimal.
 
-Let's start with our NPC. We should just be able to modify our
-`draw_entity` function to account for the field of view, which would
-solve our problem.
+Lancez le projet maintenant. Le champ de vision du joueur est maintenant
+visible \! Mais bien qu'on soit capable de "voir" le FOV, cela ne *change rien*.
+On peut toujours voir l'intégralité de la carte ainsi que notre NPC.
+Heureusement, les changements pour y parvenir sont minimaux.
+
+Commençons avec le NPC. On devrait simplement être capable de modifier notre
+fonction `draw_entity`pour tenir compte du champ de vision, ce qui devrait
+résoudre notre problème.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def draw_entity(con, entity):
@@ -390,10 +396,10 @@ def draw_entity(con, entity):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-*\* Again, the blue means the line is the same as before, except the
-indentation has changed.*
+*\* A nouveau, les lignes bleues contiennent du code inchangé hormis en ce qui
+concerne son indentation.*
 
-Also be sure to update the part where we call the function:
+Aussi soyez sûrs de mettre à jour la partie où on appelle la fonction :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     for entity in entities:
@@ -408,14 +414,14 @@ Also be sure to update the part where we call the function:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project again, and you won't see the NPC unless it's in your
-field of view.
+Lancez le projet à nouveau et vous ne verrez plus le NPC à moins qu'il soit
+dans votre champ de vision;
 
-Now for the map. In traditional roguelikes, your character can only see
-whats inside its field of view, but it will "remember" areas that were
-explored previously. We can accomplish this effect by adding a variable
-called `explored` to our `Tile` class. Modify the `__init__` function in
-`Tile` to include this new variable:
+Maintenant la carte. Dans un roguelike traditionnel, votre joueur ne voit que
+son champ de vision mais il se souvient des zones qu'il a déjà exploré. Nous
+pouvons réaliser ça en ajoutant une variable `explored` à notre classe `Tile`.
+Modifiez la fonction `__init__` dans `Tile` pour inclure cette nouvelle
+variable :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -432,10 +438,10 @@ called `explored` to our `Tile` class. Modify the `__init__` function in
 {{</ original-tab >}}
 {{</ codetab >}}
 
-This new variable needs to be taken into account in our `render_all`
-function. Let's do that now. We'll only draw the tiles outside of our
-field of view if we've explored them previously. Also, any tiles that
-*are* in our field of view, we'll mark as 'explored'.
+Cette nouvelle variable doit être prise en compte dans notre fonction
+`render_all`. Faisons le immédiatement. On ne dessinera que les tuiles hors du
+champ de vision que si on les déjà explorées. Aussi, chaque tuile figurant dans
+notre champ de vision sera marquée comme explorée.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                 ...
@@ -480,15 +486,14 @@ field of view if we've explored them previously. Also, any tiles that
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We now have a real, explorable dungeon\! True, there may not be much
-*in* there right now, but this was a major step to a working game. In
-the next few parts, we'll fill the dungeon with some evil(?) monsters to
-punch.
+Nous avons maintenant un vrai donjon explorable \! Il est vrai qu'il n'y a
+surement pas grand chose à y faire pour l'instant mais c'est un grand pas vers
+un jeu fonctionnel. Dans les prochaines parties, nous remplirons le donjon
+de monstres (hostiles ?) qu'on peut taper.
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part4).
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-5)
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part4).
+
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-5)
 
 <script src="/js/codetabs.js"></script>
