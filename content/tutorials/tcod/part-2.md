@@ -1,24 +1,23 @@
 ---
-title: "Part 2 - The generic Entity, the render functions, and the map"
+title: "Part 2 - Une entité générique, les fonctions de rendu et la carte]"
 date: 2019-03-30T08:39:20-07:00
 draft: false
 ---
 
-Now that we can move our little '@' symbol around, we need to give it
-something to move around *in*. But before that, let's stop for a moment
-and think about the player object itself.
+Maintenant que l'on peut déplacer notre petit symbole "@", on doit lui donner un
+*cadre*. Mais avant ça pensons un instant à l'objet joueur lui même.
 
-Right now, we just represent the player with the '@' symbol, and its x
-and y coordinates. Shouldn't we tie those things together in an object,
-along with some other data and functions that pertain to it?
+Pour l'instant, nous représentons simplement le joueur avec un '@' et ses
+coordonnées x et y. On devrait regrouper ces éléments dans un objet avec
+d'autres données et des fonctions qui lui correspondent.
 
-Let's create a generic class to represent not just the player, but just
-about *everything* in our game world. Enemies, items, and whatever other
-foreign entities we can dream of will be part of this class, which we'll
-call `Entity`.
+Créons une classe générique qui représente non seulement le joueur mais aussi
+*tous les éléments* de notre monde de jeu. Ennemis, items et tout autre entité
+à laquelle on pourrait penser feront parties de cette classe qui s'appellera
+`Entity`.
 
-Create a new file, and call it `entity.py`. In that file, put the
-following class:
+Créez un nouveau fichier et nommez le `entity.py`. Dans ce fichier, ajouter la
+classe suivante :
 
 {{< highlight py3 >}}
 class Entity:
@@ -37,14 +36,14 @@ class Entity:
         self.y += dy
 {{</ highlight >}}
 
-This is pretty self explanatory. The `Entity` class holds the x and y
-coordinates, along with the character (the '@' symbol in the player's
-case) and the color (white for the player by default). We also have a
-method called `move`, which will allow the entity to be moved around by
-a given x and y.
+C'est plutôt explicite. La classe `Entity` qui contient les coordonnées x et y
+ainsi que le caractère (le symbole `@` en ce qui concerne le joueur) et la
+couleur (blanche par défaut pour le joueur). Nous avons aussi une méthode
+appelée `move` qui permettra à l'entité d'être déplacée selon des coordonnées
+x et y données.
 
-Let's put our fancy new class into action\! Modify the first part of
-`engine.py` to look like this:
+Mettons cette nouvelle classe en action \! Modifiez la première partie de
+`engine.py` pour qu'elle ressemble à ceci :
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -89,12 +88,12 @@ def main():
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We're importing the `Entity` class into `engine.py`, and using it to
-initialize the player and a new NPC. We store these two in a list, that
-will eventually hold all our entities on the map.
+On importe la classe `Entity` dans `engine.py` et on l'emploie pour initialiser
+le joueur et un nouveau NPC. On range ces éléments dans une liste qui contiendra
+toutes les entités sur la carte.
 
-Also modify the part where we handle movement so that the Entity class
-handles the actual movement.
+Modifiez aussi la partie qui gère le mouvement de façon à ce que ce soit la
+classe Entity qui s'en occupe.
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -115,7 +114,8 @@ handles the actual movement.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Lastly, update the drawing functions to use the new player object:
+Enfin, mettez à jour les fonctions de dessin pour utiliser le nouvel objet
+joueur.
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -164,14 +164,14 @@ Lastly, update the drawing functions to use the new player object:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now we need to alter the way that the entities are drawn to the screen.
-If you run the code right now, only the player gets drawn. Let's write
-some functions to draw not only the player, but any entity currently in
-our entities list.
+On doit modifier la manière dont l'entité est dessinée à l'écran. Si vous
+exécutez le code maintenant, seul le joueur est dessiné. Ecrivons quelques
+fonctions qui dessinent à la fois le joueur mais aussi toute entité de la liste
+des entités.
 
-Create a new file called `render_functions.py`. This will hold our
-functions for drawing and clearing from the screen. Put the following
-code in that file.
+Créez un nouveau fichier appelé `render_functions.py`. Il contiendra nos
+fonctions de dessin et une fonction nettoyant l'écran. Ajoutez le code suivant
+dans ce fichier.
 
 {{< highlight py3 >}}
 import tcod as libtcod
@@ -200,28 +200,28 @@ def clear_entity(con, entity):
     libtcod.console_put_char(con, entity.x, entity.y, ' ', libtcod.BKGND_NONE)
 {{</ highlight >}}
 
-Here's a quick breakdown of what these functions do:
+Voici un découpage rapide de ce que font ces fonctions :
 
-  - The `render_all` function is what we'll call from our game loop to
-    draw entities and, shortly, the map. For now, it takes the console
-    (con), a list of entities, and the screen width/height as
-    parameters, and calls the `draw_entity` function on each. It then
-    blits the changes to the screen.
-  - `draw_entity` is what does the actual drawing. The code should look
-    very similar to what's in our game loop right now, except it's using
-    the entity's variables (x, y, char, and color) to do the drawing.
-    This makes it flexible enough to, theoretically, draw any entity we
-    pass to it.
-  - `clear_all` is what we'll use to clear all the entities after
-    drawing them to the screen. It's just a loop that calls another
-    function.
-  - `clear_entity` just does what our previous line did, and clears the
-    entity from the screen (so that when it moves, it doesn't leave a
-    trail behind).
+  - La fonction `render_all` est celle qui sera appelée de notre boucle de
+    jeu pour dessiner les entités et, dans un instant, la carte. Pour l'instant
+    elle prend la console (con), une liste d'entité et les dimensions
+    (hauteur/largeur) de l'écran en paramètres et elle appelle la fonction
+    `draw_entity` sur chaque élément. Ensuite elle colle (blit) les changements
+    à l'écran.
+  - `draw_entity` est ce qui réalise vraiment le dessin. Le code devrait être
+    très proche de ce qui est dans notre boucle de jeu actuellement à ceci près
+    qu'elle utilise les variables de l'entité (x, y, char et color) pour faire
+    le dessin. Cela est assez flexible en théorie pour dessiner n'importe quelle
+    entité qu'on lui donne.
+  - `clear_all` et ce qu'on utilisera pour nettoyer les entités après les avoir
+    dessinées à l'écran. C'est simplement une boucle qui appelle une autre
+    fonction.
+  - `clear_entity` est justement cette fonction. Elle nettoie les entités de
+    l'écran (de façon à ce qu'elle bouge sans laisser une trace derrière elle).
 
-Now that we've gotten a few functions to assist drawing the entities,
-let's put them to use. Make the following modifications to the section
-where we drew the player (in `engine.py`).
+Maitenant qu'on a quelques fonctions pour nous aider à dessiner les entités
+mettons les en action. Réalisez les modifications dans la partie où le joueur
+est dessiné dans `engine.py`
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -262,8 +262,8 @@ where we drew the player (in `engine.py`).
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Don't forget to import `render_all` and `clear_all` at the top of your
-file. Your imports section should now look something like this:
+N'oubliez pas d'importez `render_all` et `clear_all` en haut de votre fichier.
+Votre partie d'imports devrait ressemble à quelque chose comme cela :
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -284,16 +284,17 @@ from input_handlers import handle_keys
 {{</ original-tab >}}
 {{</ codetab >}}
 
-If you run the project now, you should see your '@' symbol, along with a
-yellow one representing our NPC. It doesn't do anything, yet, but now we
-have a method for drawing more than one character to the screen.
+Si vous exécutez le projet maintenant, vous devriez voir votre symbole '@'
+accompagné d'un autre symbole jaune représentant notre NPC. Il ne fait rien
+pour l'instant mais nous avons une méthode permettant dessiner plus d'un
+personnage à l'écran.
 
-It's time to shift gears a bit and get our map in place. The map will
-consist of a 2d array of Tile objects. Tiles will have a few properties
-that define whether we can move through them, or see through them.
+Il est temps de changer de vitesse et de mettre la carte en place. La carte est
+un tableau 2d d'objets Tile (tuile). Les tuiles aurons quelques propriétés qui
+définissent si on peut voir à travers ou voir à travers.
 
-We'd better start by defining the size of our map. Add these variables
-right below where you defined the screen width and height:
+On devrait commencer en définissant la taille de notre carte. Ajoutez ces
+variables juste après avoir défini la hauteur et la largeur de l'écran.
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -312,12 +313,12 @@ right below where you defined the screen width and height:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Simple enough. Now we need a place for our Tile class, along with a few
-other map classes, to live. I prefer to keep similar classes in the same
-folder, so create a new Python package (that's a directory with a file
-called `__init__.py` in it, \_\_init\_\_.py is empty in this case)
-called `map_objects`. In there, create a file called `tile.py` and put
-the following code in it.
+Assez simple. On doit maintenant trouver une place pour notre classe Tile
+et d'autres classes. Je préfère ranger les classes similaires dans le même
+dossier donc créez un nouveau package Python (c'est un dossier avec un fichier
+appelé `__init__.py`, ce fichier étant vide dans notre cas) appelé
+`map_objects`. Dans ce dossier, crées un fichier `tile.py` et ajoutez-y le code
+suivant.
 
 {{< highlight py3 >}}
 class Tile:
@@ -326,28 +327,29 @@ class Tile:
     """
     def __init__(self, blocked, block_sight=None):
         self.blocked = blocked
-        
+
         # By default, if a tile is blocked, it also blocks sight
         if block_sight is None:
             block_sight = blocked
-        
+
         self.block_sight = block_sight
-    
+
 {{</ highlight >}}
 
-Nothing too complicated here. The `Tile` class holds whether or not the
-tile is blocked (if it's blocked, you can't move through it), and
-whether or not it blocks sight (for our FOV algorithm later). Notice
-that you don't have to pass `block_sight` every time; it's assumed to be
-the same as `blocked`. By keeping the two separate, we can have a tile
-that can be seen-through, but not crossed (a lava pit maybe?), or vice
-versa (a dark room perhaps).
+Rien de très compliqué ici. La classe `Tile` contient l'information selon
+laquelle elle est bloquante (blocked, si elle l'est, vous ne pouvez vous
+déplacer dedans et l'information nous permettant de savoir si on peut voir à
+travers (`block_sight` pour notre algorithme de champ de vision FOV). Remarquez
+qu'il n'est pas nécessaire de passer `block_sight` à chaque fois ; ce
+paramètre supposé être le même que `blocked`. En séparant les deux, une tuile
+peut être transparente sans pouvoir être traversée (un puis de lave,
+peut-être ?) ou inversement (une pièce sombre, par exemple).
 
-Now that we have the tile class, we need some sort of container to hold
-our tiles. Let's call this class `GameMap`, which will hold the 2d array
-of tiles and some methods for setting up and interacting with it. Create
-a file (in the map\_objects folder) and call it `game_map.py`, and put
-the following in it:
+Maintenant qu'on a une classe tuile, il nous faut un conteneur pour garder
+nos tuiles. Créeons une classe `GameMap` qui contiendra notre tableau 2d de
+tuiles ainsi que quelques méthodes pour régler et intéragir avec elles.
+Créez un fichier dans le dossier map_objects et appelez le `game_map.py`.
+Ajoutez-y le code suivant :
 
 {{< highlight py3 >}}
 from map_objects.tile import Tile
@@ -372,20 +374,20 @@ class GameMap:
         return tiles
 {{</ highlight >}}
 
-We're passing in the width and height of the map (which we've defined in
-our engine), and initializing a 2d array of Tiles, set to non-blocking
-by default. We're setting a few tiles as blocked, just for demonstration
-purposes. I've kept the code setting the tiles up out of the `__init__`
-function, for two reasons. One, it may get called outside the
-initialization, and two, because I prefer keeping `__init__` functions
-as simple as possible.
+On lui passe la largeur et la hauteur de la carte (définies dans notre moteur)
+et on initialise un tableau 2d de tuiles, réglées sur non bloquantes par défaut.
+On règle quelques tuiles comme étant bloquantes, pour démontrer le principe.
+J'ai conservé les réglages des tuiles hors de la fonction `__init__` pour deux
+raisons. D'une part parce qu'on peut l'appeler en dehors de l'initialisation,
+d'autre part parce que je prefère avoir des fonctions `__init__` aussi simples
+que possible.
 
-Go back to `engine.py`, where we'll make a few changes so that our map
-get initialized and then drawn to the screen.
+Revenez sur `engine.py` où nous allons faire quelques changement pour
+initialiser la carte et l'afficher à l'écran.
 
-Firstly, we need to define what colors to draw for blocked and
-non-blocked tiles. Let's set up a dictionary that holds the colors we'll
-be using for now (it will expand as this tutorial goes on).
+D'abord, nous définissons quelle couleur employer pour les tuiles bloquantes et
+non bloquantes. Définissons un dictionnaire qui contient les couleurs qu'on
+utilisera pour l'instant (il s'agrandira avec l'avancée du tutoriel).
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -414,11 +416,12 @@ be using for now (it will expand as this tutorial goes on).
 {{</ original-tab >}}
 {{</ codetab >}}
 
-These colors will serve as our wall and ground outside the FOV, when we
-get there (hence the 'dark' in the names).
+Ces couleurs nous serviront pour les murs et le sol en dehors du champ de vision
+quand on y sera (d'où le 'dark' de leurs noms).
 
-Now let's initialize the game map itself. This can go anywhere before
-the main loop; I put mine right below the console initialization.
+Maintenant nous allons initialiser la carte de jeu elle même. Cela peut-être
+placé n'importe où avant la boucle principale. J'ajoute la mienne juste en
+dessous de l'initialisation de la console.
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -439,8 +442,7 @@ the main loop; I put mine right below the console initialization.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Don't forget to import the actual GameMap object so that we can use it
-in the engine.
+N'oublions pas d'importer l'objet GameMap de façon à l'utiliser dans le moteur.
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -459,12 +461,12 @@ from render_functions import clear_all, render_all</pre>
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now that our map object is ready to go, let's pass it to `render_all` so
-that we can draw it. We'll also pass the `colors` dictionary, because
-`render_all` will need to know what colors to draw the various parts of
-the map. Note that the order in which you pass these arguments doesn't
-matter, it just has to match in the function definition and when you
-call it.
+Maintenant que notre objet carte est prêt passons le à `render_all` de façon
+à le dessiner. Nous passerons aussi le dictionnaire `colors` parce que
+`render_all` aura besoin de connaître les couleurs des éléments de la carte.
+Remarquez que l'ordre dans lequel vous passez ces arguments n'a pas d'importance
+cela doit simplement être cohérent avec la définition de la fonction quand vous
+l'appelez.
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -479,7 +481,7 @@ call it.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Open up `render_functions.py` and modify `render_all` like this:
+Ouvrez `render_functions.py` et modifiez `render_all` ainsi :
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -495,7 +497,7 @@ Open up `render_functions.py` and modify `render_all` like this:
 +               libtcod.console_set_char_background(con, x, y, colors.get('dark_wall'), libtcod.BKGND_SET)
 +           else:
 +               libtcod.console_set_char_background(con, x, y, colors.get('dark_ground'), libtcod.BKGND_SET)
-+   
++
     # Draw all entities in the list
     for entity in entities:
         draw_entity(con, entity)
@@ -524,16 +526,17 @@ Open up `render_functions.py` and modify `render_all` like this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-`render_all` now loops through each tile in the game map, and checks if
-it blocks sight or not. If it does, then it draws it as a wall, and if
-not, it draws a floor.
+`render_all` boucle maintenant sur les tuiles de la carte de jeu et vérifie si
+elles bloquent la vue ou non. Si c'est le cas, il dessine la tuile comme un mur
+et sinon comme le sol.
 
-Run the project now, and you should see the 'map' drawn with some color
-to it. You'll see our three block wall as well, but there's one problem:
-We can move through the wall\!
+Lancez le projet maintenant et vous devriez voir la carte dessinée avec des
+couleurs. Vous verrez nos trois blocs de mur mais il y a un problème : vous
+pouvez bouger à travers le mur !
 
-We need to add two more things before we can call it a day. Modify the
-part where the player's move function gets called to look like this:
+Nous devons ajouter deux choses avant de conclure cette étape. Modifiez la
+partie où la fonction de déplacement du joueur est appelée pour qu'elle
+ressemble à ceci :
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -550,11 +553,11 @@ part where the player's move function gets called to look like this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-*\* Note the indentation change for player.move(dx, dy). This is Python,
-so indentation matters\!*
+*\* Remarquez le changement d'indentation pour `plaer.move(dx, dy)`. En Python
+l'indentation est importante !*
 
-Now we just have to create the `is_blocked` method in the game map. Open
-up the `game_map.py` file and add this method to the class:
+Maintenant on doit simplement crée la méthode `is_blocked` dans la carte du jeu.
+Ouvrez le fichier `game_map.py` et ajouter cette méthode à la classe :
 
 {{< highlight py3 >}}
     def is_blocked(self, x, y):
@@ -564,20 +567,19 @@ up the `game_map.py` file and add this method to the class:
         return False
 {{</ highlight >}}
 
-*\* Note: You could shorten the is\_blocked function, by simply writing*
-`return self.tiles[x][y].blocked`. *But we'll be modifying this function
-to do more checks soon, hence we're taking the more explicit route.*
+*\* Remarque : vous pouvez raccourcir la fonction `is_blocked` en écrivant
+simplement `return self.tiles[x][y].blocked` mais nous changerons cette fonction
+pour qu'elle vérifie plus de choses plus tard aussi nous prenons un chemin
+plus explicite.*
 
-Run the project again, and you will get stuck on the walls.
+Lancez le projet à nouveau et vous serez bloqués par les murs.
 
-That's going to do it for this tutorial. It may not look like much, but
-we've set ourselves up to create some real looking dungeons in the next
-tutorial.
+Cela fera l'affaire pour ce tutoriel. Il n'y parait peut-être pas mais nous
+avons fait ce qu'il faut pour créer un donjon réalise dans la prochaine partie.
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part2).
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-3)
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part2).
+
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-2)
 
 <script src="/js/codetabs.js"></script>
