@@ -4,12 +4,12 @@ date: 2019-03-30T08:39:22-07:00
 draft: false
 ---
 
-Welcome back to the Roguelike Tutorial Revised\! In this tutorial, we'll
-be taking a **very** important step towards having a real, functioning
-game: Creating a procedurally generated dungeon\!
+Bienvenue à nouveau dans le tutoriel Roguelike revisité \! Dans cette étape nous
+allons franchir un pas **très** important vers un vrai jeu fonctionnel : créer
+un donjon procédural !
 
-Remember that little wall we created for demonstration purposes in the
-last tutorial? We don't need it anymore, so let's take it out.
+Vous souvenez-vous du petit mur crée pour la démonstration dans la partie
+précédente ? Nous n'en avons plus besoin aussi enlevons le.
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -32,9 +32,8 @@ last tutorial? We don't need it anymore, so let's take it out.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We also need to make a slight change to the list comprehension that
-created our
-Tiles.
+Nous avons aussi besoin de faire un petit changement à la liste par
+compréhension qui crée nos tuiles.
 
 {{< codetab >}}
 {{< diff-tab >}}
@@ -49,22 +48,22 @@ Tiles.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Why are we changing the `False` to `True`? Before, we were setting every
-Tile to be walk-able by default, so that we could move around easily.
-Hence, we passed `False` to the `Tile` class, so that the `blocked`
-attribute would be False.
+Pourquoi changer `False` en `True` ? Jusque là, nous réglions chaque tuile
+pour être franchissable par défaut de façon à nous déplacer facilement.
+Aussi nous passion `False` à la classe `Tile` de façon a rendre l'attribut
+`blocked` en False.
 
-However, our dungeon generation algorithm works the opposite way: We
-start with a completely walled off room, and start "digging" out
-sections as we go along. Therefore, we initialize all our tiles to be
-blocked by default. For the record: every dungeon generation algorithm
-I've seen does this in some way.
+Cependant notre algorithme de génération fonctionne à l'envers : on crée une
+pièce remplie de murs et on creuse les sections alors qu'on avance. Aussi,
+on initialise nos tuiles pour qu'elles bloquent par défaut. Pour information,
+tous les algorithmes de génération que j'ai vu fonctionnent ainsi.
 
-One more thing we'll want to do before getting to our dungeon algorithm
-is defining a helper class for our "rooms". This will be a basic class
-that holds some information about dimensions, which we'll call `Rect`
-(short for rectangle). Create a new file in the `map_objects` folder,
-and name it `rectangle.py`. Enter the following code into it:
+Avant d'attaquer l'algorithme nous devons faire une chose en plus : définir une
+classe d'aide pour nos "cartes". Ce sera une classe basique qui contiendra un
+peu d'information à propos des dimensions et que nous appellerons `Rect` (pour
+rectangle). Créez un nouveau fichier dans le dossier `map_objects` et appelez-le
+`rectangle.py`. Saisissez-y le code suivant.
+
 
 {{< highlight py3 >}}
 class Rect:
@@ -75,20 +74,20 @@ class Rect:
         self.y2 = y + h
 {{</ highlight >}}
 
-The `__init__` function takes the x and y coordinates of the top left
-corner, and computes the bottom right corner based on the w and h
-parameters (width and height). We'll be adding more to this class
-shortly, but to get us started, that's all we need.
+La fonction `__init__` prend les coordonnées x et y du coin supérieur gauche et
+calcule le coin inférieur droit avec la largeur et la hauteur données en
+paramètres w et h. Nous ajouterons plus de choses à cette classe dans peu de
+temps mais c'est tout ce dont on a besoin pour commencer.
 
-Now, if we're going to be "carving out" a bunch of rooms to create our
-dungeon, we'll want a function to create a room. This function should
-take an argument, which we'll call `room`, and that argument should be
-of the `Rect` class we just created. From x1 to x2, and y1 to y2, we'll
-want to set each tile in the `Rect` to be not blocked, so the player can
-move around in it. We can put this function in the `GameMap` class,
-since it will be manipulating the map's list of tiles.
+Maintenant, si nous voulons "creuser" un paquet de pièces pour créer notre
+donjon, nous avons besoin d'une fonction pour créer une pièce. Cette fonction
+doit prendre un argument, appelé `room` qui doit être de la classe `Rect` que
+nous venons de créer. De x1 à x2 et de y1 à y2 nous voulons que chaque tuile
+dans le `Rect` ne soit pas bloquante de façon à ce que le joueur puisse s'y
+déplacer. Nous pouvons ajouter cette fonction dans la classe `GameMap` puisque
+nous manipulerons la liste des tuiles de la carte.
 
-What we end up with is this function:
+Voici ce qu'on obtient dans cette fonction :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def initialize_tiles(self):
@@ -121,16 +120,17 @@ What we end up with is this function:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-*\* Note: `initialize_tiles` and `is_blocked` shortened for the sake of
-brevity.*
+*\*Remarque : `initialize_tiles` et `is_blocked` sont réduites pour rendre les
+choses concises.
 
-What's with the + 1 on room.x1 and room.y1? Think about what we're
-saying when we tell our program that we want a room at coordinates (1,
-1) that goes to (6, 6). You might assume that would carve out a room
-like this one (remember that lists are 0-indexed, so (0, 0) is a wall in
-this case):
+Pourquoi les + 1 de room.x1 et room.y1 ? Pensons à ce que nous disons à notre
+programme quand nous voulons une pièce aux coordonnées (1, 1) qui aille jusque
+(6, 6). On pourrait supposer qu'on creuse une pièce comme celle-ci
+(souvenez-vous que les listes sont indexées à partir de 0) donc (0, 0) est un
+mur dans notre cas) :
 
-``` 
+
+```
   0 1 2 3 4 5 6 7
 0 # # # # # # # #
 1 # . . . . . . #
@@ -142,10 +142,10 @@ this case):
 7 # # # # # # # #
 ```
 
-That's all fine and good, but what happens if we put a room right next
-to it? Let's say this room starts at (7, 1) and goes to (9, 6)
+Tout cela est bel et bon mais que se passe-t-il si on ajoute une pièce juste
+à côté ? Imaginons une pièce qui commence en (7, 1) et aille jusque (9, 6).
 
-``` 
+```
   0 1 2 3 4 5 6 7 8 9 10
 0 # # # # # # # # # # #
 1 # . . . . . . . . . #
@@ -157,14 +157,13 @@ to it? Let's say this room starts at (7, 1) and goes to (9, 6)
 7 # # # # # # # # # # #
 ```
 
-There's no wall separating the two\! That means that if two rooms are
-one right next to the other, then there won't be a wall between them\!
-So long story short, our function needs to take the walls into account
-when digging out a room. So if we have a rectangle with coordinates x1 =
-1, x2 = 6, y1 = 1, and y2 = 6, then the room should actually look like
-this:
+Aucun mur ne les sépare \! Cela veut dire que si deux pièces sont côte à côte,
+il n'y aura aucun mur entre elles \! Pour faire simple, notre fonction doit
+tenir compte des murs quand on creuse une pièce. Ainsi si on a un rectangle de
+coordonnées x1 = 1, x2 = 6, y1 = 1 et y2 = 6, alors la pièce devrait ressembler
+à cela :
 
-``` 
+```
   0 1 2 3 4 5 6 7
 0 # # # # # # # #
 1 # # # # # # # #
@@ -176,17 +175,22 @@ this:
 7 # # # # # # # #
 ```
 
-This ensures that we'll always have at least a one tile wide wall
-between our rooms, unless we choose to create overlapping rooms. In
-order to accomplish this, we add + 1 to x1 and y1.
+Cela nous assure qu'on aura au moins une tuile de mur d'épaisseur entre les
+pièces à moins qu'on souhaite créer des pièces qui se superposent. De façon à y
+parvenir on ajoute + 1 à x1 et y1.
 
 *\* Note: In case you're wondering, we don't subtract 1 from x2 and y2
 because Python's range function does not include the 'end' value in its
 range. For example, range(0, 10) would give us \[0, 1, 2, 3, 4, 5, 6, 7,
 8, 9\].*
 
-Let's make some rooms\! We'll need a function in `GameMap` to generate
-our map, so let's add one:
+*\* Remarque : si vous vous posiez la question, on n'a pas besoin de soustraire
+1 de x2 et y2 parce que la fonction range de Python n'inclut pas les valeurs
+de fin dans son intervalle. Par exemple range(0, 10) nous donne \[0, 1, 2, 3, 4,
+ 5, 6, 7, 8, 9\].*
+
+Créons des pièces \! Nous avons besoin d'une fonction dans `GameMap` pour
+générer notre carte donc ajoutons en une :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def initialize_tiles(self):
@@ -221,8 +225,8 @@ our map, so let's add one:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We need to import the `Rect` class into the `game_map` file in order for
-this to work. At the top of the file, modify your import section:
+On doit importer la classe `Rect` dans le fichier `game_map` de façon à ce que
+ça fonctionne. En haut de votre fichier, modifiez votre section d'import :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +from map_objects.rectangle import Rect
@@ -249,14 +253,15 @@ function.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now is a good time to run your code and make sure everything works as
-expected. The changes we've made puts two sample rooms on the map, with
-our player in one of them (our poor NPC is stuck in a wall though).
+C'est le bon moment pour exécuter votre code et vous assurer que tout fonctionne
+comme prévu. Les changements effectués mettent deux pièces d'exemple sur la
+carte avec notre joueur au centre de l'une d'entre elle (notre pauvre NPC est
+coincé dans un mur, cela dit).
 
-I'm sure you've noticed already, but the rooms are not connected. What's
-the use of creating a dungeon if we're stuck in one room? Not to worry,
-let's write some code to generate tunnels from one room to another. Add
-the following methods to `GameMap`:
+Je pense que vous aurez remarqué que les pièces ne sont pas reliées. Quel est
+l'intérêt d'avoir un donjon si on est enfermé dans une pièce ? Pas d'inquiétude,
+écrivons un peu de code pour créer un tunnel d'une pièce à l'autre. Ajoutez la
+méthode suivante à `GameMap` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def create_room(self, room):
@@ -274,7 +279,7 @@ the following methods to `GameMap`:
 
     def is_blocked(self, x, y):
         ...
-        
+
 {{</ highlight >}}
 {{</ diff-tab >}}
 {{< original-tab >}}
@@ -314,15 +319,15 @@ Let's put this code to use by drawing a tunnel between our two rooms.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now that we've demonstrated to ourselves that our room and tunnel
-functions work as intended, it's time to move on to an actual dungeon
-generation algorithm. Our will be fairly simple; we'll place rooms one
-at a time, making sure they don't overlap, and connect them with
+Maintenant qu'on a démontré que nos fonctions de pièces et de tunnels
+fonctionnent comme prévues, il est temps de passer à un vrai algorithme de
+génération de donjons. Le notre sera plutôt simple : on place des pièces une à
+la fois en nous assurant qu'elles ne se superposent pas et on les relie avec des
 tunnels.
 
-We'll need two additional functions in the `Rect` class to ensure that
-two rectangles (rooms) don't overlap. Enter the following methods into
-the `Rect` class:
+Nous aurons besoin de deux fonctions dans la classe `Rect` pour nous assurer que
+les deux rectangles (rooms) ne se superposent pas. Saisissez les méthodes dans
+la classe `Rect` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Rect:
@@ -363,13 +368,13 @@ class Rect:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Don't worry too much about the specifics here. Just know that the
-'center' method gives us the center point of a rectangle, and that
-'intersect' tells us if two rectangles overlap.
+Ne vous souciez pas trop des détails ici. Sachez simplement que la méthode
+'center' renvoie le point central d'un rectangle et qu'`intersect` nous indique
+si deux rectangles se rencontrent.
 
-We're going to need a few variables to set the maximum and minimum size
-of the rooms, along with the maximum number of rooms one floor can have.
-Add the following to `engine.py`
+Nous aurons besoin de quelques variables pour régler les dimensions minimales
+des pièces ainsi que le nombre maximal de pièces qu'un étage peut contenir.
+Ajoutez les éléments suivants à `engine.py`
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -396,9 +401,9 @@ Add the following to `engine.py`
 {{</ original-tab >}}
 {{</ codetab >}}
 
-At long last, it's time to modify `make_map` to generate our dungeon\!
-You can completely remove our old implementation and replace it with the
-following:
+Enfin, il est temps de modifier `make_map` pour créer notre donjon \!
+Vous pouvez enlever complètement notre ancienne implémentation et la remplacer
+par la suivante :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -   def make_map(self):
@@ -447,15 +452,15 @@ following:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-The variables we're creating here will be what we use to create our
-rooms momentarily. `randint` gives us a random integer between the
-values we specify. In this case, we want our width and height to be
-between our given minimums and maximums, and our x and y should be
-within the boundaries of the map.
+Les variables que nous créons ici seront celles que nous utiliserons pour
+créer nos pièces dans un instant. `randint` nous donne un entier aléatoire entre
+les valeurs indiquées. Dans notre cas nous voulons que que la largeur et la
+hauteur soient entre les minimums et maximums et que notre x et y soient entre
+les bornes de la carte.
 
-We also need to import `randint` from `random` at the top of the file.
-Your import section for `game_map.py` should now look something like
-this:
+Nous devons aussi importer `randint` de `random` en haut du fichier.
+Votre section d'import pour `game_map.py` devrait maintenant ressembler à
+quelque chose comme ceci :
 
 {{< highlight py3 >}}
 from random import randint
@@ -464,9 +469,9 @@ from map_objects.rectangle import Rect
 from map_objects.tile import Tile
 {{</ highlight >}}
 
-Last thing before we proceed: We need to update the call to `make_map`
-in `engine.py`, because now we're asking for a bunch of variables that
-we weren't before. Modify it to look like this:
+Dernière étape avant d'avancer : nous devons mettre à jour l'appel de `make_map`
+dans `engine.py`, nous utilisons des variables qui n'existaient pas jusque là.
+Modifiez le pour qu'il ressemble à :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -483,10 +488,10 @@ we weren't before. Modify it to look like this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now we'll put our `Rect` class to use, by passing it the variables we
-just created. Then, we can check if it intersects with any other rooms.
-If it does, we don't want to add it to our rooms, and we simply toss it
-out.
+Maintenant nous allons mettre notre classe `Rect` en action en lui passant les
+variables créees. Ensuite, nous pourrons vérifier s'il rencontre une autre
+pièce. Si c'est le cas, nous ne voulons pas l'ajouter aux pièces et on s'en
+débarrasse simplement.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -515,13 +520,12 @@ out.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-If the room does *not* intersect any others, then we'll need to create
-it. Rather than introducing a boolean (True/False value) to keep track
-of whether or not we intersected, we can simply use a for-else
-statement\! This is a unique, lesser known Python technique, which
-basically says "if the for loop did not 'break', then do this". We'll
-put our room placement code in this 'else' statement right after the
-for-loop.
+Si la pièce *n'en rencontre pas* d'autre alors nous devons la créer. Plutôt que
+d'introduire un booléen (True/False) pour garder ça en mémoire, on peut
+simplement utiliser une expression for-else \! C'est une particularité
+spécifique et méconnue de Python qui dit simplement "si la boucle n'a pas été
+interrompue par un 'break', alors fait ceci". Nous ajoutons notre code de
+construction de la pièce dans l'expression 'else' juste après la boucle 'for'.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -564,10 +568,9 @@ for-loop.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We're creating our room, and saving the coordinates of its "center". If
-it's the first room we've created, then we place the player right in the
-middle of it. We'll also put these center coordinates to use in just a
-moment to create our tunnels.
+Nous créons la pièce et conservons les coordonnées de son centre. Si c'est la
+première pièce créée on y place le joueur en son centre. Nous allons utiliser
+ces coordonnés de centre dans un instant pour créer nos tunnels.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                 ...
@@ -626,24 +629,21 @@ moment to create our tunnels.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-This 'else' statement covers all cases where we've already placed at
-least one room. In order for our dungeon to be navigable, we need to
-ensure connectivity by creating tunnels. We get the center of the
-previous room, and then, based on a random choice (between one or zero,
-or a coin toss if you prefer to think of it that way), we carve our
-tunnels, either vertically then horizontally or vice versa. After all
-that, we append the room to our 'rooms' list, and increment the number
-of rooms.
+Ce bloc 'else' traite tous les cas où nous avons déjà crée au moins une pièce.
+De manière à pouvoir parcourir notre donjon, on doit s'assurer que les tunnels
+soient bien connectés. On récupère le centre de la pièce précédente et, selon
+un choix aléatoire (entre pile ou face, si vous voulez), on creuse notre tunnel
+verticalement puis horizontalement ou le contraire. Une fois tout ceci réalisé
+on ajoute la pièce à notre liste de pièces 'rooms' et on incrémente le nombre
+de pièces.
 
-And that's it\! There's our functioning, albeit basic, dungeon
-generation algorithm. Run the project now and you should be placed in a
-procedurally generated dungeon\! Note that our NPC isn't being placed
-intelligently here, so it may or may not be stuck in a wall.
+Et voilà \! Voici notre algorithme de génération de donjons, plutôt simple, mais
+qui fonctionne. Lancez le projet et vous devriez vous trouver dans un donjon
+procédural \! Remarquez que le NPC n'est pas placé intelligemment et peut être
+bloqué dans un mur ou non.
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part3).
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part3).
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-4)
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-4)
 
 <script src="/js/codetabs.js"></script>

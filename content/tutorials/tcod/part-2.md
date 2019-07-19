@@ -580,6 +580,6 @@ avons fait ce qu'il faut pour créer un donjon réalise dans la prochaine partie
 
 Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part2).
 
-[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-2)
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-3)
 
 <script src="/js/codetabs.js"></script>
