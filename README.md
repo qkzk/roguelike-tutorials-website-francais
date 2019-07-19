@@ -25,3 +25,5 @@ The original repo is available [here](https://github.com/TStand90/roguelike-tuto
 * [part-0.md](./content/tutorials/tcod/part-0.md)
 * [part-1.md](./content/tutorials/tcod/part-1.md)
 * [part-2.md](./content/tutorials/tcod/part-2.md)
+* [part-3.md](./content/tutorials/tcod/part-3.md)
+* [part-4.md](./content/tutorials/tcod/part-4.md)
