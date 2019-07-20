@@ -4,20 +4,18 @@ date: 2019-03-30T09:33:50-07:00
 draft: false
 ---
 
-The last part of this tutorial set us up for combat, so now it's time to
-actually implement it.
+La dernière partie du tutorial a préparé les combats, il est temps de les
+implémenter.
 
-In order to make "killable" Entities, rather than attaching hit points
-to each Entity we create, we'll create a **component**, called
-`Fighter`, which will hold information related to combat, like HP, max
-HP, attack, and defense. If an Entity can fight, it will have this
-component attached to it, and if not, it won't. This way of doing things
-is called **composition**, and it's an alternative to your typical
-inheritance-based programming model.
+De manière à créer des entités "tuables", plutôt que d'ajouter des "points de
+vie" à chaque entité, nous allons créer un **composant**, appelé `Fighter` qui
+va contenir l'information relative au combat : HP, max HP, attaque et défense.
+Si une entité peut combattre ce composant lui sera attaché et sinon, il n'en
+aura pas. Cette manière de procéder est appelé **composition** et c'est une
+alternative à la programmation par héritage habituelle.
 
-Create a new Python package (a folder with an empty \_\_init\_\_.py
-file), called `components`. In there, put a new file called
-`fighter.py`, and put the following code in it:
+Créer un paquet Python (un dossier avec un fichier vide \_\_init\_\_.py) appelé
+`components`. Ajoutez-y un fichier `fighter.py` contenant le code suivant :
 
 {{< highlight py3 >}}
 class Fighter:
@@ -28,19 +26,18 @@ class Fighter:
         self.power = power
 {{</ highlight >}}
 
-These variables should look familiar to anyone who's played an RPG
-before. HP represents the entity's health, defense blocks damage, and
-power is the entity's attack strength. Perhaps the game you have in mind
-has a more complex combat model, but we'll keep it simple here.
+Ces variables devraient sembler familières à quiconque a joué à un RPG. HP
+désigne la santé de l'entité, defense attenue les dégats et power est la force
+d'attaque de l'entité. Peut-être que le jeu que vous envisagez dispose d'un
+système de combat plus complexe mais nous resterons simple.
 
-Another component we'll need is one to define the enemy AI. Some
-entities (enemies) will have AI, whereas others (player, items) will
-not. We'll set up our game loop to allow any entity with an AI
-component, regardless of what it is, to take a turn, and all others
-won't get to.
+Un autre composant dont nous aurons besoin défini l'AI des ennemis. Certaines
+entités (les ennemis) aurons une AI, d'autres (le joueur, les objets) n'en
+auront pas. Nous reglerons notre boucle de jeu pour donner un tour à chaque
+entité qui a une AI de prendre un tour et les autres n'auront pas de tour.
 
-Create a file in `components` called `ai.py`, and put the following
-class in it:
+Créer un fichier dans `components` appelé `ai.py` et ajouter la classe suivante
+dedans :
 
 {{< highlight py3 >}}
 class BasicMonster:
@@ -48,15 +45,15 @@ class BasicMonster:
         print('The ' + self.owner.name + ' wonders when it will get to move.')
 {{</ highlight >}}
 
-We've defined a basic method called `take_turn`, which we'll call in our
-game loop in a minute. It's just a placeholder for now, but by the end
-of this chapter, the `take_turn` function will actually move the entity
-around.
+Nous avons défini une méthode de base appelée `take_turn` qui sera appelée
+dans notre boucle de jeu dans un instant. C'est juste un exemple pour l'instant
+mais, dès la fin du chapitre, la fonction `take_turn` va réellement déplacer
+l'entité.
 
-With our classes in place, we'll turn our attention to the `Entity`
-class once more. We need to pass the components through the constructor,
-like we do for everything else. Modify the `__init__` function in
-`Entity` to look like this:
+Notre classe étant en place, nous allons porter notre attention sur la classe
+`Entity` une fois encore. Nous devons lui passer les composants via le
+constructeur comme nous avons fait à chaque fois. Modifiez la fonction `__init__`
+dans `Entity` pour qu'elle ressemble à :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Entity:
@@ -99,21 +96,21 @@ class Entity:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So the `fighter` and `ai` components are optional, so entities that
-don't need them won't need to do anything.
+Ainsi les composants `fighter` et `ai` sont optionnels et les entités qui n'en
+ont pas pas besoin n'en dépendront pas pour faire quoi que ce soit.
 
-Why do we need to set the owner of the component to self? There will be
-a few instances where we'll want to access the Entity from within the
-component. In our previous bit of code for the `BasicMonster`, we gained
-access to the entity's "name" simply by referencing the "owner". We just
-have to be sure we set the owner upon initializing the entity.
+Pourquoi devoir régler le propriétaire du composant sur `self` ? Parce que nous
+aurons besoin d'accéder à l'entité depuis le composant. Dans notre extrait de
+code précédent pour le `BasicMonster`, nous avons pu accéder au nom ("name") de
+l'entité en référençant le propriétaire ("owner"). Nous devons simplement nous
+assurer de régler le propriétaire à l'initialisation de l'entité.
 
-Now we'll need to add our new components to all the entities we've
-created so far. Let's start with the easiest one: the player. The player
-doesn't actually need AI (because we're controlling the player object
-directly), but it does need the `Fighter` component.
+Maintenant nous allons devoir ajouter notre nouveau composant à chaque entité
+que nous avons crée jusque là. Commençons par la plus facile : le joueur. Le
+joueur n'a pas besoin d'une AI (parce que nous contrôlons directement l'objet
+joueur) mais il lui faut un composant `Fighter`.
 
-First, import the `Fighter` component into `engine.py`:
+En premier, importer le composant `Fighter` dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -130,7 +127,7 @@ from entity import Entity, get_blocking_entities_at_location</pre>
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then, create the component and add it to the player Entity.
+Ensuite, créons le composant et ajoutons le à l'entité du joueur.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +   fighter_component = Fighter(hp=30, defense=2, power=5)
@@ -150,8 +147,8 @@ Then, create the component and add it to the player Entity.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-And now for our monsters. We'll need both the Fighter and BasicMonster
-components for them.
+Et maintenant pour les monstres. Nous aurons besoin des composants Fighter
+et BasicMonster pour ceux là.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                 if randint(0, 100) < 80:
@@ -189,7 +186,7 @@ components for them.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Remember to import the needed classes at the top.
+Souvenez-vous d'importer les classes nécessaires en haut.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -218,8 +215,8 @@ from map_objects.tile import Tile</pre>
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now we can modify our monster's turn loop to use the `take_turn`
-function.
+Maintenant nous pouvons modifier la boucle qui parcourt les tours des monstres
+pour utiliser la fonction `take_turn`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -248,21 +245,20 @@ function.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Not a whole lot has changed yet (we're still printing something instead
-of the monsters taking a real turn), but we're getting there. Notice
-that rather than checking if the entity is not the player, we're
-checking if the entity has an AI component. The player doesn't have an
-AI component, so the loop will skip the player, but more importantly,
-any items we implement later on won't get a "turn" either.
+Nous n'avons pas changé grand chose (on affiche toujours quelque chose
+plutôt de donner vraiment un tour aux monstres) mais on avance. Remarquez que
+plutôt que de vérifier si l'entité n'est pas le joueur, nous vérifions si elle
+a un composant AI. Le joueur n'en a pas donc la boucle le passe. Ce sera aussi
+le cas des objets que nous implémenterons plus tard, ils n'auront pas de "tour".
 
-Now for our actual AI implementation. Our AI will be very simple
-(stupidly so, really). If the enemy can "see" the player, it will move
-towards the player, and if it is next to the player, it will attack. We
-won't implement enemy FOV in this tutorial; instead, we'll just assume
-that if you can see an enemy, it can see you too.
+Maintenant, implémentons l'AI. Notre AI sera très simple (et même stupide). Si
+l'ennemi peut "voir" le joueur, elle va déplacer se déplacer vers le joueur et
+si elle est proche du joueur elle va l'attaquer. Nous n'implémenterons pas le
+FOV de l'ennemi dans ce tutoriel. À la place, nous supposons simplement que si
+vous pouvez voir l'ennemi, alors il peut aussi vous voir.
 
-Let's put a basic movement function in place. Put the following code in
-the `Entity` class.
+Mettons une simple fonction de mouvement en place. Ajouter le code suivant
+dans la classe `Entity`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def move(self, dx, dy):
@@ -299,8 +295,8 @@ the `Entity` class.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We'll also need a function to get the distance between the Entity and
-its target.
+Nous avons aussi besoin d'une fonction pour obtenir la distance entre l'entité
+et sa cible.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def move_towards(self, target_x, target_y, game_map, entities):
@@ -323,8 +319,7 @@ its target.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Both of these functions use the `math` module, so we'll need to import
-that.
+Ces deux fonctions utilisent le module `math` donc nous devons l'importer.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +import math
@@ -343,8 +338,8 @@ class Entity:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now let's replace our placeholder `take_turn` function with one that
-will actually move the Entity.
+Remplaçons notre fonction `take_turn` d'exemple avec celle qui va réellement
+déplacer l'entité.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -383,7 +378,7 @@ class BasicMonster:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We'll also need to update the call to `take_turn` in `engine.py`
+Nous devons aussi mettre à jour l'appel de `take_turn` dans `engine.py`
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -                   entity.ai.take_turn()
@@ -396,20 +391,20 @@ We'll also need to update the call to `take_turn` in `engine.py`
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now our enemies will give chase, and, if they catch up, hurl insults at
-our poor player\!
+Maintenant notre ennemi va poursuivre le joueur et, s'il le rattrape lui hurler
+des insultes \!
 
-If you run the project, you may notice something strange about our mean
-spirited monsters: They can insult you from a diagonal position, but the
-player and the monsters can only move in the cardinal directions (north,
-east, south, west). If the enemies were actually attacking us right now,
-they'd have an unfair advantage. While this could make for interesting
-gameplay, we'll fix that here to allow for 8 directional attacking and
-movement for all Entities.
+Si vous lancez le jeu projet, vous remarquerez quelque chose d'étrange à propos
+de nos monstres : ils peuvent vous insulter depuis une case en diagonale mais
+le joueur et les ennemis ne peuvent se déplacer que dans des directions
+cardinales (nord, sud, est, ouest). Si les ennemis nous attaquaient vraiment
+ils auraient un avantage injuste. Cela pourrait être un gameplay intéressant
+mais nous le fixerons en permettant le déplacement et l'attaque dans les 8
+directions pour toutes les entités.
 
-For the player, that's easy enough; we just need to update `handle_keys`
-to allow us to move diagonally. Modify the movement part of that
-function like so:
+Pour le joueur c'est assez simple, nous devons mettre à jour `handle_keys` pour
+permettre un mouvement diagonal. Modifiez la partie mouvement de cette fonction
+ainsi :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def handle_keys(key):
@@ -464,25 +459,22 @@ def handle_keys(key):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-The first line is just getting the 'character' that we pressed on the
-keyboard. This will be handy in other spots as well, when we check for
-inventory and pickup commands.
+La première ligne récupère le caractère pressé sur le clavier. Cela sera commode
+dans de futures étapes, quand nous allons écouter les commandes pour
+l'inventaire et ramasser les objets.
 
-For diagonal movement, we've implemented the "vim keys" for movement,
-while also retaining the arrow keys for cardinal directions. Vim keys
-allow you to move diagonally without the help of a numpad. A lot of
-older roguelikes do 8 directions through the numpad, but personally, I
-play all my roguelikes on a laptop, which doesn't have one, so the Vim
-keys are useful.
+Pour les mouvements diagonaux, nous avons implémenté les "vim keys" du
+déplacement et conservé les fleches pour les déplacements cardinaux. Les "vim
+keys" permettent de se déplacer en diagonale sans utiliser le pavé numérique.
+De nombreux roguelikes implémentent les déplacements dans 8 directions via le
+pavé numérique mais je préfère jouer sur un portable qui n'en a pas, aussi les
+"vim keys" sont commodes.
 
-Getting the enemies to move in eight directions is going to be a bit
-more complicated. For that, we'll want to use a pathfinding algorithm
-known as A-star. I'm simply going to be copying the code from the
-[Roguebasin
-extra](http://www.roguebasin.com/index.php?title=Complete_Roguelike_Tutorial,_using_Python%2Blibtcod,_extras#A.2A_Pathfinding)
-for our purposes. I won't go into detail explaining how this works, but
-if you want to know more about the details of the algorithm, [click
-here](https://en.wikipedia.org/wiki/A*_search_algorithm).
+Déplacer les ennemis dans huit directions sera un peu plus délicat. Pour ça,
+nous allons utiliser un algorithme de recherche de chemin appelé A-star. Je vais
+simplement copier le code puis les [extra de Roguebasin](http://www.roguebasin.com/index.php?title=Complete_Roguelike_Tutorial,_using_Python%2Blibtcod,_extras#A.2A_Pathfinding).
+Je n'entrerai pas dans le détail à ce propos mais si vous voulez comprendre son
+fonctionnement, [cliquez ici](https://en.wikipedia.org/wiki/A*_search_algorithm).
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def move_towards(self, target_x, target_y, game_map, entities):
@@ -581,7 +573,7 @@ here](https://en.wikipedia.org/wiki/A*_search_algorithm).
 {{</ original-tab >}}
 {{</ codetab >}}
 
-For this to work, we'll need to import `libtcod` into `entity.py`:
+Pour faire fonctionner ça, nous devons importer `libtcod` dans `entity.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +import tcod as libtcod
@@ -598,12 +590,11 @@ import math
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Note that if for whatever reason the algorithm doesn't find a path, it
-will revert back to our previous movement function, so we still need
-that.
+Remarquez que si l'algorithme est incapable de trouver un chemin il va revenir
+à notre fonction de mouvement précédente. Nous en avons donc toujours besoin.
 
-Modify the `take_turn` function in `BasicMonster` to take advantage of
-this new function.
+Modifiez la fonction `take_turn` de `BasicMonster` pour utiliser cette nouvelle
+fonction.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -622,9 +613,9 @@ this new function.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now both the player and enemies can move in diagonals. With that taken
-care of, it's time to implement an actual combat system. Let's start by
-adding a method to `Fighter` that allows the entity to take damage.
+Maintenant le joueur et les ennemis peuvent se déplacer en diagonale. Ceci étant
+fait, il est temps d'implémenter un système de combat. Commençons par ajouter
+une méthode au `Fighter` qui permette à l'entité de prendre des dégats.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Fighter:
@@ -645,7 +636,7 @@ class Fighter:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Simple enough. Now for the attack function (also in `Fighter`):
+Plutôt simple. Maintenant la fonction d'attaque, toujours dans `Fighter` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -674,12 +665,12 @@ Simple enough. Now for the attack function (also in `Fighter`):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-There's nothing too complex about this system. We're taking the
-attacker's power and subtracting the defender's defense, and getting our
-damage dealt. If the damage is above zero, then the target takes damage.
+Rien de très complexe dans ce système. On prend la puissance d'attaque (power)
+de l'agresseur et on soustraie la défense du défenseur pour obtenir les dégâts
+effectués. Si le dégât est supérieur à zéro, alors la cible reçoit des dégâts.
 
-We can finally replace our placeholders from earlier\! Modify the
-player's placeholder in `engine.py`:
+Nous pouvons enfin remplacer notre exemple antérieur \! Modifier l'exemple
+du joueur dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                 if target:
@@ -694,7 +685,7 @@ player's placeholder in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-... And for the enemy placeholder in `BasicMonster`
+... et pour l'exemple de l'ennemi dans `BasicMonster`
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -711,25 +702,23 @@ player's placeholder in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now we can attack enemies, and they can attack us\!
+Maintenant on peut attaquer les ennemis et ils peuvent rendre les coups \!
 
-As exciting as this all is, we have to take a step back for a moment and
-think about a design question. Right now, we're printing our messages to
-the console, but in the next chapter we'll move that to a more formal
-message log. Also, later in this chapter, we need to alter the game
-state when the player is killed in action. Do functions like `attack`
-and `take_damage` really need to receive the message log or game state
-as arguments? And should they be directly manipulating those things in
-the first place?
+Aussi amusant que cela soit, nous devons marquer une pause et réfléchir au
+design. Pour l'instant, nous affichons nos messages dans la console et, dans
+l'étape suivante, nous utiliserons un journal de message plus classique. Aussi
+nous devrons modifier l'état du jeu quand le joueur est tué en combat. Les
+fonctions `attack` et `take_damage` doivent-elles recevoir le journal de message
+ou l'état du jeu comme paramètre ? Doivent-elles manipuler ces objets ?
 
-There's a lot of different ways to handle this. For this tutorial, we'll
-implement a `results` list for functions like this, which will be
-returned to the `engine.py` file, and be handled there. We're already
-doing something similar in `handle_keys`; that function just returns the
-results of the key press, it doesn't actually *move* the player.
+Il existe de multiples manières de traiter cela, pour ce tutoriel, nous allons
+implémenter une liste `results` pour les fonctions de ce genre qui sera retourné
+à `engine.py` et sera traité dans ce fichier. Nous faisons déjà quelque chose
+de similaire dans `handle_keys`, cette fonction renvoie le résultat d'une touche
+pressée, elle ne *déplace pas* le joueur.
 
-Let's modify the `take_damage` and `attack` functions to return an array
-of results, rather than print anything.
+Modifiez les fonctions `take_damage` et `attack` pour renvoyer un tableau de
+résultats plutôt que d'afficher quoi que ce soit.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def take_damage(self, amount):
@@ -793,22 +782,22 @@ of results, rather than print anything.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Let's break it down a little. In `take_damage`, we add a dictionary to
-`results` if the entity happens to die after taking damage. The results
-list is returned regardless (it may be empty).
+Découpons cette étape quelques morceaux. Dans `take_damage`, on ajoute un
+dictionnaire à `results` si l'entité meurt après avoir pris des dégâts. la
+liste résultante est renvoyée dans tous les cas (elle peut être vide).
 
-In `attack`, we're again setting a list called `results`, and we add our
-message to it regardless of damage was taken or not. Notice that in the
-`if` block, we're using `extend` to add the results of `take_damage` to
-our current `results` list.
+Dans `attack`, nous créeons à nouveau une liste appelée `results` et nous y
+ajoutons notre message qu'un dégât ait été pris ou non. Remarquez que dans le
+bloc `if` nous utilisons `extend` pour ajouter les résultat de `take_damage`
+à notre liste `results`.
 
-The `extend` function is similar to `append`, but it keeps our list
-flat, so we don't get something like `[{'message': 'something'},
-[{'message': 'something else'}]]`. Instead, we would get: `[{'message':
-'something'}, {'message': 'something else'}]`. That will make looping
-through our results much simpler.
+La méthode `extend` est similaire à `append` mais elle garde la liste plate.
+Ainsi nous évitons d'avoir quelque chose comme `[{'message': 'something'},
+[{'message': 'something else'}]]`. Nous obtenons plutôt quelque chose comme :
+[{'message': 'something'}, {'message': 'something else'}]`. Cela va simplifier
+la boucle sur nos résultats.
 
-Let's extend this logic to the `take_turn` function in `BasicMonster`.
+Appliquons cette logique à la fonction `take_turn` de `BasicMonster`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class BasicMonster:
@@ -849,8 +838,8 @@ class BasicMonster:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So what do we actually *do* with this `results` list? Lets modify
-`engine.py` to react to the results of our attacks.
+Que *faisons nous* avec cette liste `results` ? Modifiez `engine.py` pour réagir
+aux résultats d'une attaque.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -975,14 +964,14 @@ So what do we actually *do* with this `results` list? Lets modify
 {{</ original-tab >}}
 {{</ codetab >}}
 
-*\* Note: There's that for-else statement again. There's no `break`
-statement yet, so the 'else' will always happen, but we'll add it in
-just a minute.*
+*\* Remarque : il y a encore une expression for-else. Il n'y a aucun `break`
+pour l'instant donc le bloc `else` sera toujours exécuté. Mais nous l'ajouterons
+dans un instant.*
 
-Not that much has changed yet, but now we've set ourselves up to handle
-the death of the player and the other entities. Let's implement that
-now. Create a new python file called `death_functions.py` and put the
-following two functions in it:
+Il n'y a pas eu beaucoup  de changement mais nous avons mis en place ce qu'il
+faut pour la mort du joueur ou d'une autre entité. Implémentons ça maintenant.
+Créons un nouveau fichier appelé `death_functions.py` et ajoutons y deux
+fonctions :
 
 {{< highlight py3 >}}
 import tcod as libtcod
@@ -1010,13 +999,13 @@ def kill_monster(monster):
     return death_message
 {{</ highlight >}}
 
-These two functions will handle the death of the player and monsters.
-They're different because obviously the death of a monster isn't *that*
-big a deal (we'll be killing quite a few of them), but the death of the
-player is a *very* big deal (this is a roguelike after all\!).
+Ces deux fonctions vont s'occuper de la mort du joueur et des monstres.
+Elles sont différentes parce que la mort d'un monstre n'est pas quelque chose
+de dramatique (nous en tuerons quelques uns...) mais la mort du joueur est
+*très* importante (c'est un roguelike après tout \!).
 
-Modify `engine.py` to use these two functions. Replace the `pass`
-section like this:
+Modifiez `engine.py` pour utiliser ces deux fonctions. Remplacez la section
+`pass` comme ceci :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -1101,13 +1090,12 @@ section like this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-*\*Note: There's the break statements that will skip over the 'else' in
-our 'for-else'. Why do this? Because if the player is dead, we don't
-want to set the game state back to the player's turn when all the
-enemies are done moving. That, and there's no reason to continue with
-the loop; the game is over.*
+*\*Remarque : il y a l'expression break qui va éviter le 'else' de notre
+'for-else'. Pourquoi ? Parce que si le joueur meurt nous ne voulons pas lui
+rendre de tour une fois que les ennemis auront tous joué. D'autre part il n'y
+aucune raison de continuer, le jeu est terminé.*
 
-Remember to import the killing functions at the top of `engine.py`:
+Souvenez-vous d'importer la fonction qui tue en haut de `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -1126,7 +1114,7 @@ from entity import Entity, get_blocking_entities_at_location
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Also, we need to add the `PLAYER_DEAD` value to `GameStates`:
+Aussi, nous devons ajouter la valeur `PLAYER_DEAD` à `GameStates` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class GameStates(Enum):
@@ -1143,18 +1131,16 @@ class GameStates(Enum):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project now. Entities will now drop dead when hitting 0 HP,
-including the player\! When the player dies, you won't be able to move,
-but you can still exit the game. At long last, we have a real combat
-system in place\!
+Lancez le projet maintenant. Les entités, y compris le joueur, vont mourir en
+arrivant à 0 HP \! Quand le joueur meurt, on ne peut plus le déplacer mais on
+peut toujours quitter le jeu. Nous avons enfin un vrai système de combat \!
 
-It's been a long chapter already, but let's clean things up just a
-little bit. Right now, we're clueless as to how much HP the player has
-remaining before death. Rather than having the user keep track of the
-math in their head, we can add a little health bar by putting the
-following code at the end of `render_all`, right before the blit
-statement (note that the player needs to be passed to `render_all`
-    now).
+C'est déjà un long chapitre mais nettoyons un peu les choses. Pour l'instant
+nous ne savons pas combien le joueur a de HP avant sa mort. Plutôt que de
+demander au joueur de faire les calculs mentalement nous pouvons ajouter une
+petite barre de vie avec le code suivant à la fin de `render_all` juste avant
+l'expression 'blit' (remarquez que le joueur doit être passé à `render_all`
+pour l'instant).
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -def render_all(con, entities, game_map, fov_map, fov_recompute, screen_width, screen_height, colors):
@@ -1185,8 +1171,7 @@ statement (note that the player needs to be passed to `render_all`
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Update the call to `render_all` in
-    `engine.py`:
+Mettez l'appel de `render_all` à jouer dans `engine.py`
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -render_all(con, entities, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
@@ -1199,15 +1184,16 @@ Update the call to `render_all` in
 {{</ original-tab >}}
 {{</ codetab >}}
 
-One thing you probably noticed by now is that the enemy corpses will
-"cover up" the player if we move onto them. This obviously isn't
-desired; acting entities should always appear above corpses, items, and
-other things in the dungeon. To solve this, let's add an Enum to the
-Entities, that describes the render order in which they should be drawn.
-Lower priority items will be drawn first, to ensure they never appear
-above the Entities.
+Une chose que vous avez certainement déjà remarqué est que les corps des ennemis
+décédés "recouvrent" le joueur si on se déplace dessus. De toute évidence ce
+n'est le comportement souhaité. Les entités qui agissent devraient toujours
+apparaître au dessus des cadavres, des objets et des autres choses du donjon.
+Pour résoudre ce problème ajoutons un Enum aux entités. Il décrira l'ordre dans
+lequel elles doivent être dessinées. Les éléments faible priorité seront
+dessinées en premier pour s'assurer qu'elles n'apparaissent jamais au dessus des
+autres.
 
-Add the following to `render_functions.py`:
+Ajoutez le code suivant à `render_functions.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -1293,8 +1279,7 @@ class Entity:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now modify our Entity initializations, starting with
-    `engine.py`:
+Maintenant modifions l'initialisation des entités en commençant par `engine.py`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -player = Entity(0, 0, '@', libtcod.white, 'Player', blocks=True, fighter=fighter_component)
@@ -1306,7 +1291,7 @@ Now modify our Entity initializations, starting with
 {{</ original-tab >}}
 {{</ codetab >}}
 
-... And don't leave out the import:
+... N'oublions pas les imports sur le bord de la route :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -from render_functions import clear_all, render_all
@@ -1318,7 +1303,7 @@ Now modify our Entity initializations, starting with
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now for the monsters, in `game_map.py`:
+Et maintenant les monstres de `game_map.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                 if randint(0, 100) < 80:
@@ -1418,19 +1403,17 @@ this new variable into account.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now the corpses will be drawn first, then the items (when we put them
-in), then the entities. This ensures we will see what's most important
-first.
+Maintenant les cadavres seront dessinés en premier, ensuite les objets (quand
+nous les aurons ajouté) et enfin les entités. Cela nous assure qu'on verra
+d'abord les choses importantes.
 
-And we're done\! That was quite the chapter, but you survived\! Run the
-project and see how long you can last in the now-deadly Dungeons of
-Doom\! With an actual combat system, we've taken a pretty massive step
-towards having a real roguelike game on our hands.
+Et c'est fait \! Ce fut une sacré étape mais vous en êtes sorti indemne \!
+Lancez le projet et regardez combien de temps vous surviviez dans ce donjon
+maudit qui est maintenant mortel. Avec un sytème de combat en place, nous avons
+franchis un grand pas vers un vrai jeu roguelike.
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part6).
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part6).
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-7)
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-7)
 
 <script src="/js/codetabs.js"></script>
