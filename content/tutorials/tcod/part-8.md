@@ -1,24 +1,23 @@
 ---
-title: "Part 8 - Items and Inventory"
+title: "Part 8 - Les items et l'inventaire"
 date: 2019-03-30T09:33:55-07:00
 draft: false
 ---
 
-So far, our game has movement, dungeon exploring, combat, and AI (okay,
-we're stretching the meaning of "intelligence" in *artificial
-intelligence* to its limits, but bear with me here). Now it's time for
-another staple of the roguelike genre: items\! Why would our rogue
-venture into the dungeons of doom if not for some sweet loot, after all?
+Pour l'instant, notre jeu implémente les mouvements, l'exploration des donjons,
+le combat et l'AI (okay, on abuse un peu du terme "intelligence" dans
+intelligence artificielle mais vous voyez ce que je veux dire). Il est temps
+de passer à une étape fondamentale des roguelike : les items \! Pourquoi
+explorer les donjons si ce n'est pour récupérer quelques butins, après tout ?
 
-We'll start by placing one type of item, the healing potion in this
-case, and then we'll work on our implementation of the inventory. In the
-next chapter, we'll add different types of items, but for now, just the
-healing potion will suffice.
+Commençons par un type d'item, les potions de soin en l'occurrence et nous
+passerons à l'implémentation de l'inventaire. Dans le chapitre suivant nous
+ajouterons d'autres types d'items mais pour l'instant, les potions de soin
+feront l'affaire.
 
-Make the following changes to `place_entities` to start placing some
-health potion entities. They won't do anything yet, but they'll at least
-appear on the
-map.
+Faites les changements suivants à `place_entities` pour placer quelques entités
+potions de soin. Elles ne font rien pour l'instant mais elles apparaîtront déjà
+sur la carte.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -   def place_entities(self, room, entities, max_monsters_per_room):
@@ -58,8 +57,7 @@ map.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Update the call to `place_entities` in
-`make_map`:
+Mettez à jour l'appel à `place_entities` dans `make_map`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -               self.place_entities(new_room, entities, max_monsters_per_room)
@@ -71,9 +69,8 @@ Update the call to `place_entities` in
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Update the definition of `make_map` to include the new
-`max_items_per_room`
-variable.
+Mettez la définition de `make_map` à jour pour inclure la nouvelle variable
+`max_items_per_room`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def make_map(self, max_rooms, room_min_size, room_max_size, map_width, map_height, player, entities,
@@ -87,8 +84,7 @@ variable.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-And finally, the call in `engine.py`. We'll also define the variable
-here.
+Et enfin, l'appel dans `engine.py`. Nous définirons aussi la variable ici.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -118,12 +114,12 @@ here.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-You should now see a few health potions here and there in the dungeon.
-But we can't pick anything up yet. An obvious place to start would be by
-giving the player an inventory. Let's create a new component, called
-Inventory, which will hold a list of items, along with the maximum
-amount of items the inventory can have. Create a new file in the
-`components` folder, named `inventory.py`, and put the following in it:
+Vous devriez maintenant voir quelques potions de soin deci delà dans le donjon.
+Il est pour l'instant impossible de les ramasser. De toute évidence, on peut
+commencer par donner au joueur un inventaire. Créons un nouveau composant,
+appelé Inventory, qui contiendra une liste d'objets ainsi qu'une capacité
+maximale pour l'inventaire. Créez un nouveau fichier dans le dosser
+`components`, appelez le `inventory.py` et ajoutez-y le code suivant :
 
 {{< highlight py3 >}}
 class Inventory:
@@ -132,17 +128,16 @@ class Inventory:
         self.items = []
 {{</ highlight >}}
 
-The `items` list will be what holds the actual item entities. Capacity
-determines how many items we can pick up in total.
+La liste `items` contiendra la liste des entités. "Capacity" indique combien
+d'objets nous pouvons ramasser en tout.
 
-But what types of entities can we pick up in the first place? We may or
-may not want the player picking up *every* type of entity that can be
-walked on (corpses for example), so how do we distinguish between the
-two?
+Mais quel type d'entités pouvons nous ramassez ? Nous n'avons pas forcement
+envie que le joueur puisse ramasser *n'importe quelle* entité sur lequel il
+marche (les cadavres, par exemple...) aussi comment les distinguer ?
 
-Let's create a new component, called `Item`, which we'll add to entities
-when we want them to be able to be picked up. Create a file called
-`item.py` in `components`, and add the following class to it:
+Créons un nouveau composant, appelé `Item` que nous ajouterons aux entités
+quand nous voudrons qu'elle puisse être ramassées. Créez un fichier appelé
+`item.py` dans `components` et ajoutez-y la classe suivante :
 
 {{< highlight py3 >}}
 class Item:
@@ -150,13 +145,13 @@ class Item:
         pass
 {{</ highlight >}}
 
-Wait, what? An empty class? Don't worry, we'll add some more interesting
-stuff here once we move on to using our items. But for now, if an Entity
-has this component, we can pick it up, and if not, we can't. Therefore,
-all we need is an empty class at the moment.
+Quoi ? Une classe vide ? Ne vous inquiétez pas, nous y ajouterons des choses
+plus intéressantes une fois qu'on abordera le ramassage des items. Mais pour
+l'instant, si une entité a ce composant, on peut la ramasser et sinon on ne
+le peut. Aussi, tout ce dont on a besoin pour l'instant est d'une classe vide.
 
-Now let's modify the `Entity` class to accept the `Item` and `Inventory`
-components.
+Maintenant, modifions la classe `Entity` pour accepter les composants `Item` et
+`Inventaire`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Entity:
@@ -218,12 +213,12 @@ class Entity:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-With our `Entity` class modified, we'll need to modify the player and
-the healing potions to have `Inventory` and `Item` respectively. This
-tutorial won't give monsters an inventory, but you could attach the
-`Inventory` component to them for a similar effect.
+Notre classe `Entity` étant mise à jour, nous devons modifier le joueur et la
+potion de soin pour avoir respectivement les composants `Inventory` et `Item`.
+Ce tutoriel ne donnera pas aux monstres un inventaire, mais vous pourriez
+attacher le composant d'inventaire aux monstres pour un effet similaire.
 
-In `engine.py`:
+Dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -248,7 +243,7 @@ In `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Of course, be sure to import `Inventory` as well:
+Bien-sûr assurez vous d'importer `Inventory` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 from components.fighter import Fighter
@@ -265,8 +260,8 @@ from death_functions import kill_monster, kill_player
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then, modify where we put the healing potions in the `place_entities`
-function.
+Ensuite, modifiez la partie relative aux potions de soin de la fonction
+`place_entities`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +               item_component = Item()
@@ -283,7 +278,7 @@ function.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-... And don't forget the import:
+... Et pensez à l'import :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -306,12 +301,12 @@ from entity import Entity
 {{</ original-tab >}}
 {{</ codetab >}}
 
-How does our player go about picking things up then? Roguelikes
-traditionally allow you to pick up an item if you're standing on top of
-it, and ours will be no different. Many of them use the 'g' key
-(probably for 'grab' or 'get') for the pickup command, so we'll use that
-as well. Modify `handle_keys` in `input_handlers.py` to process the 'g'
-key:
+Comment notre joeur va-t-il s'y prendre pour ramasser les objets ? Les
+roguelikes permettent généralement de ramasser un item sur lequel on se trouve
+et le notre ne sera pas différent. Nombreux sont ceux qui utilisent la touche
+'g' (certainement pour 'grab', ramasser ou 'get', obtenir) pour ramasser et
+nous ferons de même. Modifiez `handle_keys` dans `input_handlers.py` pour
+utiliser la touche 'g'.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -338,7 +333,7 @@ key:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now we'll need to check for the 'pickup' action in our engine.
+Maintenant nous devons vérifier l'action de ramasser dans notre moteur.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -357,13 +352,13 @@ Now we'll need to check for the 'pickup' action in our engine.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now we'll need to actually *do* something when this 'pickup' variable is
-true. First, let's create a method for the `Inventory` class to add an
-item to the inventory. We'll use the same "results" pattern as before.
-If adding the item to the inventory was successful, then we'll return a
-result saying we picked up the item. If not, we'll send a result that
-indicates a failure. The engine will then have to determine what to do
-with the item entity.
+Maintenant nous devons *faire* quelque chose quand cette variable 'pickup'
+(ramasser) est vraie. D'abord, nous allons créer une méthode de la classe
+`Inventory` pour ajouter un item à l'inventaire. Nous utiliserons le même
+concept de de "results" que la dernière fois. Si l'ajout d'un objet à
+l'inventaire est réussi nous renvoyons un résultat disant qu'on a ramassé
+l'objet. Sinon on envoie un résultat qui indique un échec. Le moteur devra
+déterminer ce qu'il faut faire avec l'entité "item".
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +import tcod as libtcod
@@ -426,8 +421,8 @@ class Inventory:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Let's add some code in `engine.py` to process the results of adding an
-item to the inventory.
+Ajoutons du code à `engine.py` pour exécuter le résultat de l'ajout d'un objet
+à l'inventaire.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         if move and game_state == GameStates.PLAYERS_TURN:
@@ -466,7 +461,7 @@ item to the inventory.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We'll need to import `Message` for this to work:
+Nous devons importer `Message` pour que cela fonctionne :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -from game_messages import MessageLog
@@ -478,16 +473,16 @@ We'll need to import `Message` for this to work:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Basically, we loop through each entity on the map, checking if it's an
-item and if it is occupying the same space as the player. If so, we add
-it to the inventory and tack on the results to `player_turn_results`,
-and if not, we create a message informing the player that nothing can be
-picked up. The 'break' statement makes it so that we can only pick up
-one item at a time (though perhaps in your game, you'll allow the player
-to pick up several things at once).
+Pour faire simple, nous bouclons sur chaque entité de la carte, vérifiant si
+c'est un objet et si elle est disposée à la même place que le joueur. Si c'est
+le cas on l'ajoute à l'inventaire et on ajoute le résultat à
+`player_turn_results` et sinon, on crée un message pour informer le joueur que
+rien ne peut être ramassé. L'expression 'break' nous assure qu'on ne peut
+ramasser qu'un objet à la fois (mais peut-être que dans votre jeu, vous
+permettrez au joueur d'en ramasser plusieurs d'un coup).
 
-Now let's process the results of the pickup, in our loop that processes
-the player's turn results:
+Maintenant, passons à l'exécution du "ramassage" dans notre boucle qui s'occupe
+du résultat du tour du joueur.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -544,21 +539,20 @@ the player's turn results:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-This just handles removing the entity from the entities list (since it's
-now located in the player's inventory, not the map) and sets the game
-state to the enemy's turn. Simple enough.
+Cette partie s'occupe de retirer l'entité de la liste des entités
+affichées maintenant que cela est dans l'inventaire du joueur et non plus
+sur la carte et passe le tour à l'ennemi. Plutôt simple.
 
-Run the project, and you should be able to pick the healing potions up
-off the ground. Of course, this doesn't do our rogue any good at the
-moment; we can't use any of them yet, so we're really just wasting a
-turn.
+Lancez le projet et vous devriez être capable de ramasser les potions de soin
+du sol. Bien sûr, cela ne fait aucun bien à notre vagabond pour l'instant,
+on ne peut rien en faire. Ce n'est donc qu'un gachis de tour.
 
-Before we get into how to use items, we need to have a way to look at
-and select which item to use. We'll create an inventory interface, which
-the player can open and select an item from. Let's start by creating a
-new file, called `menus.py`, where we'll store our menu functions for
-the inventory and any other menus we'll need for this tutorial. Put the
-following code in that file:
+Avant d'en passer à l'utilisation de l'objet, nous devons avoir un moyen
+d'examiner et de choisir les objets à utiliser. Nous créons une interface pour
+l'inventaire que le joueur peut ouvrir et dans lequel il peut choisir un objet.
+Créons un nouveau fichier, appelé `menus.py` où nous stockerons nos fonctions de
+menus pour l'inventaire et tous les autres menus dont on aura besoin dans ce
+tutoriel. Ajoutez-y le code suivant :
 
 {{< highlight py3 >}}
 import tcod as libtcod
@@ -622,9 +616,9 @@ def menu(con, header, options, width, screen_width, screen_height):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-How might we display this menu? One way is to switch our game state, and
-when the game state is set to "inventory menu", we'll display the menu
-and accept input for it. So let's add the option to `GameStates`:
+Comment afficher ce menu ? Une manière est de changer l'état du jeu et, quand
+l'état du jeu est sur `menu d'inventaire`, on affiche le menu et on accepte
+les saisies clavier. Aussi ajoutons l'option à `GameStates` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 from enum import Enum
@@ -649,9 +643,9 @@ class GameStates(Enum):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-When do we switch to this new state? Let's add a new key command to
-switch to "inventory" mode. As you may have guessed, we'll press the 'i'
-key to do this.
+Quand bascule-t-on vers ce nouvel état ? Ajoutons une nouvelle touche pour
+passer en mode "inventaire".  Ainsi que vous l'aurez deviné on utilisera la
+touche "i" pour ce faire.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -678,12 +672,12 @@ key to do this.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Not only do we want to switch the game state to `SHOW_INVENTORY`, we'll
-also want to switch back to the previous game state if we exit the menu
-without doing anything. This makes it so that just opening the inventory
-doesn't waste a turn, and so that we can view our inventory after death
-(this makes it sting that much more). So we'll need a variable to keep
-track of the last game state.
+Non seulement voulons nous basculer l'état du jeu vers `SHOW_INVENTORY`
+(afficher l'inventaire) mais aussi voulons nous revenir vers le précédent état
+du jeu si nous quittons le menu sans rien faire. Cela permet aussi de ne pas
+gaspiller un tour si on se contente d'ouvrir l'inventaire ainsi que d'ouvrir
+l'inventaire après la mort (la rendant encore plus douloureuse). Aussi nous
+avons besoin d'une variable qui retienne l'état précédent.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -754,16 +748,15 @@ track of the last game state.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We're modifying our previous "exit" section to just revert back to the
-previous game state if we open the inventory. That way, the "escape" key
-just closes the menu, rather than closing the game.
+Nous modifions notre précédente fonction de sortie pour revenir à l'état
+précédent si on ouvre l'inventaire. Ainsi, la touche "escape" ferme seulement
+le menu sans quitter le jeu.
 
-Now we're switching the game's state, but we still need to display the
-menu. Needless to say, we'll need to modify `render_all`. Because we'll
-only display the inventory when the game state is `SHOW_INVENTORY`, the
-`render_all` function will need to be aware of the state. Modify the
-call in
-    `engine.py`:
+Maintenant nous basculons l'état du jeu mais nous devons toujours afficher le
+menu. Cela va sans dire, nous devons modifier `render_all`. L'inventaire n'étant
+affiché que lorsque l'état est sur `SHOW_INVENTORY`, la fonction `render_all`
+doit connaître cet état. Modifiez l'appel dans `engine.py`.
+
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, screen_width,
@@ -778,8 +771,7 @@ call in
 {{</ original-tab >}}
 {{</ codetab >}}
 
-And now for the
-    definition:
+Et maintenant la définition :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, screen_width, screen_height,
@@ -807,7 +799,7 @@ def render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, m
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We'll need to import `GameStates` and `inventory_menu` for this to work.
+Nous devons importer `GameStates` et `inventory_menu` pour que cela fontionne.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -838,20 +830,19 @@ class RenderOrder(Enum):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project now. You should be able to open the inventory menu and
-see all the items you've picked up so far. We can't quite use them yet,
-but we're almost there\!
+Lancez le projet maintenant. Vous devriez pouvoir ouvrir l'inventaire et voir
+tous les objets ramassés jusque là. Nous ne pouvons toujours rien en faire
+mais nous y sommes presque \!
 
-In order to actually select an inventory item, we'll need to modify
-`handle_keys`. Why? Because we're selecting items using the letter keys,
-which is fine and good, but some of those keys we're using for movement
-and other things. It'd be nice if our function reacted differently
-depending on what our game's state was.
+De manière à choisir un objet de l'inventaire, nous devons modifier
+`handle_keys`. Pourquoi ? Parce que nous allons choisir les objets avec les
+touches du clavier ce qui est très bien mais certaines sont déjà utilisées
+pour le déplacement et d'autres choses. Il serait agréable que notre fonction
+réagisse différemment selon l'état du jeu.
 
-Here's what we'll do: We'll split `handle_keys` up into several
-different functions, which will return different results depending on
-the game's state. Rename the `handle_keys` function to
-`handle_player_turn_keys`:
+Voici ce qu'on va faire : nous allons séparer `handle_keys` en différentes
+fonctions, chacune renvoyant un résultat différent selon l'état du jeu. Renommez
+la fonction `handle_keys` en `handle_player_turn_keys` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -def handle_keys(key):
@@ -864,8 +855,8 @@ the game's state. Rename the `handle_keys` function to
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then, create a new `handle_keys` function, which calls
-`handle_player_turn_keys`
+Ensuite, créez une nouvelle fonction `handle_keys` qui appelle
+`handle_player_turn_keys`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -902,7 +893,7 @@ def handle_player_turn_keys(key):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Don't forget to modify the call to `handle_keys` in `engine.py`:
+N'oubliez pas de modifier l'appel à `handle_keys` dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -action = handle_keys(key)
@@ -914,8 +905,8 @@ Don't forget to modify the call to `handle_keys` in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Before we move on to the inventory part, let's cover our bases and put
-in a key handler for when the player is dead.
+Avant de passer à la partie sur l'inventaire, assurons nos arrières et ajoutons
+un gestionnaire de touches pour la mort du joueur.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -980,8 +971,8 @@ def handle_player_turn_keys(key):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now, let's create a new function, called `handle_inventory_keys`, which
-will handle our input when the inventory menu is open.
+Maintenant crééons une nouvelle fonction, appelée `handle_inventory_keys` qui
+va gérer nos saisies quand le menu d'inventaire est ouvert.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -1042,13 +1033,14 @@ def handle_keys(key, game_state):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-What's with the `ord` function? Long story short, we're converting the
-key pressed to an index. 'a' will be 0, 'b' will be 1, and so on. This
-will allow us to select an item out of the inventory in `engine.py`. All
-we need the input handler to do is give us the index of what we picked;
-it doesn't need to know anything about the item or what it should do.
+Qu'est-ce que cette histoire avec la fonction `ord` ? Disons le simplement,
+on converti la touche pressée en un indice. 'a' sera 0, 'b' sera 1 et ainsi de
+suite. Cela nous permettra de choisir un item de l'inventaire dans `engine.py`.
+Tout ce que le gestionnaire de saisie doit faire est renvoyer l'indice de ce
+qui est ramassé. Il n'a pas besoin de savoir quoi que ce soit de l'objet
+ni ce qui doit en être fait.
 
-Let's get this index in `engine.py` and do something with it\!
+Ajoutons cet indice à `engin.py` et utilisons le \!
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -1096,23 +1088,23 @@ Let's get this index in `engine.py` and do something with it\!
 {{</ original-tab >}}
 {{</ codetab >}}
 
-*\*Note: The print statement is just a placeholder for now. We're close
-to actually using the item, I promise\!*
+*\*Remarque : l'expression print n'est là que pour l'exemple. Nous avons presque
+tout ce qu'il faut pour utiliser l'objet, je vous le promet \!*
 
-We're taking the index that we selected, and "using" (printing for now)
-the item selected. Run the project and verify that this works. Now that
-we have a way of opening the menu and selecting an item, we can, at long
-last, move on to using the item.
+Nous prenons l'indice qui a été choisi et "utilisons" (seulement un print pour
+l'instant) l'objet en question. Lancez le projet et vérifiez que cela
+fonctionne. Maintenant qu'on peut ouvrir le menu et choisir un objet, on peut
+enfin passer à son utilisation.
 
-So, how do we use the item? The `Item` component seems like an obvious
-place to do something. But, each item should do something different,
-right? So the `Item` class won't actually contain the functions for
-healing the player, or doing damage to an enemy. Instead, it will just
-hold the healing and damaging functions, along with whatever arguments
-we need to make that function work. We'll then take the results of that
-function (like usual) and process them.
+Aussi, comment utiliser cet objet ? Le composant `Item` semble être un lieu
+évident pour faire quelque chose. Mais chaque objet devrait faire quelque chose
+de différent, n'est ce pas ? Aussi la classe `Item` ne va pas contenir les
+fonctoins pour soigner le joueur ou faire des dégâts à un ennemi. À la place
+elle contiendra seulement les appels aux fonctions de soin et de dégâts ainsi
+que les paramètres dont elles auront besoin. Ensuite nous enverrons les
+résultats des ces fonctions (comme d'habitude) et les exécuterons.
 
-Modify `Item` like this:
+Modifiez `Item` ainsi :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Item:
@@ -1132,13 +1124,12 @@ class Item:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-What about the actual function though? We'll define that separately,
-which will allow us (in the next chapter) to freely assign functions to
-the `use_function`, thus changing the behavior of each item depending on
-our needs.
+Et que dire des fonctions elles mêmes ? Définissons les séparément, cela
+nous permettra (dans le chapitre suivant) d'attribuer librement des fonctions
+au paramètre `use_function`. Ainsi nous adapterons le comportement en fonction
+de l'item selon nos besoins.
 
-Create a file, called `item_functions.py`, and put the following
-function in it:
+Créez un fichier, appelé `item_functions.py` et ajoutez-y la fonction suivante :
 
 {{< highlight py3 >}}
 import tcod as libtcod
@@ -1161,14 +1152,14 @@ def heal(*args, **kwargs):
     return results
 {{</ highlight >}}
 
-We're taking the `entity` that's using the item as the first argument
-(all of our functions will do this, even if they don't need it). We're
-also extracting the "amount" from "kwargs", which will be provided by
-the `function_kwargs` from the `Item` component.
+Nous prenons l'entité qui utilise l'item comme premier argument (toutes nos
+fonctions le feront, même si elles n'en ont pas besoin). Nous extrayons aussi
+le nombre ("amount") des "kwargs" ce qui sera fourni par le `function_kwargs`
+du composant `Item`.
 
-We'll need to add the `heal` method to the `Fighter` component for this
-to work right (note: both functions are called "heal", but they are not
-the same).
+Nous devons ajouter la méthode `heal` au composant `Fighter` pour que cela
+fonctionne (remarque : les deux fonctions sont appelées "heal" mais elles
+sont différentes).
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -1201,9 +1192,9 @@ the same).
 {{</ original-tab >}}
 {{</ codetab >}}
 
-This may make more sense once we pass the `heal` function to the healing
-potions. Let's do that now; in the `place_entities` function in
-`game_map`:
+Cela prendra plus de sens une fois qu'on aura passé la fonction `heal` aux
+potions de soin. Faisons le maintenant : dans la fonction `place_entities` de
+`game_map` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -1224,7 +1215,7 @@ potions. Let's do that now; in the `place_entities` function in
 {{</ original-tab >}}
 {{</ codetab >}}
 
-You'll need to import `heal` for this.
+Vous devez importer `heal` pour cela.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -1247,9 +1238,9 @@ from map_objects.rectangle import Rect
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now our item has an actual function to fire off when it gets used. But
-*where* does this get called? Why not have our inventory call the
-function? Add the following functions to `Inventory`:
+Maintenant notre item dispose d'une fonction à exécuter quand il est employé.
+Mais *où* cela doit-il être appelé ? Pourquoi notre inventaire n'appellerait-il
+pas la fonction ? Ajoutez la fonction suivante à `Inventory` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -1361,16 +1352,16 @@ Finally, let's handle the results of the item use function in
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project now. You can now consume the health potions, and this
-will take a turn. Potions will not be used if you're at full health
-already.
+Lancez le projet maintenant. Vous pouvez consommer les potions de soin et cela
+va utiliser un tour. Les potions ne seront pas dépensées si vous êtes déjà
+au maximum de santé.
 
-Final thing before we end the chapter: dropping items. This may seem
-pointless now, but later on, when we have multiple levels in the
-dungeon, the player may have to make some decisions about which items to
-keep and which to drop.
+Une dernière étape avant de clore ce chapitre : abandonner (drop) un objet. Cela
+peut semble inutile mais plus tard, quand nous aurons de nombreux niveaux dans
+le donjon, le joueur devra prendre des décisions concernant les objets à
+conserver et abandonner.
 
-First, add a new game state:
+D'abord ajoutons un nouvel état au jeu :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class GameStates(Enum):
@@ -1391,7 +1382,7 @@ class GameStates(Enum):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then, modify `handle_player_turn_keys` to respond to the 'd' key:
+Ensuite modifier `handle_player_turn_keys` pour réagir à la touche 'd' :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -1418,7 +1409,7 @@ Then, modify `handle_player_turn_keys` to respond to the 'd' key:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Update the action handler section to accept this:
+Mettez à jour le gestionnaire d'action pour en tenir compte :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -1437,7 +1428,7 @@ Update the action handler section to accept this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We'll need to switch the game state when the player presses this key:
+Nous devrons changer l'état du jeu quand un joueur presse cette touche :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -1470,10 +1461,10 @@ We'll need to switch the game state when the player presses this key:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-You might think we need to add another function to handle the keys for
-dropping inventory, but we actually don't; we can just use our code for
-`SHOW_INVENTORY` for this same purpose. Just modify the "if" statement
-in `handle_keys`:
+Vous pouvez croire qu'on doive ajouter une autre fonction pour gérer cette
+touche mais ce n'est pas le cas. Nous allons simplement utiliser le code de
+`SHOW_INVENTORY` dans ce but. Modifiez simplement le bloc "if" dans
+`handle_keys` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def handle_keys(key, game_state):
@@ -1502,7 +1493,7 @@ def handle_keys(key, game_state):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Also, modify the `exit` section:
+Aussi, changez la partie `exit` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -1527,9 +1518,9 @@ Also, modify the `exit` section:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now for displaying the drop menu. It's really not different from the
-inventory menu, so we can use the same function, and send a different
-title to it.
+Et maintenant l'affichage du menu "drop" (déposer). Cela ne change pas vraiment
+du menu d'inventaire aussi nous pouvons employer la même fonction et lui
+donner un autre titre.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -1562,11 +1553,11 @@ title to it.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-What happens when the player pressed a key in this menu? Let's modify
-the part in `engine.py` that handled the `inventory_index` to take the
-game's state into account. If it's `SHOW_INVENTORY`, then use the item,
-and if it's `DROP_INVENTORY`, then call a function to drop the
-    item.
+Que se passe-t-il quand le joueur presse une touche de ce menu ? Modifions la
+partie dans `engine.py` qui gère la partie `inventory_index` pour tenir compte
+de l'état du jeu. Si l'état est sur `SHOW_INVENTORY`, alors on utilise l'objet,
+et s'il est sur `DROP_INVENTORY` alors on appelle une fonction qui lâche
+l'objet.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 if inventory_index is not None and previous_game_state != GameStates.PLAYER_DEAD and inventory_index < len(
@@ -1593,10 +1584,10 @@ if inventory_index is not None and previous_game_state != GameStates.PLAYER_DEAD
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We haven't defined the `drop_item` method of inventory yet, so let's do
-that now. It will remove the item from the inventory, set the item's
-coordinates to match the player (since the item gets dropped at the
-player's feet), and return the results.
+Nous n'avons pas défini la méthode `drop_item` de l'inventaire pour l'instant
+aussi faisons le maintenant. Cela va retirer l'objet de l'inventaire, établir
+les coordonnées de l'objet sur celle du joueur (car l'objet est déposé aux
+pieds du joueur) et renvoyer le résultat.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -1635,7 +1626,7 @@ player's feet), and return the results.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Finally, handle the results in `engine.py`:
+Enfin, gérer les résultats dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -1674,15 +1665,13 @@ Finally, handle the results in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-That was quite the chapter\! It took a lot of setup to get using the
-items, but now we've got a framework that we can add on to. In the next
-chapter, we'll do just that, by adding some scrolls to cast spells at
-our enemies.
+Quel chapitre ! Cela a demandé beaucoup de réglages pour utiliser les objets
+mais nous disposons d'un cadre sur lequel bâtir. C'est ce que nous ferons
+dans le chapitre suivant en ajoutant divers parchemins pour lancer des sorts
+à nos ennemis.
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part8).
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part8).
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-9)
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-9)
 
 <script src="/js/codetabs.js"></script>

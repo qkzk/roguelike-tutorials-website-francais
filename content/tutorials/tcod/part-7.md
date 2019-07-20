@@ -635,8 +635,6 @@ Les graphismes de notre jeu sont bien meilleurs. Si vous espérez que votre jeu
 soit joué par d'autres joueurs que vous (sinon c'est bien aussi \!) ce type de
 changement sera d'une grande importance dans votre projet.
 
-
-
 Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part7).
 
 [Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-8)
