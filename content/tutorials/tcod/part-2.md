@@ -1,5 +1,5 @@
 ---
-title: "Part 2 - Une entité générique, les fonctions de rendu et la carte]"
+title: "Partie 2 - Une entité générique, les fonctions de rendu et la carte]"
 date: 2019-03-30T08:39:20-07:00
 draft: false
 ---

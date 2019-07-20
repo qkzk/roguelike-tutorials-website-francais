@@ -1,5 +1,5 @@
 ---
-title: "Part 1 - Dessiner le caractère ‘@’ et le déplacer"
+title: "Partie 1 - Dessiner le caractère ‘@’ et le déplacer"
 date: 2019-03-30T08:39:15-07:00
 draft: false
 ---

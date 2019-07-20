@@ -1,5 +1,5 @@
 ---
-title: "Part 3 - Generating a dungeon"
+title: "Part 3 - Générer un donjon"
 date: 2019-03-30T08:39:22-07:00
 draft: false
 ---

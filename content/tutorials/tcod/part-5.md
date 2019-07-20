@@ -1,14 +1,14 @@
 ---
-title: "Part 5 - Placing Enemies and kicking them (harmlessly)"
+title: "Partie 5 - Ajouter des ennemis et leur donner des coups de pied (sans faire mal)"
 date: 2019-03-30T09:33:48-07:00
 draft: false
 ---
 
-What good is a dungeon with no monsters to bash? This chapter will focus
-on placing the enemies throughout the dungeon, and setting them up to be
-attacked (the actual attacking part we'll save for next time). To start,
-we'll need a function to place the enemies in the dungeon; let's call it
-`place_entities` and put it in the `GameMap` class.
+Qu'est-ce qu'un donjon sans monstre à cogner ? Ce chapitre se concentrera sur
+la disposition des ennemis à travers le donjon et les configurer pour qu'on
+puisse les attaquer (les vrais combats seront abordés plus tard). Pour
+commencer nous aurons besoin d'une fonction pour positionner les ennemis dans
+le donjon. Appelons la `place_entities` et ajoutons la à la classe `GameMap`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def create_v_tunnel(self, y1, y2, x):
@@ -61,13 +61,12 @@ we'll need a function to place the enemies in the dungeon; let's call it
 {{</ original-tab >}}
 {{</ codetab >}}
 
-In this function, we're choosing a random amount of enemies to place,
-between 0 and the maximum we specify. Then, we take a random x and y,
-and, if no other monster is currently at that location, we place a
-monster there. There's an 80% chance of it being an Orc, and a 20%
-chance of it being a Troll.
+Dans cette fonction on choisit un nombre aléatoire d'ennemis à disposer, entre
+0 et le maximum qu'on choisit. Ensuite on tire un x et y aléatoire et, si
+aucun ennemi n'est déjà à cet endroit, on y place un monstre. Il y à 80% de
+chance que ce soit un Orc et 20% de chance que ce soit un Troll.
 
-We'll need to import both `libtcod` and the `Entity` class.
+Nous aurons besoin d'importer à la fois `libtcod` et la classe `Entity`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +import tcod as libtcod
@@ -88,8 +87,8 @@ from map_objects.tile import Tile</pre>
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now let's modify our `make_map` function to include the `place_entities`
-function.
+Maintenant modifions notre fonction `make_map` pour y inclure la fonction
+`place_entities`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                         ...
@@ -112,10 +111,9 @@ function.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Because we now need the `entities` and `max_monsters_per_room`
-variables, we should modify our `make_map` function definition to
-include
-them.
+Parce que nous avons maintenant besoin des variables `entities` et
+`max_monsters_per_room`, nous devrions modifier la définition de la fonction
+`make_map` pour les y inclure.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -   def make_map(self, max_rooms, room_min_size, room_max_size, map_width, map_height, player):
@@ -130,11 +128,11 @@ them.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We're all set up here; now we have to modify `engine.py` to match this
-new `make_map` function. Also, we'll need to create the
-`max_room_per_monsters` variable before calling the function. Finally,
-we'll change our `entities` list to include only the player at first,
-and we'll completely remove our dummy NPC from before.
+Tout est bon ici, maintenant nous devons modifier `engine.py` pour tenir compte
+de cette nouvelle fonction `make_map`. Aussi nous aurons besoin de créer la
+variable `max_room_per_monsters` avant d'appeler la fonction. Enfin nous
+changerons notre liste `entities` pour qu'elle ne contienne que le joueur,
+retirant complètement notre NPC d'exemple utilisé plus tôt.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -203,26 +201,26 @@ and we'll completely remove our dummy NPC from before.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project now, and you should see some orcs and trolls beginning
-to populate our dungeon\!
+Lancez le projet maintenant et vous devriez voir quelques orcs et trolls peupler
+notre donjon \!
 
-One obvious issue with our newly created monsters (you know, besides the
-fact that they just sit there lifelessly) is that the player can just
-walk right through them. Unless you're planning on making a game about a
-ghost walking through monsters and possessing them (doesn't sound like a
-bad idea actually\!), this isn't what we want; if the player "moves
-into" an enemy, we should attack\!
+Un problème évident avec les monstres qu'on vient d'inventer (au dela du fait
+qu'ils sont totalement inanimés...) est que le joueur peut les traverser. À
+moins que vous n'ayez l'intention de créer un jeu sur un fantôme qui traverse
+des monstre pour en prendre possession (ça ne semble pas être une si mauvaise
+idée \!), ce n'est pas ce que nous souhaitons. Si le joueur "se déplace dans" un
+ennemi, on devrait l'attaquer !
 
-One might think that we can just check if we're moving into an Entity,
-and attack it if we are, but we actually do want some Entities to not
-block movement. Why? Because we'll be using that same Entity class to
-represent items, and we'll want to be able to move over those and pick
-them up. So it seems we need a class attribute that tells us if the
-Entity "blocks" our movement or not.
+On pourrait croire qu'il suffit de vérifier si on se déplacer dans une Entity et
+l'attaquer si c'est le cas mais nous aurons besoin que certaines entités ne
+bloquent pas le mouvement. Pourquoi ? Parce que nous utiliserons cette classe
+Entity pour représenter les objets et nous voudrons marcher dessus pour les
+ramasser. Aussi il semble qu'il nous faille un attribut de classe nous disant
+si l'entité bloque le mouvement ou non.
 
-Let's modify the `Entity` class to include the "blocks" variable. While
-we're modifying this class, we should also pass in a "name" for the
-Entity, which will be useful a little later.
+Modifions la classe `Entity` pour y inclure la variable "block". Profitons de
+cette occasion pour passer à la classe le nom ("name") pour l'entité. Nous
+en aurons besoin d'ici peu.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Entity:
@@ -255,11 +253,11 @@ class Entity:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Notice that "blocks" is optional; if we don't pass it on initialization,
-it will be False by default.
+Remarquons que "blocks" est optionnel. Si nous ne la déclarons pas à
+l'initialisation, elle sera False par défaut.
 
-Go back to `game_map.py` and modify the `place_entities` method, where
-we declare our monsters.
+Revenons à `game_map.py` et modifions la méthode `place_entities` où nous
+déclarons nos monstres.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             if randint(0, 100) < 80:
@@ -280,7 +278,7 @@ we declare our monsters.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We also need to update the initialization of the player in `engine.py`:
+Nous devons aussi mettre à jour l'initialisation du joueur dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -   player = Entity(0, 0, '@', libtcod.white)
@@ -293,16 +291,15 @@ We also need to update the initialization of the player in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-With our new attribute in place, we need to make a check if a blocking
-entity is in the way when we try to move into a tile. One thing that
-will definitely help is a function to get a "blocking" entity in a tile,
-given the list of entities and the x and y coordinates. We'll put this
-function in `entity.py`, but not in the `Entity` class itself. The
-reasoning is that it's a function that relates to the entities, but it
-doesn't relate to a specific Entity, so it doesn't need to belong to the
-class.
+Avec nos nouveaux attributs nous devons nous assurer qu'une entité ne bloque
+pas le chemin quand nous essayons de nous déplacer sur une tuile. Cela nous
+aiderait d'avoir une fonction qui renvoie l'entité bloquante en lui donnant
+la liste des entités et les coordonnées x et y. Nous l'ajouterons à `entity.py`
+mais pas à la classe `Entity` elle même. La raison est que c'est une fonction
+en rapport avec les entités mais pas à une entité en particulier aussi elle
+n'appartient pas à la classe.
 
-Add the function to `entity.py` like this:
+Ajoutez la fonction à `entity.py` comme ceci :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Entity:
@@ -331,15 +328,14 @@ class Entity:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-The function loops through the entities, and if one of them is
-"blocking" and is at the x and y location we specified, we return it. If
-none of them match, then we return "None" instead. Note that the
-function is assuming that only one "blocking" entity will be at each
-location; this should be fine, as we'll make sure two entities can't
-move into the same tile.
+La fonction boucle sur les entités et, si l'une est bloquante et placée aux
+x et y indiqués, on la renvoie. Si aucune ne correspond on renvoie "None".
+Remarquez que la fonction suppose qu'une seule entité est placée à cette
+position. Cela ne devrait pas poser de problème car nous nous assurerons que
+deux entités ne peuvent se déplacer sur une même tuile.
 
-With that in place, let's return to our movement function. Modify the
-code that moves the player in `engine.py` like this:
+Ceci étant fait, revenons à notre fonction de déplacement. Modifiez le code
+qui déplace le joueur dans `engine.py` comme ceci :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         if move:
@@ -384,8 +380,9 @@ code that moves the player in `engine.py` like this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Also be sure to import the function `get_blocking_entities_at_location`
-at the top of `engine.py`.
+Assurez vous d'importer la fonction `get_blocking_entities_at_location` en haut
+de `engine.py`
+
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -   from entity import Entity
 +   from entity import Entity, get_blocking_entities_at_location
@@ -396,23 +393,22 @@ at the top of `engine.py`.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now the player gets blocked when trying to move through another entity.
-We're putting that humorous (hey, I think it's funny\!) print statement
-as a placeholder, for the moment. We'll implement real combat in the
-next chapter.
+Maintenant le joueur est bloqué quand il essaye de traverser une autre entité.
+Nous affichons un texte humoristique (hey, je trouve ça drôle \!) pour
+l'instant. Nous implémenterons un vrai combat dans le chapitre suivant.
 
-Our player should only be able to move during their turn, and the same
-applies for the monsters. We'll need a variable to keep track of whose
-turn it actually is. We could store a string in this variable, say,
-'players\_turn' and 'enemy\_turn', but that seems error prone. If you
-happen to mistype one of those strings, you'll end up with some bugs.
-Not to mention our number of game states will inevitably grow, and we'll
-need a better way to keep track of them all.
+Notre joueur ne devrait pouvoir se déplacer que durant son tour et ce principe
+s'applique aux monstres. Nous aurons besoin d'une variable pour savoir à qui est
+le tour. Nous pourrions conserver une chaîne dans cette variable comme
+'players\_turn' ou 'enemy_turn' mais c'est succeptible de créer des erreurs. Si
+vous faîtes une typo en écrivant ces chaîne, vous allez créer des bugs.
+N'oublions pas que le nombre d'états du jeu va augmenter et nous aurons besoin
+d'une meilleure manière de les enregistrer.
 
-Let's keep the game states in an Enum. An "Enum" is a set of named
-values that won't change, so it's perfect for things like game states.
-Create a new file called `game_states.py` and put the following class in
-it:
+Nous allons enregistrer ces états avec un Enum. Un "Enum" est un ensemble de
+valeurs qui ne changent pas et qu'on peut énumérer, parfait pour les états du
+jeu. Créer un nouveau fichier appelé `game_states.py` et ajoutez-y la classe
+suivante :
 
 {{< highlight py3 >}}
 from enum import Enum
@@ -423,16 +419,15 @@ class GameStates(Enum):
     ENEMY_TURN = 2
 {{</ highlight >}}
 
-This will make our game state switching much easier to manage,
-especially in the future when we have more than two.
+Cela rendra nos changements d'états du jeu plus faciles à gérer, en particulier
+quand nous en aurons plus de deux.
 
-*\* Note: The numbers for the states don't necessarily mean anything. In
-fact, if you're using Python 3.6 or higher, you can use the 'auto'
-feature to just increment the number for you. Check it out if you're
-able to.*
+*\* Remarque : les nombres associés n'ont pas de sens précis. En fait, si vous
+Python 3.6 ou une version ultérieure, vous pouvez utiliser 'auto' pour
+incrémenter un nombre automatiquement. Vérifiez si c'est possible pour vous.*
 
-Let's put this new `GameStates` enum into action. Start by importing it
-at the top.
+Mettons ces nouveaux enum `GameStates` en action. Commencez par les importer
+en haut.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -451,8 +446,8 @@ from input_handlers import handle_keys
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then, create a variable called `game_state`, which we'll set initially
-to the player's turn.
+Enfin, créez une variable appelée `game_state` sera d'abord réglée sur le
+tour du joueur.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -475,10 +470,10 @@ to the player's turn.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Depending on whether or not its the players turn, we want to control the
-player's movement. The player can only move on the players turn, so
-let's modify our `if move:` section to handle this. After the player
-successfully moves, we'll set the state to `ENEMY_TURN`.
+Selon que ce soit le tour du joueur ou non, nous voulons contrôler le mouvement
+du joueur. Le joueur ne peut se déplacer que durant son tour aussi modifions
+notre section `if move:` pour en tenir compte. Une fois que notre joueur aura
+réussi à se déplacer, nous allons passer l'état à `ENEMY_TURN`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -       if move:
@@ -521,12 +516,12 @@ successfully moves, we'll set the state to `ENEMY_TURN`.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-If you run the project now, the player will be able to move once... and
-then get stuck forever. That's because we need to implement the enemy's
-moves, and set the `game_state` back to the player's turn afterwards.
-Note that you *can* exit the game and make it full screen, because we're
-not stopping the player from doing those things when it isn't the
-player's turn.
+Si vous lancez le projet maintenant, votre joueur sera capable de se déplacer
+une fois... et sera bloqué pour toujours. C'est parce que nous devons
+implémenter les mouvements des ennemis et rendre le `game_state` au joueur
+ensuite. Remarquez que vous *pouvez* quitter le jeu ou le passer en plein écran
+parce que nous n'empéchons pas le joueur d'accomplir ces choses quand ça n'est
+pas son tour.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -555,17 +550,14 @@ player's turn.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-This is simple enough. Assuming it's the enemy turn, we're looping
-through each of the entities (excluding the player) and allowing them to
-take a turn. Right now, we don't have any AI in place for our enemies,
-so they'll just sit there contemplating their lives for now. In the next
-chapter, we'll give them some more interesting behavior, but for now,
-this works as a placeholder.
+C'est assez simple. Supposons que c'est le tour de l'ennemi, nous parcourons
+chaque entité, à l'exception du joueur, et nous leur donnons le tour. Pour
+l'instant nous n'avons pas d'AI pour nos ennemis donc ils restent immobiles à
+contempler leurs vies. Dans le prochain chapitre nous leur donnerons un
+comportement plus intéressant mais pour l'instant cela servira d'exemple.
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part5).
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part5).
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-6)
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-6)
 
 <script src="/js/codetabs.js"></script>

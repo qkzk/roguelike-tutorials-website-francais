@@ -1,5 +1,5 @@
 ---
-title: "Part 6 - Doing (and taking) some damage"
+title: "Part 6 - Faire mal (et prendre des coups)"
 date: 2019-03-30T09:33:50-07:00
 draft: false
 ---
@@ -585,7 +585,7 @@ For this to work, we'll need to import `libtcod` into `entity.py`:
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +import tcod as libtcod
-    
+
 import math
 ...
 {{</ highlight >}}
