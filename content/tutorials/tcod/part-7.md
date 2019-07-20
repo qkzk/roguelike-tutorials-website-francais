@@ -1,18 +1,18 @@
 ---
-title: "Part 7 - Creating the Interface"
+title: "Part 7 - Créer une interface"
 date: 2019-03-30T09:33:53-07:00
 draft: false
 ---
 
-Our game is looking more and more playable by the chapter, but before we
-move forward with the gameplay, we ought to take a moment to focus on
-how the project *looks*. Despite what roguelike traditionalists may tell
-you, a good UI goes a long way.
+Avec chaque chapitre notre jeu est un peu plus jouable mais avant de progresser
+sur le gameplay, nous devrions prendre un moment pour nous concentrer sur
+l'aspect *esthétique*. Contrairement à ce que les traditionalistes du roguelike
+pourraient vous dire, une bonne UI est pratique.
 
-Let's start by fixing up our HP section. With not all that much code, we
-can add a neat little health bar, that will tell the player how much
-health is remaining before death. We'll start by adding some needed
-variables in `engine.py`:
+Commençons par la section sur l'HP. Avec relativement peu de code nous pouvons
+ajouter une petite barre de vie qui nous dira combien il reste de santé au
+joueur avant de mourir. Commençons par ajouter quelques variables utiles dans
+`engine.py`
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -47,16 +47,17 @@ variables in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We're creating a new console, called `panel`, which will hold our HP bar
-and message log. We also modified the map height while we were at it, to
-give the HP bar and (soon to come) message log more room.
+Nous créons une nouvelle console, `panel`, qui contiendra notre barre de vie
+et le journal des messages. Nous avons aussi modifié la hauteur de la carte
+afin de laisser un peu de place à notre barre de vie et notre futur journal de
+message.
 
-Now we'll want a function that draws the health bar, or any other bar we
-desire. You might want to add a Mana or Stamina bar later on, so it's
-best that we make this function as reusable as possible. Put the
-following in `render_functions.py`, right under the `RenderOrder` enum,
-but above
-    `render_all`.
+Maintenant il nous faut une faut une fonction qui dessine la barre de vie et
+n'importe quelle barre qu'on puisse souhaiter. Vous pouvez ajouter une barre
+de Mana ou de Stamina plus tard si vous le souhaitez aussi il est préférable
+de la rendre la plus réutilisable possible. Ajoutez la suite à
+`render_functions.py`, juste en dessous de l'enum `RenderOrder` mais au dessus
+de `render_all`.
 
 {{< highlight py3 >}}
 def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_color):
@@ -74,10 +75,9 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
                              '{0}: {1}/{2}'.format(name, value, maximum))
 {{</ highlight >}}
 
-Now let's use this function in `render_all`. Remove the HP indicator we
-had put in before, and put the code for the stats panel at the end of
-the
-    function.
+Maintenant utilisons cette fonction dans `render_all`. Retirez l'indication de
+HP qu'on a ajouté plus tôt et ajoutez le code pour le panneau de statistiques
+à la fin de la fonction.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -def render_all(con, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height, colors):
@@ -120,8 +120,7 @@ the
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Be sure to update the call to `render_all` in
-`engine.py`:
+Ajoutez l'appel à `render_all` dans `engine.py`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -       render_all(con, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height, colors)
@@ -136,12 +135,12 @@ Be sure to update the call to `render_all` in
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now we've got a nice looking HP bar at the bottom of the screen. It'll
-decrease when the player takes damage, and increase when we heal (that's
-coming next chapter).
+Maintenant on a une jolie barre de vie en bas de l'écran. Elle va décroître
+quand le joueur perd des HP et croître quand on se soigne (ça arrive au prochain
+chapitre).
 
-Let's keep things going, and create our message log. Add the following
-variables to `engine.py` to start:
+Continuons d'avancer et créons un journal de messages. Ajouter les variables
+suivantes à `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -168,9 +167,9 @@ variables to `engine.py` to start:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-To implement the message log, we'll need two classes: one for the log,
-and one for the messages inside it. Start by creating a new file, called
-`game_messages.py`. Put the following code inside it:
+Pour implémenter un journal de message, nous avons besoin de deux classes :
+une pour le journal et une pour les messages qu'il contient. Commencez par
+créer un nouveau fichier appelé `game_messages.py`. Ajoutez-y le code suivant :
 
 {{< highlight py3 >}}
 import tcod as libtcod
@@ -204,25 +203,25 @@ class MessageLog:
             self.messages.append(Message(line, message.color))
 {{< /highlight >}}
 
-That's a lot to take in at once, so let's go through it.
+Cela fait beaucoup aussi examinons en détail.
 
-`Message` is pretty simple. We store the message text and the color to
-draw it with. You can opt to not pass a color, in which case, white is
-used by default.
+`Message` est plutôt simple. On enregistre le message et la couleur associée.
+Vous pouvez décider de ne pas passer de couleur, auquel cas, le blanc est
+utilisé par défaut.
 
-The `MessageLog` is the more interesting class. It holds a list of
-messages (the `Message` class), holds its x coordinate (for
-convenience), and its width and height. Width and height are useful so
-that we'll know when we need to cut off the top messages (the message
-log will "scroll" as new messages come up).
+La classe `MessageLog` est la plus intéressante. Elle conserve une liste de
+messages (de la classe `Message`), conserve les coordonnées en x (par commodité)
+et sans hauteur et largeur. Hauteur et largeur sont pratiques pour savoir
+quand couper le message du haut (les messages vont "défiler" avec l'arrivée de
+nouveaux messages).
 
-In the `add_message` method, we're splitting up the message text into
-multiple lines if needed, using the `textwrap.wrap` function. We then
-check if the message log is at its capacity, and if so, we delete the
-top lines. Finally, we append the new message.
+Dans la méthode `add_message`, on sépare le texte des messages en de multiples
+lignes si c'est nécessaire, en utilisant la fonction `textwrap.wrap`. On peut
+ensuite vérifier si le message et rempli et, si nécessaire, on efface la ligne
+du haut. Enfin, on ajoute le nouveau message.
 
-Let's start putting this new message log into place. Add a new message
-log to `engine.py`:
+Commençons par mettre en place le nouveau journal de messages. Ajoutez un
+nouveau journal à `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     fov_map = initialize_fov(game_map)
@@ -241,7 +240,7 @@ log to `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Remember to import the `MessageLog` at the top as well:
+Souvenez-vous d'importer aussi le `MessaegLog` en haut :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 from fov_functions import initialize_fov, recompute_fov
@@ -256,10 +255,10 @@ from game_states import GameStates</pre>
 {{</ original-tab >}}
 {{</ codetab >}}
 
-With our message log in place, let's go through the project and remove
-all the `print` statements, replacing them with the message log.
+Notre journal de message étant implémenté, parcourons le projet pour retirer
+les expressions `print` et les remplacer par des messages log.
 
-Let's start with the death functions. In `death_functions.py`:
+Commençons par les fonctions 'death'. Dans `death_functions.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -310,8 +309,8 @@ def kill_monster(monster):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then, back in `engine.py`, replace the corresponding `print` statements
-like this:
+Ensuite, revenez dans `engine.py` et remplacez les expressions `print` comme
+ceci :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
              ...
@@ -366,7 +365,7 @@ like this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now for our action messages. In `fighter.py`:
+Maintenant pour nos messages d'action, dans `fighter.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -403,7 +402,7 @@ Now for our action messages. In `fighter.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-You'll need to import both libtcod and Message for this to work:
+Vous devez importer à la fois libtcod et Message pour que cela fonctionne :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +import tcod as libtcod
@@ -426,7 +425,7 @@ class Fighter:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-And in `engine.py`:
+Et dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -459,9 +458,9 @@ And in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Great, now we're adding all the messages to the log. However, nothing
-shows up yet. Let's modify `render_all` to display the message log we've
-created.
+Super, maintenant nous ajoutons tous les messages dans le log. Cela étant dit,
+rien n'apparaît encore. Modifions `render_all` pour afficher le journal de
+message que nous avons crée.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -def render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height, bar_width,
@@ -498,9 +497,8 @@ created.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then modify the call to `render_all` in `engine.py` to include the
-message
-log:
+Modifiez l'appel à `render_all` depuis `engine.py` pour inclure le journal
+de message :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -       render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, screen_width, screen_height,
@@ -517,20 +515,20 @@ log:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project now. All our previous printed statements should now
-appear in a scrolling message log. From here on out, we won't be doing
-any more `print` statements, we'll just add everything to our message
-log.
+Lancez le projet maintenant. Tous les anciens "print" devraient apparaître
+dans un journal de message déroulant. Dorenavent nous n'utiliserons plus de
+print, nous ajouterons tout à notre journal de messages.
 
-What's next? How about a little mouse-driven action? Our game is only
-orcs and trolls right now, but perhaps someday it will have dozens
-(hundreds?) of different monster and item types. It would be nice if we
-could see what they are by moving our mouse over them.
+Et la suite ? Pourquoi pas un peu d'action à la souris ? Notre jeu ne contient
+que des orcs et des trolls pour l'instant mais peut-être qu'un jour nous aurons
+des douzaines (centaines ?) de monstres différents et de types d'objets. Ce
+serait bien qu'on puisse voir ce qu'ils sont en déplaçant la souris sur eux.
 
-Lucky for us, we're already capturing Mouse input, in the `mouse`
-variable right above the game loop. All we need to do is adjust our call
-to `libtcod.sys_check_for_event` to respond to the mouse, and write the
-code that displays the name when we move the mouse over something.
+Heureusement pour nous, on a déjà capturé les événements souris dans la variable
+`mouse` juste au dessus de la boucle principale. Tout ce qu'il faut faire est
+d'ajuster notre appel à `libtcod.sys_check_for_event` pour répondre à la souris
+et d'écrire le code qui affiche le nom quand on déplace la souris au dessus de
+quelquechose.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -       libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
@@ -543,7 +541,8 @@ code that displays the name when we move the mouse over something.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Put the following function in `render_functions.py`, above `render_bar`:
+Ajoutez la fonction suivante dans `render_functions.py` au dessus de
+`render_bar` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +def get_names_under_mouse(mouse, entities, fov_map):
@@ -576,10 +575,9 @@ def render_bar(panel, x, y, total_width, name, value, maximum, bar_color, back_c
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now we'll once again modify our `render_all` function (that sure has had
-a lot of changes this chapter, hasn't it?) to account for the mouse and
-take advantage of our new
-    function.
+Maintenant nous allons à nouveau modifier notre fonction `render_all` (elle a
+beaucoup changé dans ce chapitre, n'est-ce-pas ?) pour utiliser la souris et
+utiliser notre nouvelle fonction.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -def render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, screen_width, screen_height,
@@ -614,9 +612,9 @@ take advantage of our new
 {{</ original-tab >}}
 {{</ codetab >}}
 
-And, of course, we'll need to modify the call to `render_all` in
-`engine.py` to match our new
-definition.
+Et, bien-sûr, nous devons modifier l'appel à `render_all` dans `engine.py` pour
+correspondre à notre nouvelle définition.
+
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -       render_all(con, panel, entities, player, game_map, fov_map, fov_recompute, message_log, screen_width,
@@ -633,15 +631,14 @@ definition.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Our game is now looking much, much better. If you ever intend for your
-game to be played by more people than just yourself (it's okay if you
-don't\!) then changes like these will be of paramount importance to your
-project.
+Les graphismes de notre jeu sont bien meilleurs. Si vous espérez que votre jeu
+soit joué par d'autres joueurs que vous (sinon c'est bien aussi \!) ce type de
+changement sera d'une grande importance dans votre projet.
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part7).
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-8)
+
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part7).
+
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-8)
 
 <script src="/js/codetabs.js"></script>
