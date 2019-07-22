@@ -1098,7 +1098,7 @@ from render_functions import clear_all, render_all
 Ce chapitre est clos. Le gameplay n'a pas changé mais l'enregistrement et le
 chargement ne sont pas choses aisées. Soyez fier de vous \!
 
-Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part910.
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part-10.
 
 [Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-11)
 

@@ -1,16 +1,16 @@
 ---
-title: "Part 11 - Delving into the Dungeon"
+title: "Part 11 - Explorer les profondeurs du donjons"
 date: 2019-03-30T09:34:06-07:00
 draft: false
 ---
-Our game isn't much of a "dungeon crawler" if there's only one floor to
-our dungeon. In this chapter, we'll allow the player to go down a level,
-and we'll put a very basic leveling up system in place, to make the dive
-all the more rewarding.
+Notre jeu ne sera pas un jeu d'exploration de donjon tant qu'on n'aura qu'un
+niveau à parcourir. Dans ce chapitre, nous permettrons au joueur de descendre
+d'un niveau et nous mettrons un simple système de niveau en place afin de
+rendre l'exploration plus gratifiante.
 
-Let's start by modifying the `GameMap` to hold the current dungeon
-depth. This will help out when we're writing our stairs. Open `game_map`
-and make the following modification:
+Commençons par modifier `GameMap` pour retenir la profondeur actuelle. Cela
+nous aidera quand nous écrirons nos escaliers. Ouvrez `game_map` et réalisez
+les modifications suivantes :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class GameMap:
@@ -34,10 +34,10 @@ class GameMap:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-The stairs themselves will be another `Entity`, as you might expect.
-We'll create a new component that sets it apart from the rest, called
-`Stairs`. Create a file called `stairs.py` and put the following class
-in it:
+Les escaliers en eux-même seront d'autres entités, comme vous pouviez vous y
+attendre. Nous allons créer un nouveau composant qui règle cela en dehors des
+autres et qu'on appelle `Stairs` (escaliers). Créez un fichier appelé
+`stairs.py` et ajoutez-y la classe suivante :
 
 {{< highlight py3 >}}
 class Stairs:
@@ -45,11 +45,11 @@ class Stairs:
         self.floor = floor
 {{</ highlight >}}
 
-The `floor` variable tells us which floor we'll be landing on if we take
-the stairs. Our game will only allow for downward movement, but you
-could use this to represent going up a floor as well.
+La variable étage nous indique à quel étage nous allons arriver si on emprunte
+les marches. Notre ne permet que de descendre mais vous pouvez aussi l'utiliser
+pour monter d'un étage.
 
-Like with all our other components, we need to pass it into `Entity`.
+Comme notre autres composants, on doit le passer à `Entity`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Entity:
@@ -119,10 +119,9 @@ class Entity:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-For placing our stairs, we'll turn to our `make_map` function. To keep
-things simple, we'll always place the stairs in the middle of the last
-room we create. Modify the function like
-this:
+Pour placer nos escaliers, on utilise notre fonction `make_map`. Pour garder
+les choses simples on placera toujours les escaliers au milieu de la dernière
+pièce crée. Modifiez la fonction ainsi :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def make_map(self, max_rooms, room_min_size, room_max_size, map_width, map_height, player, entities,
@@ -263,7 +262,7 @@ this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Be sure to import `Stairs` at the top.
+Assurez-vous d'importer `Stairs` en haut :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -284,14 +283,16 @@ from components.item import Item
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We're creating two new variables to keep track of the last room's center
-x and y, and using them to place our stairs. The stairs themselves are
-just a tuple that holds the x and y coordinates.
+Nous créons deux nouvelles variables pour conserver la position du centre
+de la dernière pièce et nous les utilisons pour placer notre escalier. Les
+escaliers en eux même sont simplement dans un tuple qui contient les coordonnées
+x et y.
 
-Notice that we used a new value in the `RenderOrder` enum in the code
-above. We'll need to add that to `RenderOrder`. The stairs should appear
-below everything else, so it will be the first value in our enum; the
-others will have to be pushed down.
+Remarquez que dans le code précédent, nous utilisons une nouvelle valeur dans
+l'enum `RenderOrder`. Nous devrons l'ajouter à `RenderOrder`. Les escaliers
+doivent apparaître en dessous du reste et ils doivent occuper la première
+valeur. Les autres devront être décalé d'un étage.
+
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class RenderOrder(Enum):
@@ -316,8 +317,8 @@ class RenderOrder(Enum):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Note that if you're working on Python 3.6, you can make this a lot
-easier with the `auto()` function.
+Remarquez que si vous utilisez Python 3.6 ou une version plus récente, vous
+pouvez vous simplifier la tâche en utilisant la nouvelle fonction `auto()`
 
 {{< highlight py3 >}}
 class RenderOrder(Enum):
@@ -327,13 +328,13 @@ class RenderOrder(Enum):
     ACTOR = auto()
 {{</ highlight >}}
 
-One problem with our current implementation is that we can only see the
-stairs when they're in the player's field of view. This might sound
-right at first, but consider if the player has seen the stairs, and then
-moves away from them. The stairs won't show on the map\! It'd be better
-if once found, the stairs are always drawn.
+Une difficulté avec notre implémentation actuelle est qu'on ne peut voir les
+escaliers que s'ils sont dans le champ de vision du joueur. Cela peut sembler
+cohérent de prime abord mais imaginez que le joueur ait découvert les escaliers
+et s'en éloigne. Ils n'apparaitront plus sur la carte \! Il serait mieux qu'une
+fois découverts, les escaliers soient toujours dessinés.
 
-To make this happen, we can modify the `draw_entity` function inside
+Pour rendre cela possible, nous pouvons modifier la fonction `draw_entity` dans
 `render_functions`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
@@ -355,13 +356,13 @@ To make this happen, we can modify the `draw_entity` function inside
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We're now checking if the entity has the 'stairs' component, and if the
-map has been explored. If so, we draw the entity, regardless if it's in
-the field of view or not. This works even if there's another entity on
-top of the stairs.
+Nous vérifions maintenant si une entité à le composant 'escaliers' et si la
+carte a été explorée. Si c'est le cas, on dessine l'entité qu'elle soit toujours
+dans le champ de vision ou non. Cela fonctionne même si une autre entité est
+sur les escaliers.
 
-Note that we're now passing the `game_map` object to `draw_entity`.
-We'll need to update our call to `draw_entity` in `render_all`.
+Remarquez que nous passons l'objet `game_map` à `draw_entity`. Nous devons
+aussi mettre à jour notre appel de `draw_entity` dans `render_all`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     for entity in entities_in_render_order:
@@ -375,13 +376,13 @@ We'll need to update our call to `draw_entity` in `render_all`.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project now, and you should be able to see the stairs (if you
-can find them before meeting your end\!). Now let's make them do
-something.
+Lancez le jeu maintenant et vous devriez voir des escaliers (si vous parvenez
+à les trouver avant de rencontrer votre créateur...). Maintenant faisons en
+sorte qu'ils fassent quelque chose.
 
-First, let's add a handler for going down the stairs in
-`input_handlers.py`. Add the following to the `handle_player_turn_keys`
-function:
+D'abord ajoutons un gestionnaire pour descendre les marches dans
+`input_handlers.py`. Ajoutez ce qui suit à la fonction
+`handle_player_turn_keys`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -408,21 +409,20 @@ function:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-*\*Note: I've used the Enter key here rather than the traditional '\>'
-key. This is because the current Roguebasin tutorial's code for the '\>'
-key does not work.*
+*\*Remarquez : j'ai utilisé la touche Enter plutôt que l'habituelle touche '\>'.
+C'est parce que le code du tutoriel Roguebasin pour la touche '\>' ne fonctionne
+pas.*
 
-With all this in place, we'll need to implement the code to actually
-move the player down a floor. To go down a floor, we'll need to generate
-a new map, create a new list of entities, and increment the integer that
-represents the dungeon floor. It's not nearly as complex as it sounds\!
-Things get a little more difficult if you want to allow the player to
-move back up the stairs, but in order to keep this tutorial as simple as
-possible, we'll say that once you descend down to the next floor, you
-cannot go back up.
+Ceci étant fait, nous devons implémenter le code pour déplacer le joueur à
+l'étage inférieur. Nous devons générer une nouvelle carte, créer une nouvelle
+liste d'entité et incrémenter un entier qui représente le niveau. Ce n'est pas
+aussi compliqué que ça en a l'air \! Les choses se compliquent un peu si vous
+voulez permettre au joueur de remonter mais pour la simplicité de ce tutoriel
+nous allons supposer qu'une fois descendu d'un étage, vous ne pouvez plus
+remonter.
 
-Now let's write the function that will take us down a floor. Add the
-following to the bottom of the `game_map.py`:
+Maintenant écrivons la fontion qui va nous descendre d'un étage. Ajoutez la
+suite à la fin de `game_map.py` :
 
 {{< highlight py3 >}}
     def next_floor(self, player, message_log, constants):
@@ -441,15 +441,14 @@ following to the bottom of the `game_map.py`:
         return entities
 {{</ highlight >}}
 
-The function starts by incrementing the dungeon level by one. The
-`entities` list is created from scratch, with only the player in it
-initially. We then call `make_map` to generate the new floor, like we
-did at the game's start. We'll also give the player half of the max HP
-back, as a reward for making it to the new floor, and add a message to
-this effect. We then return the `entities` list to be used in
-`engine.py`.
+La fonction commencen par incrémenter le niveau du donjon. La liste `entities`
+est crée depuis zéro, elle ne contient que le joueur. Ensuite nous appelons
+`make_map` pour générer un nouveau niveau comme nous l'avons fait au début du
+jeu. Nous rendons aussi au joueur la moitié de ses HP pour le récompenser de
+ses efforts et nous ajoutons un message dans ce sens. Ensuite nous renvoyons
+la liste `entities` pour qu'elle soit utilisée par `engine.py`
 
-At last, let's modify `engine.py` to use this new function.
+Enfin, modifions `engine.py` pour utiliser cette nouvelle fonction.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -503,13 +502,14 @@ At last, let's modify `engine.py` to use this new function.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-If the player is standing on the stairs, we call the `next_floor`
-function and set the `entities` list to the new values. We also clear
-the screen, so that the map shows as unexplored once again, and set the
-FOV to recompute. If there aren't any stairs, we let the player know.
+Si le joueur se tient sur les escaliers, nous appelons `next_floor` réglons
+la liste `entities` sur de nouvelles valeurs. Nous nettoyons aussi l'écran
+de façon à ce que la carte ne soit plus découverte et nous forçons le champ
+de vision à être recalculé. S'il n'y a pas d'escaliers, nous l'indiquons au
+joueur.
 
-We can easily display the dungeon's current depth right below the HP
-bar, by rendering the `render_all` function like so:
+Nous pouvons simplement afficher la profondeur juste en dessous de la barre de
+HP en générant la fonction `render_all` comme ceci :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -536,23 +536,22 @@ bar, by rendering the `render_all` function like so:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-And that's it\! We are now officially dungeon diving\! However, the way
-our game works right now, going deeper into the dungeon isn't
-particularly interesting. In order to make it feel more like a
-roguelike, we'll need to do two things: give our character some sort of
-progression (either through leveling up or better equipment) and make
-the monsters more threatening at lower levels. We'll focus on the former
-for the remainder of this chapter, while the latter will be for the next
-one.
+Et c'est tout \! Nous pouvons enfin plonger dans la différents niveaux.
+Néanmoins, la façon dont le jeu fonctionne ne rend pas cette exploration très
+intéressante. De manière à faire ressembler notre jeu aux roguelikes nous
+devons faire deux choses : donner au personnage un moyen de progresser (en
+changeant de niveau ou en équipant du matériel) et rendre les monstres plus
+menaçant au fur et à mesure qu'on descend. Nous allons nous concentrer sur le
+premier dans ce chapitre et nous aborderons le second volet dans le chapitre
+suivant.
 
-Most roguelikes (and RPGs in general) reward the player with experience
-points upon killing an opponent. Once a certain amount of experience has
-been collected, the player levels up and gets stronger. In order to
-acheive that, we'll need to do several things. Let's start by modifying
-the `Fighter` component to hold a new variable: `xp`. This will
-represent the experience points the player receives upon killing an
-enemy (but not the experience points of the Entity itself, more on that
-later).
+La plupart des roguelikes (et des RPG en général) récompensent le joueur avec
+de l'expérience une fois un monstre vaincu. Une fois un certain total
+d'expérience atteint, le joueur gagne un niveau et devient plus fort. De manière
+à y parvenir, nous devons faire plusieurs choses. Commençons par modifier
+le composant `Fighter` pour contenir une nouvelle variable `xp`. Cela
+représente les poits d'expérience acquis quand un monstre est tué (mais pas
+ceux de l'entité elle-même, nous reviendrons là dessus plus tard).
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Fighter:
@@ -576,10 +575,10 @@ class Fighter:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We don't need to modify the player's fighter component at all, but we'll
-need to alter the components for our enemies. Open up `game_map.py` and
-modify the `place_entities` function to include experience points in
-each fighter component.
+Nous n'avons pas besoin de modifier le composant fighter du joueur mais nous
+devons modifier le composant de nos ennemis. Ouvrez `game_map.py` et modifiez la
+fonction `place_entities` pour inclure les points d'expérience de chaque
+composant.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                 ...
@@ -618,11 +617,11 @@ each fighter component.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-The player's xp will be a bit different, because we'll be keeping track
-of a running total. We'll also need to know how much more experience the
-player needs until the next level up. Let's create a new component to
-keep track of all this, which we'll call `Level`. Create a new file in
-`components` called `level.py` and put the following code in it.
+L'expérience du joueur sera légèrement différente parce qu'elle doit tenir
+compte d'un cumul total. Nous devons aussi connaître le nombre de points
+nécessaire avant d'atteindre le prochain niveau. Créons un nouveau composant
+pour conserver ces informations que nous appellerons `Level` (niveau). Créez un
+nouveau fichier dans `components` appelé `level.py` et ajoutez le code suivant :
 
 {{< highlight py3 >}}
 class Level:
@@ -648,30 +647,31 @@ class Level:
             return False
 {{</ highlight>}}
 
-I've set all the variables in this class to have the defaults I want,
-which you should feel free to change. Also, it probably makes more sense
-to put these defaults in our `constants` dictionary, but in the interest
-of moving things along faster, I've put them here.
+J'ai réglé toutes les variables de cette sur les valeurs par défaut qui me
+conviennent et je vous invite à choisir les vôtres. Il est certainement plus
+judicieux de déplacer ces variables vers notre dictionnaire de constantes mais
+afin de gagner du temps je les ai placées là.
 
-The `current_level` is our player's level, which should start at 1,
-unless we're loading a saved game. `current_xp` is a running total of
-the player's experience points, which resets when the player levels up.
-`level_up_base` and `level_up_factor` are using in our level up formula.
+Le niveau courant, `current_level`, est le niveau du joueur. Il commence
+toujours à un sauf si nous chargeons une partie. `current_xp` est une somme
+cumulée des points d'expérience. Elle est remise à zéro quand on gagne un
+niveau. `level_up_base` et `level_up_factor` sont employées dans la formule
+de gain de niveau.
 
-When the player gains experience points, we check if the current xp is
-greater than the level up base, plus the current level times the level
-up factor. This makes it such that leveling up takes a longer time at
-higher levels. If it is, then we reset the `current_xp`, and return
-`True` (which our engine will know means that the player leveled up).
+Quand le joueur gagne des points d'expérience, on vérifie si l'expérience est
+supérieure au seuil ajouté au niveau multiplié par le facteur. Cela rend
+la progression plus lente au fur et à mesure qu'on gagne des niveaux.
+Si l'expérience dépasse ce seuil, on reset `current_xp` et on renvoie `True`
+(ce que notre moteur interprétera comme le gain d'un niveau par le joueur).
 
-The actual level up threshold is handled by the
-`experience_to_next_level` property. What's a property? It's basically a
-read only variable that we can easily access inside the class and on the
-objects we create. `experience_to_next_level` will always have the
-latest value when we access it, so we can just say
-`player.level.experience_to_next_level` and get the correct value.
+Le seuil actuel de gain de niveau est géré par la propriété
+`experience_to_next_level`. Qu'est ce qu'une propriété ? C'est grosso-modo une
+variable en lecture seule à laquelle on peut facilement accéder et qui réside
+dans la classe de l'objet créé. À chaque accès `experience_to_next_level` aura
+la dernière valeur aussi il suffit de dire
+`player.level.experience_to_next_level` pour obtenir la bonne valeur.
 
-Let's add this new component to the `Entity`:
+Ajoutons ce nouveau composant à `Entity` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Entity:
@@ -749,8 +749,8 @@ class Entity:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now we'll need to add it to the `player` object. Open
-`initialize_new_game.py` and make the following modifications:
+Nous devons maintenant l'ajouter à l'objet `player`. Ouvrez
+`initialize_new_game.py` et réalisez les changements suivants :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     fighter_component = Fighter(hp=30, defense=2, power=5)
@@ -772,7 +772,7 @@ Now we'll need to add it to the `player` object. Open
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Remember to import `Level` at the top:
+Souvenez vous d'importez `Level` en haut :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 from components.fighter import Fighter
@@ -789,9 +789,9 @@ from components.inventory import Inventory
 {{</ original-tab >}}
 {{</ codetab >}}
 
-As is tradition in RPGs, we'll gain this experience when we defeat the
-monsters. We can return the xp amount along with our death result, in
-the `Fighter` component's `take_damage` function.
+Par tradition dans les RPG le gain d'expérience se fait à la mort du monstre.
+Nous pouvons renvoyer le montant d'xp avec le résultat de la méthode
+`take_damage` du composant `Fighter`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def take_damage(self, amount):
@@ -819,7 +819,7 @@ the `Fighter` component's `take_damage` function.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-And now let's process the result in `engine.py`:
+Et maintenant intégrons ce résultat dans  `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -881,8 +881,8 @@ And now let's process the result in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Obviously, we'll need to add the `LEVEL_UP` game state to our
-`GameStates` enum.
+De toute évidence nous devons ajouter l'état du jeu `LEVEL_UP` à notre enum
+`GameStates`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class GameStates(Enum):
@@ -907,13 +907,13 @@ class GameStates(Enum):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So what happens when the player levels up? Our system will be pretty
-simple: the player will have a choice between increasing HP, attack, or
-defense. A menu will pop up, prompting the user to select one of these
-power ups, and won't close until a selection is made.
+Que se passe-t-il quand le joueur gagne un niveau ? Notre système sera plutôt
+simple : le joueur aura le choix entre améliorer ses HP, son attaque ou sa
+défense. Un menu va apparaître, proposant à l'utilisateur de choisir parmi
+une de ces améliorations et ne se fermera qu'une fois la sélection effectuée.
 
-Let's create a new menu function, called `level_up_menu`, which will
-display our options:
+Créons une nouvelle fonction de menu, intitulée `level_up_menu` qui va afficher
+nos options :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def main_menu(con, background_image, screen_width, screen_height):
@@ -948,8 +948,8 @@ def message_box(con, header, width, screen_width, screen_height):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Modify the `render_all` function to display this menu, after importing
-the `level_up_menu` function.
+Modifiez la fonction `render_all` pour afficher ce menu après avoir importé
+la fonction `level_up_menu`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -994,8 +994,8 @@ from menus import inventory_menu<span class="new-text">, level_up_menu</span>
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Of course, we'll need to handle the input for this menu. Open up
-`input_handlers.py` and add the following function:
+Bien sûr, nous devrons gérer la saisie dans ce menu. Ouvrez `input_handlers.py`
+et ajoutez la fonction suivante :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def handle_main_menu(key):
@@ -1042,7 +1042,7 @@ def handle_mouse(mouse):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Modify the `handle_keys` function to use this new handler:
+Modifiez la fonction `handle_keys` pour employer ce nouveau gestionnaire :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def handle_keys(key, game_state):
@@ -1077,7 +1077,8 @@ def handle_keys(key, game_state):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-With our key handler in place, let's handle the results in `engine.py`:
+Notre nouveau gestionnaire étant réalisé, nous devons employer ce résultat
+dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -1135,9 +1136,9 @@ With our key handler in place, let's handle the results in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-In order to help the players keep track of their progress, let's create
-a "character" screen, which displays the player's current stats. This
-will require another game state, so let's add that now.
+De manière à aider le joueur à connaître sa progression, créons et écran
+de statistiques du personnage ("character screen") qui affichera les valeurs
+courantes. Cela va demander un nouvel état du jeu aussi ajoutons le maintenant.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class GameStates(Enum):
@@ -1164,8 +1165,8 @@ class GameStates(Enum):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We should display this screen when the 'c' key is pressed. Let's add the
-key to `handle_player_turn_keys`:
+Nous devrions afficher l'écran quand la touche 'c' est enfoncée. Ajoutons cette
+touche à `handle_player_turn_keys` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -1193,7 +1194,7 @@ key to `handle_player_turn_keys`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now let's handle that in `engine.py`:
+Et maintenant intégrons le à `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -1239,9 +1240,9 @@ Now let's handle that in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now let's write the input handler for the character screen. All it does
-is handles the 'Escape' key, since the character screen isn't
-interactive in any way.
+Maintenant écrivons un gestionnaire de saisie pour l'écran de statistiques du
+personnage. Tout ce qu'il fait est de gérer la touche Escape étant donné que
+notre écran n'est pas du tout interactif.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def handle_level_up_menu(key):
@@ -1274,8 +1275,8 @@ def handle_mouse(mouse):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Modify `handle_keys` to call this function when showing the character
-screen:
+Modifier `handle_keys` pour appeler cette fonction quand on affiche l'écran
+du personnage :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def handle_keys(key, game_state):
@@ -1314,8 +1315,8 @@ def handle_keys(key, game_state):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-If the player does press the escape key, we'll just want to revert the
-game state. For this, we can extend our current code for 'exit'.
+Si le joueur enfonce la touche Escape, nous retournons simplement à l'état
+précédent. Pour cela nous pouvons étendre notre code pour 'exit'.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         if exit:
@@ -1344,13 +1345,11 @@ game state. For this, we can extend our current code for 'exit'.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-That takes care of the input handling. Now, to actually display the
-screen, we'll need a new menu function. Unlike the other menu functions,
-we're not displaying a list of options. Instead, we know up front what
-we want to display. Therefore, we can directly print the information to
-the screen in a more straightforward fashion. Open `menus.py` and add
-the following
-    function.
+Cela prend soin des saisies de l'utilisateur. Maintenant pour afficher l'écran
+nous devons utiliser une nouvelle fonction. Contrairement aux autres fonctions
+de menu, nous n'affichons pas de liste d'options. À la place nous savons
+d'emblée ce que nous voulons afficher. Aussi, on peut directement afficher
+l'information à l'écran. Ouvrez `menus.py` et ajoutez la fonction suivante.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def level_up_menu(con, header, player, menu_width, screen_width, screen_height):
@@ -1420,8 +1419,8 @@ def message_box(con, header, width, screen_width, screen_height):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-In order to display this new menu, we'll modify `render_all` once again.
-Start by importing the menu.
+De manière à afficher ce nouveau menu, nous allons modifier `render_all` une
+fois encore. Commencez par importer le menu.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -1467,12 +1466,12 @@ Now, add the menu to the bottom of `render_all`.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Final thing before we wrap up this chapter: Awhile ago, we included
-diagonal movement for the player character, but we forgot (okay, **I
-forgot**) to include a wait command. It's simple to add, but it's
-something we'll definitely want before the next chapter, where the game
-will start getting more difficult. Open up `input_handlers.py` and add
-the following to `handle_player_turn_keys`:
+Dernière étape avant de conclure ce chapitre : bien plus tôt nous avons ajouté
+les mouvement diagonaux pour le joueur mais nous avons oublié (okay **j'ai
+oublié**) d'inclure une commande pour passer le tour. C'est plutôt simple à
+faire mais nous en aurons besoin avant le prochain chapitre où la difficulté va
+augmenter. Ouvrez `input_handlers.py` et ajoutez ce qui suit à
+`handle_player_turn_keys`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def handle_player_turn_keys(key):
@@ -1559,20 +1558,18 @@ Then, in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So all we're doing is "skipping" the player's turn. Easy\! You could do
-a number of things here, like giving the player back 1 HP for waiting,
-but I won't do that because I'm cruel and unforgiving.
+Ainsi tout ce qu'on fait est de "passer" le tour du joueur. Facile \! Vous
+pourriez faire beaucoup de chose, comme ajouter 1 HP au joueur pour avoir
+attendu mais je suis mauvais, et je ne pardonne pas aussi je ne le ferai pas.
 
-That's all for this chapter. We've given the player a lot of advantages
-(in fact, just one more point in defense makes Orcs a non-threat), but
-that's all about to change. Next chapter, we're going to buff up the
-monsters, while making the player *weaker*. This is a roguelike after
-all, it's not supposed to be easy\!
+C'est tout pour ce chapitre. Nous avons donné au joueur beaucoup d'avantages
+(À vrai dire, ajouter un point en défense nous rend invulnérable devant les
+Orcs...) mais cela va bientôt changer. Au prochain chapitre nous allons
+améliorer les montres et *affaiblir* le joueur. C'est un roguelike après tout,
+ce n'est pas supposé être facile.
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part11).
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part-11.
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-12)
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-12)
 
 <script src="/js/codetabs.js"></script>
