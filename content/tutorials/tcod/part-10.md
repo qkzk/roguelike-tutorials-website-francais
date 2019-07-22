@@ -1,30 +1,30 @@
 ---
-title: "Part 10 - Saving and loading"
+title: "Part 10 - Sauvegarder et recharger"
 date: 2019-03-30T09:34:04-07:00
 draft: false
 ---
-Saving and loading is essential to almost every roguelike, but it can be
-a pain to manage if you don't start early. By the end of this chapter,
-our game will be able to save and load one file to the disk, which you
-could easily expand to multiple saves if you wanted to. But before we
-get into that, let's focus on our main game loop.
 
-The `engine.py` file is about 250 lines long right now. In the grand
-scheme of things, that really isn't that bad (I've worked on files that
-are 10,000 lines long), but let's face it: a lot of what's in there
-doesn't need to be. Furthermore, the `main` function could be broken up
-into initialization and the main game loop, which will make saving and
-loading that much easier.
+Sauvegarder et recharger est une partie essentielle de la majorité des Roguelike
+mais cela peut-être pénible si vous l'abordez tardivement. À la fin de ce
+chapitre votre jeu pourra sauvegarder et charger un fichier du disque et vous
+pourrez facilement étendre à plusieurs fichiers si vous le souhaitez. Mais avant
+de s'y plonger concentrons nous sur la boucle principale du jeu.
 
-The first step is to move the initialization of the variables outside
-the main game loop as much as we can. We'll create a few functions that
-will do things like create the player, create the map, and load
-variables like `map_width` and `fov_algorithm`. Let's create a new
-folder called `loader_functions`, and put a new file in it called
-`initialize_new_game.py`.
+Le fichier `engine.py` fait environ 250 lignes pour l'instant. Ce n'est pas si
+impressionnant en soit (j'ai travaillé sur des fichiers de 10,000 lignes) mais
+soyons honnêtes, une grande partie de ce qui y figure n'a rien à y faire.
+Qui plus est, la fonction `main` pourrait être découpée en initialisation et
+la boucle principale et cela nous le chargement et la sauvegarde bien plus
+facile.
 
-Our first function in this new file will return the variables that are
-currently at the top of the `main` function. It looks like this:
+Le premier pas est de déplacer autant que possible l'initialisation des
+variables en dehors de la boucle principale. Nous allons créer quelques
+fonctions qui vont créer le joueur, créer la carte et charger des variables
+comme `map_width` et `fov_algorithm`. Nous allons créer un nouveau dossier
+appelé `loader_functions` et y ajouter un fichier `initialize_new_game.py`.
+
+Notre première fonction dans ce nouveau fichier va renvoyer les variables qui
+sont en haut de la fonction `main`. Cela va ressembler à ça :
 
 {{< highlight py3 >}}
 import tcod as libtcod
@@ -91,20 +91,19 @@ def get_constants():
     return constants
 {{</ highlight >}}
 
-*\*Note: `window_title` is new. Before, we were just passing the title
-of the window as a string, but we might as well define it as part of
-this dictionary.*
+*\*Remarque : `window_title` est nouveau. Avant on se contentait de passer le
+titre de la fenêtre comme une chaîne mais on pourrait aussi bien la définir
+comme un élément de ce dictionnaire.*
 
-Why the name "constants"? Python doesn't have a way to declare a
-variable that never changes (Java has "final", C\# has "readonly",
-etc.), so I wanted a name that conveys the fact that these variable's
-*shouldn't* change. The program *could, theoretically* alter them during
-the course of the game, but for now, we won't do that. You can use
-another name if you prefer, like "game\_variables" or something to that
-effect.
+Pourquoi ce nom "constants" ? Python ne dispose pas d'un moyen de déclarer une
+variable qui ne change pas (Java a "final", C\# a "readonly" etc.) aussi je
+voulais un nom qui signfie le fait que ces variables de *devraient* pas changer.
+Le programme *pourrait, en théorie* les modifier durant le cours du jeu mais
+pour l'instant, on ne le fera pas. Vous pouvez utiliser un autre nom si vous
+préférez comme "game\_variables" ou quelque chose d'autre.
 
-Let's put this function to work in our `engine.py` file. Import the
-function first:
+Mettons cette fonction en action dans notre fichier `engine.py`. Importons
+d'abord la fonction.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -123,8 +122,8 @@ from map_objects.game_map import GameMap
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then, call it in the first line of `main`. Let's also remove those same
-variables :
+Alors, appelons la dans la première ligne de `main`. Retirons aussi les
+variables similaires.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def main():
@@ -201,11 +200,10 @@ def main():
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Okay, so if you're using an IDE (like PyCharm), then it's probably going
-crazy right now. Obviously we can't just remove that many variables and
-expect everything to be just fine. We have to modify all the times we
-used those "constant" variables directly, and replace then with a lookup
-to the `constants` dictionary.
+D'accord, si vous utilisez un IDE (comme PyCharm) alors il devient probablement
+fou en ce moment... De toute évidence on ne peut retirer autant de variables et
+espérer que tout fonctionne bien. Nous devons modifier toutes les utilisations
+de ces "constantes" et les remplacer à un appel au dictionnaire `constants`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -297,25 +295,25 @@ to the `constants` dictionary.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-*\*Note: Why are we using the square bracket notation instead of the
-`get()` method? In most other spots, we've used the 'get' notation, but
-here I would argue it makes more sense to use the square brackets.
-Square brackets will outright crash our game if the variable isn't
-found, which in this case, is probably what we'd want. The game can't
-possibly proceed without these variables, so there's no reason to try to
-continue the program without them.*
+*\*Note : pourquoi utilisons-nous un crochet plutôt qu'une méthode `get()` ?
+Dans la majorité des autres parties, nous avons utilisé la notation 'get' mais
+ici je trouve que ça fait plus de sens d'employer un crochet.
+Les crochets vont faire planter le jeu si la variable n'est pas trouvée et,
+dans ce cas, c'est certainement ce que nous voulons. Le jeu ne peut tourner
+sans ces variables aussi il n'y aucune raison de continuer le programme sans
+elle.*
 
-That's a lot of changes, but we've successfully removed the constant
-variables out of the main loop\! Note that if you wanted to, you could
-shorten a *lot* of those function definitions by just passing the
-`constants` dictionary instead of passing only what the functions need.
-It doesn't make a huge difference and is really a matter of preference.
-I'll leave it as is in this tutorial, since changing the functions right
-now would be a ton of work.
+Cela représentant beaucoup de changement mais nous avons réussi à retirer les
+constantes de la boucle principale \! Remarquez que vous pourriez
+*considérablement* raccourcir ces définitions de fonctions en leur passant
+directement le dictionnaire de constantes plutôt qu'en donnant seulement celles
+dont la fonction a besoin. Cela ne fait pas une grande différence et c'est
+surtout une question de gout. Je vais laisser les choses ainsi dans ce tutoriel
+parce que modifier les fonctions maintenant serait une tâche considérable.
 
-What's next? Another thing we could do is move the initialization of the
-player, entities list, and game's map to a separate function. Put the
-following function in `initialize_new_game.py`:
+Et maintenant ? Une autre chose à faire est de modifier l'initialisation du
+joueur, de la liste des entités et de la carte de jeu dans un fonction séparée.
+Mettez la fonction suivante dans `initialize_new_game.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def get_constants():
@@ -364,8 +362,7 @@ def get_constants():
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We'll need to include a few imports in `initialize_new_game.py` for
-this:
+Nous devons maintenant ajouter quelques imports dans `initialize_new_game.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -410,10 +407,10 @@ def get_constants():
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Nothing has changed about the way we're initializing these variables.
-All we're doing is putting it in one function, which we'll call once in
-our main game loop. Let's do that now. Start by importing the
-`get_game_variables` function:
+Rien n'a changé dans la manière d'initialiser ces variables. Tout ce qu'on a
+fait est de les ajouter à une fonction, qu'on appellera une fois dans la
+boucle principale. Faisons le. Commencez par importer la fonction
+`get_game_variables` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -433,7 +430,7 @@ from map_objects.game_map import GameMap
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then modify the `main` function like this:
+Ensuite modifiez ainsi la fonction `main` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -512,9 +509,9 @@ Then modify the `main` function like this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-One interesting effect of removing these lines is that we don't need all
-the imports we did before. Modify your import section at the top of
-`engine.py` to look like this:
+Une conséquence intéressante du retrait de ces lignes et qu'on n'a plus besoin
+d'autant d'imports. Modifiez la section d'imports en haut de `engine.py` pour
+la rendre ainsi :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -552,32 +549,32 @@ from render_functions import clear_all, render_all<span class="crossed-out-text"
 {{</ original-tab >}}
 {{</ codetab >}}
 
-It's time to think about how we're going to save and load our game. In
-order for this to happen, we'll need to save some (not necessarily all)
-of our data to some sort of persistent external location. In many
-applications, this would be a SQL or NoSQL database, but that's probably
-overkill for our little project. Instead, we'll just save to a data
-file.
+Il est temps d'envisager la sauvegarde et le chargement de notre jeu. Pour ce
+faire nous devons sauvegarder certaines (pas forcement toutes) les données
+vers un espace extérieur. Dans la majorité des applications cela serait
+une base de données SQL ou NoSQL mais c'est sûrement trop pour notre petit
+projet. Nous utiliserons pluôt une fichier de données.
 
-So what exactly do we need to save? The key things are the entities list
-(including the player), the game's map, the message log, and the game's
-state. These are the same variables we got from the game's
-initialization function too, so we'll be able to start a new game or
-load an old one by just swapping our the respective functions. More on
-that later.
+Qu'avons-nous besoin de sauvegarder ? Les éléments clé sont la liste des entités
+(contenant le joueur), la boucle de jeu, le journal de messages et l'état du
+jeu. Ce sont les variables renvoyées par la fonction d'initialisation ainsi
+nous pourrons démarrer une partie ou en charger une ancienne en remplaçant
+simplement la fonction. Plus d'information à ce propos un peu plus tard.
 
-Unfortunately, plain JSON isn't quite enough to save and load our data.
-Our objects are too complex to just save to straight JSON. There are a
-few solutions to this. The first would be to write serializers for our
-classes and objects ourselves, which isn't a bad idea. But in the
-interest of keeping things simple for this tutorial, we'll just use a
-library; specifically: `shelve`. This library allows you to save and
-load complex Python objects, without needing to write custom
-serializers.
+Malheureusement un simple JSON n'est pas assez pour sauvegarder et charger nos
+données. Nos objets sont trop complexes pour les enregistrer dans un fichier
+JSON. Il y a plusieurs solutions pour résoudre ce problème. La première serait
+d'écrire nous même des sérialiseurs pour nos classes et nos objets, ce n'est pas
+une mauvaise idée. Mais afin de conserver la simplicité de ce tutoriel nous
+utiliserons une librairie. Pour être précis : `shelve` (ranger). Cette librairie
+permet de sauvegarder et charger des objets Pythons complexes sans devoir écrire
+des serialiseurs particuliers.
 
-Install `shelve` in your Python installation (pip is the best way).
-Then, create a new file in `loader_functions`, called `data_loaders.py`.
-We'll start by writing our save function.
+Dans les versions récentes,`shelve` est déjà présent.
+Si vous utilisez une version ancienne de Python, il faut installer `shelve`
+(pip est la meillere manière). Ensuite créez un nouveau fichier dans
+`loader_functions` appelé `data_loaders.py`. Nous allons commencer par ecrire
+une fonction de sauvegarde.
 
 {{< highlight py3 >}}
 import shelve
@@ -592,17 +589,17 @@ def save_game(player, entities, game_map, message_log, game_state):
         data_file['game_state'] = game_state
 {{</ highlight >}}
 
-Using `shelve`, we're encoding the data into a dictionary which we'll
-save to the file later. Note that we're not actually saving the
-`player`, because the player is already part of the `entities` list. We
-just need the index in the list, so that we can load the player from
-that list later.
+Avec `shelve` nous encodons les données dans un dictionnaire qui sera enregistré
+plus tard dans le fichier. Remarquez qu'on ne sauvegarde pas le `player`
+parce que le joueur est déjà un élément de la liste `entities`. Nous n'avons
+besoin que de l'indice dans la liste pour en extraire le joueur plus tard.
 
-And that's all we need to save the game\! Without the `shelve` module,
-it would have taken far more effort to be able to save our game.
-Luckily, it also makes loading our game easy too; let's implement that
-now. In the same file (`data_loaders.py`), create a new function called
-`load_game`. You'll need to import `GameMap` in order for this to work.
+Et c'est tout ce qui nous faut pour sauvegarder le jeu \! Sans le module
+`shelve` cela nous aurait demandé beaucoup plus d'efforts pour sauvegarder le
+jeu. Heureusement, cela simplifie aussi le chargement du jeu. Implémentons
+le maintenant. Dans le même fichier (`data_loaders.py`), créons une nouvelle
+fonction appelée `load_game`. Vous devrez importer `GameMap` pour faire
+fonctionner ces changements.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +import os
@@ -655,22 +652,23 @@ def save_game(player, entities, game_map, message_log, game_state):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-This is just the reverse of the save function. We pull the data out of
-the data file, and return all the variables needed to the engine.
+Ce n'est que le contraire de la fonction d'enregistrement. Nous extrayons
+les données du fichier et renvoyons les variables nécessaires au moteur du
+jeu.
 
-The functions for saving and loading are done, but now we need a way to
-use them. Before we do that, it's probably a good time to think about
-how our game starts up in the first place. Right now, the game just
-starts, throwing the player straight into a new game. But that's not how
-games typically work. Almost every game in existence has some sort of
-starting screen, which lets the player start a new game, load an
-existing one, exit, or maybe edit some options. Let's implement
-something similar for ours; we should let the player start a new game,
-load an existing one, or quit.
+Les fonctions pour enregistrer et charger le jeu sont faites et nous avons
+maintenant besoin d'une manière de les employer. Avant de ce faire, c'est
+certainement une bonne idée que de penser à la manière dont notre jeu débute
+une partie. Pour l'instant, le jeu démarre directement, lançant le joueur
+dans l'action.  Ce n'est pas la manière traditionnelle de débuter un jeu.
+Presque tous les jeux proposent un écran de démarrage qui permet au joueur
+de débuter une partie, d'en charger une existante, de quitter ou modifier
+les réglages. Implémentons quelque chose de similaire pour le notre. Nous
+allons permettre au joueur de débuter une partie, de charger une sauvegarde ou
+de sortir.
 
-We'll need a new menu function to display our main menu. Open up
-`menus.py` and add the following function to
-    it:
+Nous aurons besoin d'une nouvelle fonction pour afficher notre menu principal.
+Ouvrez `menus.py` et ajouter les fonctions suivantes :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def inventory_menu(con, header, inventory, inventory_width, screen_width, screen_height):
@@ -707,18 +705,16 @@ def inventory_menu(con, header, inventory, inventory_width, screen_width, screen
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Our "main" function right now operates off the assumption that we're
-going straight into the game. A better method of handling this would be
-to have the "main" function open the main menu, and, if the player
-chooses to either start a new game or continue an old one, the main game
-starts. We can move the logic of the main game to a separate function,
-which we'll call `play_game`. This function will live in our `engine.py`
-file (it doesn't have to, but it doesn't make much sense to put it
-elsewhere right now).
+Notre fonction principale fonctionne en supposant qu'on entre directement dans
+le jeu. Il serait plus adapté que la fonction principale lance le menu principal
+et, si le joueur choisit de débuter une nouvelle partie ou d'en continuer une
+ancienne, le jeu principal débute. Nous pouvons déplacer la logique du jeu
+principal dans une fonction séparée qui s'appelera `play_game`. Cette fonction
+sera dans notre fichier `engine.py` (ce n'est pas indispensable mais ça n'a
+aucune sens de la placer ailleurs pour l'instant).
 
-*\*Note: I won't bother with code highlighting here, there's just too
-much to
-    cover.*
+*\*Remarque: Je ne vais présenter de coloration syntaxique pour illustrer les
+changement ici, il y en aurait beaucoup trop.*
 
 {{< highlight py3 >}}
 def play_game(player, entities, game_map, message_log, game_state, con, panel, constants):
@@ -910,15 +906,15 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
                 game_state = GameStates.PLAYERS_TURN
 {{</ highlight >}}
 
-This is the same as our game code from before, just put into a function.
-We'll pass all the needed variables in our `main` function. If the
-player presses escape during the game, we'll return to the main loop,
-which displays the main menu. The one thing that is different here is
-that we're calling `save_game` before exiting the loop.
+C'est le même code que ce qui était dans notre jeu jusqu'ici mais dans une
+fonction. Nous passons toutes les variables à notre fonction principale.
+Si le joueur presse Escape durant le jeu, on retourne à la boucle principale,
+qui affiche le menu. La grande différence est qu'on appelle `save_game` avant
+de quitter le jeu.
 
-Now let's change our main loop. It'll display the main menu, and
-depending on the player's choice, it will either start a new game, load
-an existing one, or exit the program.
+Maintenant modifions la boucle principale. Elle va afficher le menu principal
+et, selon le choix du joueur, on va débuter une nouvelle partie ;
+charger une existante ou quitter le programme.
 
 {{< highlight py3 >}}
 def main():
@@ -986,23 +982,20 @@ def main():
             show_main_menu = True
 {{</ highlight >}}
 
-We're loading a background image with `image_load` to display in our
-main menu. The sample image used for this tutorial can be [found
-here](http://roguecentral.org/doryen/files/menu_background1.png).
-Download it and put in in your project's directory.
+On charge l'image de fond avec `image_load` pour afficher notre menu principal.
+L'image de fond utilisée dans ce tutoriel est [disponible ici](http://roguecentral.org/doryen/files/menu_background1.png). Téléchargez la et ajoutez la à votre dossier de jeu.
 
-Other than that, a lot of this should look familiar. We're displaying
-the main menu with three options, and accepting keyboard input to
-determine which option to go with. If the user starts a new game, we use
-our `get_game_variables` function from earlier, and if an old game is
-being loaded, we use the `load_game` function. Either way, we get the
-same variables. Assuming one of those options was chosen, we pass the
-variables off to the `play_game` function, and the game proceeds as it
-has been until now.
+En dehors de ça, la majorité devrait vous paraître familière. On affiche
+le menu principal avec trois options et on lit les événements clavier pour
+déterminer quelle option choisir. Si le joueur débute une nouvelle partie,
+on utilise la fonction `get_game_variables` définie plus tôt. Dans tous les cas
+on obtient les mêmes variables. En supposant qu'une de ces options soit choisie
+on passe les variables à la fonction `play_game` et le jeu continue comme il l'a
+fait jusque là.
 
-We haven't implemented the `message_box` or `handle_main_menu` functions
-yet, so let's do so now. We'll start with `message_box` and we'll put it
-in `menus.py`, at the bottom of the file:
+On n'a pas encore implémenté les fonctions `message_box` ni `handle_main_menu`
+aussi faisons le maintenant. Commençons par `message_box` et on l'ajoutera à
+`menus.py` à la fin du fichier :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 +def message_box(con, header, width, screen_width, screen_height):
@@ -1015,10 +1008,9 @@ in `menus.py`, at the bottom of the file:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Pretty straightforward. The message box is just an empty menu,
-basically.
+Plutôt direct. La boîte de message n'est qu'un menu vide.
 
-Now on to `handle_main_menu`, which goes in `input_handlers.py`:
+Maintenant `handle_main_menu` qui va dans `input_handlers.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def handle_inventory_keys(key):
@@ -1063,11 +1055,11 @@ def handle_mouse(mouse):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Nothing too complicated here: Our main menu will have 3 options, so just
-return the result of which option was selected. Note that the 'Quit'
-option can be done through the 'c' key or 'Escape'.
+Rien de très compliqué ici : notre menu principal aura trois options. On renvoie
+le résultat de l'option choisie. Remarquez que l'option `Quit` peut être obtenue
+avec les touches 'c' ou 'Escape'.
 
-Remember to import these new functions into `engine.py`:
+Souvenez vous d'importer ces nouvelles fonctions à `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -1103,13 +1095,11 @@ from render_functions import clear_all, render_all
 {{</ original-tab >}}
 {{</ codetab >}}
 
-That's all for this chapter. The gameplay itself hasn't changed, but
-saving and loading is no small feat. Be proud\!
+Ce chapitre est clos. Le gameplay n'a pas changé mais l'enregistrement et le
+chargement ne sont pas choses aisées. Soyez fier de vous \!
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part10).
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part910.
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-11)
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-11)
 
 <script src="/js/codetabs.js"></script>

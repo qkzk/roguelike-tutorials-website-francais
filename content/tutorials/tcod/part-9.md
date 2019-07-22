@@ -1,18 +1,23 @@
 ---
-title: "Part 9 - Ranged Scrolls and Targeting"
+title: "Part 9 - Lancer des sorts"
 date: 2019-03-30T09:34:01-07:00
 draft: false
 ---
 
-Adding health potions was a big step, but we won't stop there. Let's
-continue adding a few items, this time with a focus on offense. We'll
-add a few scrolls, which will give the player a one-time ranged attack.
-This gives the player a lot more tactical options to work with, and is
-definitely something you'll want to expand upon in your own game.
+Ajouter des potions de soin fut une grande avancée mais nous ne nous arrêterons
+pas là. Continuons maintenant avec quelques objets offensifs. Nous allons
+ajouter quelques parchemins qui donneront au joueur une attaque à distance à
+usage unique. Cela permet plus d'options tactiques ce qui est une direction
+que vous devez chercher à améliorer dans un jeu.
 
 Let's start simple, with a spell that just hits the closest enemy. We'll
 create a scroll of lightning, which automatically targets an enemy
 nearby the player. Start by adding the function to `item_functions.py`:
+
+Commençons simplement par un sort qui frappe l'ennemi le plus proche. Nous
+allons créer un simple parchemin d'éclair (scoll of lightning) qui va viser
+automatiquement l'adversaire le plus proche. Commencez par ajouter la fonction
+à `item_functions.py`
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def heal(*args, **kwargs):
@@ -81,9 +86,9 @@ def heal(*args, **kwargs):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now let's add a chance for this scroll to drop on the map. Most of the
-items will still be health potions, but we'll sprinkle in a few
-lightning scrolls as well. In `game_map.py`:
+Maintenant nous devons en déposer quelqu'uns uns sur la carte. La plupart des
+items seront des potions de soin mais nous allons ajouter quelques parchemins
+d'éclair. Dans `game_map.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -119,7 +124,7 @@ lightning scrolls as well. In `game_map.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Be sure to import `cast_lightning` at the top of the file.
+Assurez-vous d'importer `cast_lightning` en haut du fichier.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -143,9 +148,9 @@ from map_objects.rectangle import Rect
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Lastly, we'll need to adjust our "use" call in `engine.py`, since our
-lightning spell is expecting more keyword arguments than we're currently
-passing.
+Enfin, nous allons ajuster notre appel à "utiliser" dans `engine.py`, notre
+parchemin d'éclair ayant besoin de davantage d'arguments qu'on n'en passe
+actuellement.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -166,21 +171,21 @@ passing.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project now, and you should have a working lightning scroll.
-That was pretty easy\!
+Lancez le projet et vous devriez avoir un parchemin d'éclair fonctionnel.
+C'était plutôt simple \!
 
-*\*Tip: For testing, you may want to increase the maximum amount of
-items per room.*
+*\*Conseil : pour tester vous pouvez augmenter le nombre maximal d'items par
+pièce.*
 
-Needless to say, the spell would be much more usable if we were allowed
-to select the target. While we won't change the lightning spell, we
-should have another type of spell that allows targeting. Let's focus on
-creating a fireball spell, which will not only ask for a target, but
-also hit multiple enemies in a set radius.
+Inutile de le dire, le sort serait bien plus pratique si on pouvait choisir sa
+cible. Nous n'allons pas changer le sort d'éclair mais plutôt ajouter un autre
+type de sort qui permette de viser. Concentrons nous sur une boule de feu qui
+permette non seulement de viser mais aussi de toucher plusieurs ennemis dans
+un rayon donné.
 
-We'll work backwards in this case, by starting with the end result (the
-"fireball" spell) and modifying everything else to make this work.
-Here's the fireball spell, which should go in `item_functions.py`:
+Nous allons travailler dans l'autre sens cette fois, partant d'un sort de boule
+de feu "fireball" nous allons modifier tout le reste pour le faire fonctionner.
+Voici le sort de boule de feu qui va dans `item_functions.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -241,19 +246,19 @@ def cast_lightning(*args, **kwargs):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-What do we need to do to make this function work? The most obvious thing
-is to pass the damage, radius, and target location. Damage and radius
-are easy; we can do those when we create the item in `place_entities`.
-The target is trickier, because we don't know that is until the player
-selects a tile after using the item.
+Que devons-nous changer pour faire marcher cette fonction ? La manière évidente
+est de passer les dégâts, le rayon et la position de la cible. Dégâts et rayon
+sont simples, on peut le faire quand on crée l'objet dans `place_entities`. La
+visée est plus délicate, on n'en connaît rien tant que le joueur n'a pas choisi
+une tuile après avoir utilisé l'objet.
 
-We're going to need another game state for targeting. When the player
-selects a certain type of item, the game will ask him or her to select a
-location before proceeding. The player then can left-click on a
-location, or right-click to cancel, so we'll need a new set of input
-handlers as well.
+Nous allons avoir besoin d'un autre état du jeu pour la visée. Quand le joueur
+choisit un certain type d'objet, le jeu va lui demander de choisir une position
+avant de continuer. Le joueur peut alors cliquer sur une position et faire un
+clic droit pour annuler. Nous aurons donc besoin d'un nouveau gestionnaire de
+saisie.
 
-Start with the easy part: Add a new game state to `GameStates`:
+Commençez par la partie facile : ajouter un nouvel état ) `GameStates` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class GameStates(Enum):
@@ -276,9 +281,9 @@ class GameStates(Enum):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now let's modify the input handlers. We'll add a function for the keys
-while we're targeting, and also add a generalized mouse handler, to know
-where the player clicks.
+Maitenant modifiez le gestionnaire de saisie. Nous allons ajouter une fonction
+pour les touches quand on vise ainsi qu'un gestionnaire de souris générique
+pour savoir où vise le joueur.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def handle_keys(key, game_state):
@@ -349,11 +354,11 @@ def handle_player_dead_keys(key):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-If the player is in targeting mode, the only key we'll accept is Escape,
-which cancels the targeting. The mouse handler doesn't take the game
-state into account; it just tells the engine if the left or right mouse
-button was clicked. The engine will have to decide what to do with that.
-Modify `engine.py` to accept the mouse inputs:
+Si le joueur est en mode visée, la seule touche acceptée est Escape, ce qui
+annule la visée. Le gestionnaire de souris ne tient pas compte de l'état du
+jeu, il ne fait que dire au moteur si le bouton gauche ou droit a été cliqué.
+Le moteur devra décider ce qu'il doit en faire.
+Modifiez `engine.py` pour recevoir les événements souris.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -392,7 +397,7 @@ Modify `engine.py` to accept the mouse inputs:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Of course, we need to import `handle_mouse` into `engine.py`:
+Bien sûr, nous devons importer `handle_mouse` dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -412,11 +417,11 @@ from map_objects.game_map import GameMap
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So how do we even know what types of items need to select a target? We
-can add an attribute to the `Item` component which will tell us. We
-should also add a message, which will display when the user activates
-the item, to inform the user that a target needs to be selected. Modify
-the `__init__` function in `Item` like this:
+Mais comment savons-nous qu'un certain item a besoin d'une visée ? Nous pouvons
+ajouter un attribut au composant `Item` qui nous l'indiquera. Nous devrions
+aussi ajouter un message, affiché quand l'utilisateur active l'objet, pour
+l'informer qu'une cible doit être choisie. Modifiez la fonction `__init__`
+depuis `Item` comme ceci :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Item:
@@ -438,15 +443,15 @@ class Item:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Because we're setting the values of `targeting` and `targeting_message`
-to `None` by default, we don't have to worry about changing the items
-we've already made.
+Parce que les valeurs de `targeting` et `targeting_message` sont None par
+défaut, nous n'avons pas à nous soucier de modifier les objets que nous avons
+déjà crée.
 
-We'll need to change our `use` function in `Inventory` to take the
-targeting variable into account. If the item needs a target, we should
-return a result that tells the engine that, and not use the item. If
-not, we proceed as before. Add a new "if" statement to `use`, and wrap
-the previous code section in the "else" clause, like this:
+Nous devrons modifier notre fonction `use` depuis `Inventory` pour tenir compte
+de la variable de visée. Si l'objet a besoin d'une cible, nous devrions renvoyer
+un résultat qui l'indique au moteur plutôt que de consommer l'objet. Sinon, on
+continue comme avant. Ajoutez une nouvelle expression "if" à `use` et entourez
+le code précédent dans un bloc "else" ainsi :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def use(self, item_entity, **kwargs):
@@ -505,17 +510,16 @@ the previous code section in the "else" clause, like this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So basically, we check if the item has "targeting" set to True, and if
-it does, whether or not we received the `target_x` and `target_y`
-variables. If we didn't we can assume that the target has not yet been
-selected, and the game state needs to switch to targeting. If it did, we
-can use the item like normal.
+Simplement, on vérifie si l'objet a "targetting" (visée) sur True et, si c'est
+le cas, si nous avons reçu les variables `target_x` et `target_y`. Sinon, on
+peut supposer que la cible n'a pas été choisie et l'état du jeu doit passer sur
+visée. Si les variables sont reçues, on peut utiliser le sort normalement.
 
-Now let's modify the engine to handle this new result type. Note that
-this result returns the item entity to the engine. That's because the
-engine will need to "remember" which item was selected in the first
-place. Therefore, we'll need a new variable right before the main game
-loop to keep track of the targeting item that was selected.
+Maintenant, il faut modifier le moteur pour gérer ce nouveau type de sort.
+Remarquez que le résultat renvoie une entité objet au moteur. C'est parce que
+le moteur aura besoin de se souvenir de l'objet choisi. Aussi, nous aurons
+besoin d'une nouvelle variable juste avant la boucle principale pour conserver
+l'objet choisi s'il a une visée.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -576,17 +580,16 @@ loop to keep track of the targeting item that was selected.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now our game state will switch to targeting when we select an item from
-the inventory that needs it. Note that we're doing something a little
-strange with the previous game state; we're setting it to the player's
-turn rather than the actual previous state. This is so that cancelling
-the targeting will not reopen the inventory screen.
+Maintenant notre état de jeu va basculer sur visée quand on choisit un objet
+de l'inventaire qui en nécessite une. Remarquez qu'on fait quelque chose
+d'étrange avec le précédent état du jeu : on le règle sur le tour du joueur
+plutôt que le précédent état du jeu. Cela évitera de réouvrir l'inventaire
+quand on annule la visée.
 
-Let's now do something with the left and right clicks we added in
-before. If the player left clicks while in targeting, we'll activate the
-use function again, this time with the target variables. If the user
-right clicks, we'll cancel the targeting. We can also add the cancel
-targeting on Escape now.
+Maintenant il faut faire quelque chose des clics gauche et droit ajoutés plus
+tôt. Si le joueur fait un clic gauche, nous lançons la fonction "use" à nouveau
+cette fois avec les variables de la cible. Si le joueur fait un clic droit, nous
+annulons la visée. Nous pouvons aussi ajouter l'annulation de la visée à Escape.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -674,8 +677,8 @@ Add the following to make the target cancellation revert the game state:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Finally, let's add the fireball scroll to the map. Modify
-`place_entities` like this:
+Enfin, ajoutons le parchemin de boule de feu sur la carte. Modifiez
+`place_entities` comme ceci :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                 ...
@@ -718,7 +721,7 @@ Finally, let's add the fireball scroll to the map. Modify
 {{</ original-tab >}}
 {{</ codetab >}}
 
-You'll need to import both `cast_fireball` and `Message`:
+Vous devez importer `cast_fireball` et `Message` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -746,9 +749,9 @@ from map_objects.rectangle import Rect
 {{</ original-tab >}}
 {{</ codetab >}}
 
-One change we need to make for `cast_fireball` to work: We need a
-`distance` function in `Entity`, to get the distance between the entity
-and an arbitrary point.
+Il faut encore un changement pour que `cast_fireball` puisse fonctionner :
+nous avons besoin d'une fonction `distance` dans `Entity` pour obtenir la
+distance entre une entité et un point arbitraire.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     def move_towards(self, target_x, target_y, game_map, entities):
@@ -774,15 +777,15 @@ and an arbitrary point.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project now, and you should have a functioning fireball spell\!
-Be careful though, the player can get damaged by this spell if you cast
-it too close to yourself\!
+Lancez le jeu et vous devriez avoir un sort de boule de feu qui fonctionne.
+Soyez prudent, le joueur prend des dégâts si vous lancez le sort trop proche
+de lui.
 
-Let's add one more spell for fun: confusion. This will involve modifying
-the target's AI for a few turns, and setting it back to normal once the
-spell ends.
+Ajoutons un dernier sort pour s'amuser : confusion. Cela va demander de changer
+la visée de l'AI pour quelques tours et la rétablir à la normale une fois que
+le sort est terminé.
 
-We'll begin by adding the confused AI, to `ai.py`:
+Commençons par ajouter un état "confus" à l'AI dans `ai.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -855,14 +858,15 @@ class BasicMonster:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-The class gets initialized with a number of turns that the entity is
-confused for. It also keeps track of what the entity's actual AI is, so
-that it can be switched back when the confusion wears off. For the
-`take_turn` method, the entity moves randomly (or not at all), and one
-turn gets taken off the timer. Once the timer hits 0, the entity is no
-longer confused, and goes back to its previous AI.
+La classe est initialisée avec un nombre de tours durant lesquels l'entité est
+confuse. On garde en mémoire l'état précédent de l'AI pour y revenir une fois
+que la confusion est terminée. Pour la méthode `take_turn`, l'entité se déplace
+de manière aléatoire (ou reste sur place) et le compteur diminue. Une fois que
+le compteur atteint 0, l'entité n'est plus confuse et revient à son AI
+précédente.
 
-Now for the confusion spell. Add the following to `item_functions.py`
+Maintenant le sort de confusion. Ajouter à `item_functions.py` les éléments
+suivants :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def cast_fireball(*args, **kwargs):
@@ -931,8 +935,7 @@ def cast_fireball(*args, **kwargs):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-You'll need to import the `ConfusedMonster` class to the top of the
-file:
+Nous devons importer la classe `ConfusedMonster` en haut du fichier :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -978,8 +981,8 @@ from map_objects.rectangle import Rect
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We'll also modify the chances of our scrolls, so that each one has a 10%
-chance of spawning.
+Nous devons aussi modifier les chances d'apparition de nos parchemins, de façon
+à ce qu'ils aient tous 10% de chance d'apparaître.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                 if item_chance < 70:
@@ -1020,18 +1023,16 @@ chance of spawning.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project, and you should be able to cast confusion on enemies.
-Enemies who are confused will waste their turns either moving randomly,
-or staying in one spot.
+Lancez le projet maintenant et vous devriez pouvoir lancer confusion sur les
+ennemis. Les ennemis confus vont gacher leur tours en se déplaçant aléatoirement
+ou en restant sur place.
 
-That's all for today. We now have 3 different types of scrolls the
-player can utilize against enemies. Feel free to try adding more scrolls
-and spells as you see fit.
+C'est tout pour aujourd'hui. Nous avons maintenant trois parchemins différents
+que le joueur peut employer contre les ennemis. N'hésitez pas à en ajouter
+d'autres !
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part9).
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part9).
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-10)
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-10)
 
 <script src="/js/codetabs.js"></script>

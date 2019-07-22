@@ -12,7 +12,7 @@ draft: false
   - [Part 6 - Faire mal (et prendre des coups)](/tutorials/tcod/part-6)
   - [Part 7 - Créer une interface](/tutorials/tcod/part-7)
   - [Part 8 - Les items et l'inventaire](/tutorials/tcod/part-8)
-  - [Part 9 - Parchemins à distance et visée](/tutorials/tcod/part-9)
+  - [Part 9 - Lancer des sorts](/tutorials/tcod/part-9)
   - [Part 10 - Sauvegarder et recharger](/tutorials/tcod/part-10)
   - [Part 11 - Explorer les donjons en profondeur](/tutorials/tcod/part-11)
   - [Part 12 - Augmenter la difficultée](/tutorials/tcod/part-12)

@@ -1,0 +1,375 @@
+---
+title: "Partie 1 - Dessiner le caractère ‘@’ et le déplacer"
+date: 2019-03-30T08:39:15-07:00
+draft: false
+---
+
+<div>
+  <p>Bienvenue dans la partie 1 du <strong>Tutoriel Roguelike revesité !</strong> Cette série va vous aider à créer votre tout premier jeu roguelike, écrit en Python.</p>
+  <p>Ce tutoriel est largement inspiré de celui <a href="http://www.roguebasin.com/index.php?title=Complete_Roguelike_Tutorial,_using_python%2Blibtcod">trouvé sur Roguebasin</a>. Une grande partie des décisions de conception furent prises afin de
+    conserver une progression commune avec celui-ci (du moins en ce concerne la composition des chapitres et la direction générale). Ce tutoriel n'aurait pu être possible sans le travail des concepteurs d'origine ainsi que celui des merveilleux
+    contributeurs de libtcod et python-tcod.</p>
+  <p>Nous supposons dans cette partie que vous avez déjà effectué la <a href="/tutorials/tcod/part-0">partie 0</a> et être prêt à commencer. Sinon, rendez-vous sur cette page est vérifiez votre installation de Python et de TCOD. Assurez-vous d'avoir
+    un fichier <code>engine.py</code> dans le dossier choisi pour votre travail.</p>
+  <p>Supposant que vous avez accompli tout ça, commençons. Modifiez (ou créez si vous ne l'avez pas déjà fait) le fichier <code>engine.py</code> pour qu'il ressemble à ça :</p>
+  <p>{{&lt; highlight py3 &gt;}} import tcod as libtcod</p>
+  <p>def main(): print('Hello World!')</p>
+  <p>if <strong>name</strong> == '<strong>main</strong>': main() {{&lt;/ highlight &gt;}}</p>
+  <p>Vous pouvez exécuter le programme comme n'importe quel programme Python mais, pour les novices, vous le faîtes en tapant <code>python engine.py</code> dans le terminal. Si vous avez à la fois Python 2 et 3 d'installé sur votre machine, il se
+    peut que vous deviez taper <code>python3 engine.py</code> pour le lancer (cela dépend de votre python par défaut et vous utilisez un environnement virtuel ou non).</p>
+  <p>D'accord, ce n'est pas le programme le plus enthousiasmant qui soit, je le reconnais, mais nous avons déjà une différence majeure avec l'autre tutoriel. C'est cette chose étrange ici :</p>
+  <p>{{&lt; highlight py3 &gt;}} if <strong>name</strong> == '<strong>main</strong>': main() {{&lt; /highlight &gt;}}</p>
+  <p>Qu'est-ce que ça fait ? Simplement, nous disons que nous n'allons lancer la fonction principale "main" que si nous lançons explicitement le script avec la commande <code>python engine.py</code>. Ce n'est pas fondamental que vous compreniez ça
+    maintenant mais si vous tenez à comprendre, cette réponse sur [Stackoverflow] (<a href="https://stackoverflow.com/a/419185">https://stackoverflow.com/a/419185</a>) donne un bon aperçu.</p>
+  <p>Assurez-vous que le programme précédent tourne (sinon, c'est probablement un soucis d'installation de libtcod). Une fois que cela est accompli, nous pouvons allez vers des étapes un peu plus intéressantes. La première étape importante dans la
+    conception d'un roguelike est d'obtenir un caractère '@' à l'écran et de le déplacer aussi allons-y.</p>
+  <p>Modifiez <code>engine.py</code> pour qu'il ressemble à ça :</p>
+  <p>{{&lt; highlight py3 &gt;}} import tcod as libtcod</p>
+  <p>def main(): screen_width = 80 screen_height = 50</p>
+  <pre><code>libtcod.console_set_custom_font(&#39;arial10x10.png&#39;, libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+
+libtcod.console_init_root(screen_width, screen_height, &#39;libtcod tutorial revised&#39;, False)
+
+while not libtcod.console_is_window_closed():
+    libtcod.console_set_default_foreground(0, libtcod.white)
+    libtcod.console_put_char(0, 1, 1, &#39;@&#39;, libtcod.BKGND_NONE)
+    libtcod.console_flush()
+
+    key = libtcod.console_check_for_keypress()
+
+    if key.vk == libtcod.KEY_ESCAPE:
+        return True
+</code></pre>
+  <p>if <strong>name</strong> == '<strong>main</strong>': main() {{&lt;/ highlight &gt;}}</p>
+  <p>Exécutez <code>engine.py</code> à nouveau et vous devriez vous un '@' à l'écran. Une fois que vous êtes complètement repu de la gloire provoquée par l'écran devant vous, vous pouvez presser la touche `Esc` pour quitter le programme.</p>
+  <p>Il se passe beaucoup de choses ici, aussi découpons ligne par ligne.</p>
+  <p>{{&lt; highlight py3 &gt;}} screen_width = 80 screen_height = 50 {{&lt;/ highlight &gt;}}</p>
+  <p>C'est assez simple. On définit quelques variables pour la dimension de l'écran. Éventuellement, nous pourrions charger ces valeurs depuis un fichier JSON plutôt que de les coder en dur dans les sources, mais nous ne en soucierons pas avant
+    d'avoir plus de variables.</p>
+  <p>{{&lt; highlight py3 &gt;}} libtcod.console_set_custom_font('arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD) {{&lt;/ highlight &gt;}}</p>
+  <p>Ici, nous disons à libtcod quelle police employer. La partie <code>'arial10x10.png'</code> est le fichier qu'on lit (il devrait exister dans votre dossier de projet). Les deux autres parties disent à libtcod quel type de fichier nous lisons.</p>
+  <p>{{&lt; highlight py3 &gt;}} libtcod.console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, 'libtcod tutorial revised', False) {{&lt;/ highlight &gt;}}</p>
+  <p>Cette ligne est ce qui crée l'écran. Nous lui donnons les valeurs <code>screen_width</code> et <code>screen_height</code> définies plus haut (80 et 50, respectivement), ainsi qu'un titre (changez le si vous connaissez déjà le nom de votre jeu)
+    et une valeur booléenne qui indique à libtcod si le jeu est plein écran ou non.</p>
+  <p>{{&lt; highlight py3 &gt;}} while not libtcod.console_is_window_closed(): {{&lt;/ highlight &gt;}}</p>
+  <p>C'est ce qu'on appelle la 'boucle de jeu'. C'est simplement une boucle qui ne va jamais s'interrompre tant qu'on n'aura pas fermé la fenêtre. Chaque jeu a une boucle de jeu d'une manière ou d'une autre.</p>
+  <p>{{&lt; highlight py3 &gt;}} libtcod.console_set_default_foreground(0, libtcod.white) {{&lt;/ highlight &gt;}}</p>
+  <p>Cette ligne indique à libtcod de régler la couleur de notre symbole '@'. Si vous souhaitez qu'il soit d'une autre couleur, remplacez <code>libtcod.white</code> par quelque chose comme <code>libtcod.red</code> et voyez ce que cela donne. Le '0'
+    dans cette fonction est la console sur laquelle nous écrivons. Nous en reparlerons plus tard.</p>
+  <p>{{&lt; highlight py3 &gt;}} libtcod.console_put_char(0, 1, 1, '@', libtcod.BKGND_NONE) {{&lt;/ highlight &gt;}}</p>
+  <p>Le premier argument est '0' (à nouveau, la console sur laquelle nous écrivons). Les deux suivants sont des coordonnées x et y, dans ce cas 1 et 1 (essayez de les remplacer pour voir ce que cela donne). Ensuite nous affichons le symbole '@' et
+    réglons le fond sur 'none' avec <code>libtcod.BKGND_NONE</code>.</p>
+  <p>{{&lt; highlight py3 &gt;}} libtcod.console_flush() {{&lt;/ highlight &gt;}}</p>
+  <p>This is the part that presents everything on the screen. Pretty straightforward.</p>
+  <p>{{&lt; highlight py3 &gt;}} key = libtcod.console_check_for_keypress()</p>
+  <pre><code>    if key.vk == libtcod.KEY_ESCAPE:
+        return True
+</code></pre>
+  <p>{{&lt;/ highlight &gt;}}</p>
+  <p>Cette partie nous permet de quitter gracieusement le jeu (sans planter) en pressant la touche <code>Esc</code>. La fonction <code>libtcod.console_check_for_keypress()</code> récupère une saisie clavier du programme que nous stockons dans la
+    variable <code>key</code>. Ensuite, nous vérifions si la touche pressée est <code>Esc</code> ou non. Si c'est le cas, nous quittons la boucle, ce qui termine le programme.</p>
+  <p>Maintenant que nous avons notre symbole <code>@</code> dessiné, déplaçons le !</p>
+  <p>Nous devons connaître la position du joueur, donc nous allons créer deux variables, <code>player_x</code> et <code>player_y</code>.</p>
+  <p>{{&lt; codetab &gt;}} {{&lt; diff-tab &gt;}} {{&lt; highlight diff &gt;}} ... screen_height = 50 +</p>
+  <ul>
+    <li>player_x = int(screen_width / 2)</li>
+    <li>player_y = int(screen_height / 2)</li>
+    <li>libtcod.console_set_custom_font('arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD) ... {{&lt;/ highlight &gt;}} {{&lt;/ diff-tab &gt;}} {{&lt; original-tab &gt;}}</li>
+  </ul>
+  <pre>    ...
+    screen_height = 50
+    <span class="new-text">
+    player_x = int(screen_width / 2)
+    player_y = int(screen_height / 2)
+    </span>
+    libtcod.console_set_custom_font('arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+    ...</pre>
+
+  <p>{{&lt;/ original-tab &gt;}} {{&lt;/ codetab &gt;}}</p>
+  <p><em>Remarque: Les trois points désignent une partie omise du code. J'inclurai des lignes autour du code à insérer afin que vous sachiez exactement où écrire les nouvelles parties de code mais je ne montrerai pas le fichier entier à chaque fois.
+      Les lignes vertes indiquent le code que vous devriez ajouter.</em></p>
+  <p>Nous plaçons le joueur en plein milieu de l'écran. Que fait la fonction <code>int()</code> ? Et bien, Python 3 ne tronque pas automatiquement la division comme Python 2 aussi nous devons convertir le résultat (un flottant) en entier. Sinon
+    libtcod va renvoyer une erreur.</p>
+  <p>Nous devons aussi modifier la commande affichant le symbole '@' afin d'employer ces nouvelles coordonnées.</p>
+  <p>{{&lt; codetab &gt;}} {{&lt; diff-tab &gt;}} {{&lt; highlight diff &gt;}} ... libtcod.console_set_default_foreground(0, libtcod.white)</p>
+  <ul>
+    <li>
+      <pre><code>  libtcod.console_put_char(0, 1, 1, &#39;@&#39;, libtcod.BKGND_NONE)
+</code></pre>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <pre><code>  libtcod.console_put_char(0, player_x, player_y, &#39;@&#39;, libtcod.BKGND_NONE)
+  libtcod.console_flush()
+  ...
+</code></pre>
+    </li>
+  </ul>
+  <p>{{&lt;/ highlight &gt;}} {{&lt;/ diff-tab &gt;}} {{&lt; original-tab &gt;}}</p>
+  <pre>        ...
+        libtcod.console_set_default_foreground(0, libtcod.white)
+        <span class="crossed-out-text">libtcod.console_put_char(0, 1, 1, '@', libtcod.BKGND_NONE)</span>
+        <span class="new-text">libtcod.console_put_char(0, player_x, player_y, '@', libtcod.BKGND_NONE)</span>
+        libtcod.console_flush()
+        ...</pre>
+
+  <p>{{&lt;/ original-tab &gt;}} {{&lt;/ codetab &gt;}}</p>
+  <p><em>Remarque : les lignes en rouge signalent le code qui a été enlevé.</em></p>
+  <p>Exécutez le programme maintenant et vous devriez voir le '@' au centre de l'écran. Occupons nous maintenant de le rendre mobile.</p>
+  <p>Ajoutez les deux lignes suivantes juste au dessus de la boucle principale.</p>
+  <p>{{&lt; codetab &gt;}} {{&lt; diff-tab &gt;}} {{&lt; highlight diff &gt;}} ... libtcod.console_init_root(screen_width, screen_height, 'libtcod tutorial revised', False)</p>
+  <ul>
+    <li>
+      <p>key = libtcod.Key()</p>
+    </li>
+    <li>
+      <p>mouse = libtcod.Mouse()</p>
+      <p>while not libtcod.console_is_window_closed(): ... {{&lt;/ highlight &gt;}} {{&lt;/ diff-tab &gt;}} {{&lt; original-tab &gt;}}</p>
+    </li>
+  </ul>
+  <pre>    ...
+    libtcod.console_init_root(screen_width, screen_height, 'libtcod tutorial revised', False)
+
+    <span class="new-text">key = libtcod.Key()
+    mouse = libtcod.Mouse()</span>
+
+    while not libtcod.console_is_window_closed():
+    ...</pre>
+
+  <p>{{&lt;/ original-tab &gt;}} {{&lt;/ codetab &gt;}}</p>
+  <p>Ainsi que les noms le suggèrent, ces variables vont contenir nos saisies clavier et souris. Nous n'implémenterons pas la souris immédiatement mais la fonction que nous allons ajouter en tient compte aussi nous pouvons l'ajouter.</p>
+  <p>{{&lt; codetab &gt;}} {{&lt; diff-tab &gt;}} {{&lt; highlight diff &gt;}} ... while not libtcod.console_is_window_closed():</p>
+  <ul>
+    <li>
+      <pre><code>  libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
+
+  libtcod.console_set_default_foreground(0, libtcod.white)
+</code></pre>
+      ... {{&lt;/ highlight &gt;}} {{&lt;/ diff-tab &gt;}} {{&lt; original-tab &gt;}}</li>
+  </ul>
+  <pre>    ...
+    while not libtcod.console_is_window_closed():
+        <span class="new-text">libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)</span>
+
+        libtcod.console_set_default_foreground(0, libtcod.white)
+    ...</pre>
+
+  <p>{{&lt;/ original-tab &gt;}} {{&lt;/ codetab &gt;}}</p>
+  <p>C'est la fonction qui capture les nouveaux "événements" (saisie clavier). Elle va mettre à jour les variables <code>key</code> et <code>mouse</code> avec ce que saisit l'utilisateur. À nouveau seule <code>key</code> nous intéresse pour
+    l'instant.</p>
+  <p>D'accord, nous mettons <code>key</code> à jour avec la saisie de l'utilisateur. Mais qu'en <em>faisons</em> nous ? Cela va traduire les saisies en action de jeu.</p>
+  <p>Pour l'instant, ce tutoriel n'a pas vraiment divergé de celui d'origine mais voici un changement radical. Nous sommes sur le point de définir une fonction appelée <code>handle_keys</code> qui va gérer les saisies clavier. Nous <em>pourrions</em>
+    l'ajouter à notre fichier <code>engine.py</code>... mais est-ce la place de cette fonction ? Je pense que non. Le moteur (la boucle principale) capture les saisies et devrait en faire quelque chose mais traduire de l'un vers l'autre ne le
+    concerne pas.</p>
+  <p>Aussi, plutôt que d'ajouter la fonction <code>handle_keys</code> à <code>engine.py</code>, créez un nouveau fichier, appelé <code>input_handlers.py</code>. Placez le code suivant dans ce nouveau fichier.</p>
+  <p>{{&lt; highlight py3 &gt;}} import tcod as libtcod</p>
+  <p>def handle_keys(key): # Movement keys if key.vk == libtcod.KEY_UP: return {'move': (0, -1)} elif key.vk == libtcod.KEY_DOWN: return {'move': (0, 1)} elif key.vk == libtcod.KEY_LEFT: return {'move': (-1, 0)} elif key.vk == libtcod.KEY_RIGHT:
+    return {'move': (1, 0)}</p>
+  <pre><code>if key.vk == libtcod.KEY_ENTER and key.lalt:
+    # Alt+Enter: toggle full screen
+    return {&#39;fullscreen&#39;: True}
+
+elif key.vk == libtcod.KEY_ESCAPE:
+    # Exit the game
+    return {&#39;exit&#39;: True}
+
+# No key was pressed
+return {}
+</code></pre>
+  <p>{{&lt;/ highlight &gt;}}</p>
+  <p>C'est un gros morceau à comprendre en une seule fois aussi, à nouveau, découpons le en différentes parties.</p>
+  <p>{{&lt; highlight py3 &gt;}} def handle_keys(key): {{&lt;/ highlight &gt;}}</p>
+  <p>On crée une fonction appelée <code>handle_keys</code> qui prend un paramètre, <code>key</code>. <code>key</code> désigne cette fois la touche capturée plus tôt.</p>
+  <p>{{&lt; highlight py3 &gt;}} if key.vk == libtcod.KEY_UP: {{&lt;/ highlight &gt;}}</p>
+  <p>Cette expression if (ainsi que les autres elifs) nous dit quelle touche a été pressée. Pour l'instant, c'est l'une des flèches pour le mouvement. Ce qui est plus intéressant est le code dans cette expression if.</p>
+  <p>{{&lt; highlight py3 &gt;}} return {'move': (0, -1)} {{&lt;/ highlight &gt;}}</p>
+  <p>Que faisons nous ici ? Quand nous retournons de cette fonction, le moteur va devoir faire quelque chose. Dans ce cas, nous voulons déplacer notre personnage. Mais si nous voulons utiliser une autre touche ? Alors nous ne voulons peut-être pas
+    bouger mais utiliser un item, lancer un sort ou quitter le jeu. Une manière de traiter toutes ces possibilités est de renvoyer un dictionnaire depuis cette fonction. Le moteur le lira et décidera ce qu'il en fera.</p>
+  <p>Pour ce faire, nous retournons un dictionnaire avec la clé <code>'move'</code> et pour valeur une paire de nombres. Ces nombres dirons au moteur dans quelle direction déplacer le joueur. Par exemple, la touche 'haut' va déplacer le joueur de '0'
+    selon les x et '-1' selon les y.</p>
+  <p>{{&lt; highlight py3 &gt;}} if key.vk == libtcod.KEY_ENTER and key.lalt: # Alt+Enter: toggle full screen return {'fullscreen': True} elif key.vk == libtcod.KEY_ESCAPE: # Exit the game return {'exit': True} {{&lt;/ highlight &gt;}}</p>
+  <p>Voici les actions sans mouvement que nous acceptons pour l'instant. Si l'utilisateur presse 'ALT+enter', le jeu va passer en mode plein écran. Si l'utilisateur presse 'Esc', le jeu va quitter.</p>
+  <p>{{&lt; highlight py3 &gt;}} return {} {{&lt;/ highlight &gt;}}</p>
+  <p>Parce que notre moteur attend un dictionnaire, nous devons renvoyer <em>quelque chose</em>, même si rien ne s'est produit.</p>
+  <p>Cela peut sembler surprenant mais cela prendra sens dans quelques insants. Retournons à ntore fichier <code>engine.py</code> pour appeler la fonction <code>handle_keys</code>.</p>
+  <p>{{&lt; codetab &gt;}} {{&lt; diff-tab &gt;}} {{&lt; highlight diff &gt;}} ... libtcod.console_flush()</p>
+  <ul>
+    <li>
+      <pre><code>  key = libtcod.console_check_for_keypress()
+</code></pre>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <pre><code>  action = handle_keys(key)
+</code></pre>
+    </li>
+    <li></li>
+    <li>
+      <pre><code>  move = action.get(&#39;move&#39;)
+</code></pre>
+    </li>
+    <li>
+      <pre><code>  exit = action.get(&#39;exit&#39;)
+</code></pre>
+    </li>
+    <li>
+      <pre><code>  fullscreen = action.get(&#39;fullscreen&#39;)
+</code></pre>
+    </li>
+    <li>
+      <pre><code>  if move:
+</code></pre>
+    </li>
+    <li>
+      <pre><code>      dx, dy = move
+</code></pre>
+    </li>
+    <li>
+      <pre><code>      player_x += dx
+</code></pre>
+    </li>
+    <li>
+      <pre><code>      player_y += dy
+</code></pre>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <pre><code>  if key.vk == libtcod.KEY_ESCAPE:
+</code></pre>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <pre><code>  if exit:
+</code></pre>
+    </li>
+    <li>
+      <pre><code>      return True
+</code></pre>
+    </li>
+    <li></li>
+    <li>
+      <pre><code>  if fullscreen:
+</code></pre>
+    </li>
+    <li>
+      <pre><code>      libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
+  ...
+</code></pre>
+    </li>
+  </ul>
+  <p>{{&lt;/ highlight &gt;}} {{&lt;/ diff-tab &gt;}} {{&lt; original-tab &gt;}}</p>
+  <pre>        ...
+        libtcod.console_flush()
+
+        <span class="crossed-out-text">key = libtcod.console_check_for_keypress()</span>
+        <span class="new-text">action = handle_keys(key)
+
+        move = action.get('move')
+        exit = action.get('exit')
+        fullscreen = action.get('fullscreen')</span>
+
+        <span class="new-text">if move:
+            dx, dy = move
+            player_x += dx
+            player_y += dy</span>
+
+        <span class="crossed-out-text">if key.vk == libtcod.KEY_ESCAPE:</span>
+        <span class="new-text">if exit:
+            return True
+
+        if fullscreen:
+            libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())</span>
+        ...</pre>
+
+  <p>{{&lt;/ original-tab &gt;}} {{&lt;/ codetab &gt;}}</p>
+  <p>Remarque : Je ferai apparaître en rouge les lignes effacées. Dans ce cas, retirez les lignes : <code>key = libtcod.console_check_for_keypress()</code> et <code>if key.vk == libtcod.KEY_ESCAPE</code></p>
+  <p>Aussi, assurez-vous d'importer les fonctions <code>handle_keys</code> en haut de <code>engine.py</code></p>
+  <p>{{&lt; codetab &gt;}} {{&lt; diff-tab &gt;}} {{&lt; highlight diff &gt;}} import tcod as libtcod</p>
+  <p>+from input_handlers import handle_keys {{&lt;/ highlight &gt;}} {{&lt;/ diff-tab &gt;}} {{&lt; original-tab &gt;}}
+    <pre>import tcod as libtcod</p>
+<p><span class="new-text">from input_handlers import handle_keys</span></pre> {{&lt;/ original-tab &gt;}} {{&lt;/ codetab &gt;}}</p>
+  <p>Esperons maintenant que le dictionnaire de <code>handle_keys</code> prenne un peu plus de sens. On capture la valeur de retour de <code>handle_keys</code> dans la variable <code>action</code> (qui devrait être un dictionnaire, quoi qu'on ait
+    pressé) et on vérifie quelle touche quelle touche elle contient. Si elle contient une clé appelée <code>move</code> alors on sait qu'il faut chercher les coordonnées (x, y). Si elle contient 'exit', alors on sait qu'il faut quitter le jeu.</p>
+  <p>Essayez d'exécuter le fichier engine.py maintenant. Vous devriez pouvoir vous déplacer. Amusant !</p>
+  <p>Une dernière étape avant d'avancer. Regardez la fonction de dessin. Remarquez le premier argument qui est '0'. Cela représente la console dans laquelle on écrit. 0 est celle par défaut. Plutôt que d'écrire sur celle par défaut nous voulons
+    préciser sur quelle console écrire après en avoir crée une nouvelle. La raison derrière est qu'il sera plus facile d'en créer pour dessiner dessus plus tard. Cela sera particulièrement utile quand nous aborderons la partie relative à l'interface
+    graphique de cette série.</p>
+  <p>Modifiez le fichier <code>engine.py</code> ainsi :</p>
+  <p>{{&lt; codetab &gt;}} {{&lt; diff-tab &gt;}} {{&lt; highlight diff &gt;}} ... libtcod.console_init_root(screen_width, screen_height, 'libtcod tutorial revised', False)</p>
+  <ul>
+    <li>
+      <p>con = libtcod.console_new(screen_width, screen_height)</p>
+      <p>key = libtcod.Key() mouse = libtcod.Mouse()</p>
+      <p>while not libtcod.console_is_window_closed(): libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)</p>
+    </li>
+    <li></li>
+    <li>
+      <pre><code>  libtcod.console_set_default_foreground(con, libtcod.white)
+</code></pre>
+    </li>
+    <li>
+      <pre><code>  libtcod.console_put_char(con, player_x, player_y, &#39;@&#39;, libtcod.BKGND_NONE)
+</code></pre>
+    </li>
+    <li>
+      <pre><code>  libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
+</code></pre>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <pre><code>  libtcod.console_set_default_foreground(0, libtcod.white)
+</code></pre>
+    </li>
+    <li>
+      <pre><code>  libtcod.console_put_char(0, player_x, player_y, &#39;@&#39;, libtcod.BKGND_NONE)
+  libtcod.console_flush()
+</code></pre>
+    </li>
+  </ul>
+  <ul>
+    <li></li>
+    <li>
+      <pre><code>  libtcod.console_put_char(con, player_x, player_y, &#39; &#39;, libtcod.BKGND_NONE)
+</code></pre>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <pre><code>  libtcod.console_put_char(0, player_x, player_y, &#39; &#39;, libtcod.BKGND_NONE)
+</code></pre>
+    </li>
+  </ul>
+  <p>{{&lt;/ highlight &gt;}} {{&lt;/ diff-tab &gt;}} {{&lt; original-tab &gt;}}</p>
+  <pre>    ...
+    libtcod.console_init_root(screen_width, screen_height, 'libtcod tutorial revised', False)
+
+    <span class="new-text">con = libtcod.console_new(screen_width, screen_height)</span>
+
+    key = libtcod.Key()
+    mouse = libtcod.Mouse()
+
+    while not libtcod.console_is_window_closed():
+        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
+        <span class="new-text">
+        libtcod.console_set_default_foreground(con, libtcod.white)
+        libtcod.console_put_char(con, player_x, player_y, '@', libtcod.BKGND_NONE)
+        libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)</span>
+        <span class="crossed-out-text">libtcod.console_set_default_foreground(0, libtcod.white)</span>
+        <span class="crossed-out-text">libtcod.console_put_char(0, player_x, player_y, '@', libtcod.BKGND_NONE)</span>
+        libtcod.console_flush()
+        <span class="new-text">
+        libtcod.console_put_char(con, player_x, player_y, ' ', libtcod.BKGND_NONE)</span>
+        <span class="crossed-out-text">libtcod.console_put_char(0, player_x, player_y, ' ', libtcod.BKGND_NONE)</span></pre>
+
+  <p>{{&lt;/ original-tab &gt;}} {{&lt;/ codetab &gt;}}</p>
+  <p>Cela conclut la première partie de ce tutoriel ! Si vous utilisez git ou une autre forme de contrôle de version (et je vous le recommande), vous devriez faire un commit de vos changements maintenant.</p>
+  <p>Si vous voulez voir le code actuel entièrement, <a href="https://github.com/TStand90/roguelike_tutorial_revised/tree/part1">cliquez ici</a>. Les fichiers que vous souhaitez consulter sont <code>engine.py</code> et <code>input_handlers.py</code>.
+  </p>
+  <p><a href="/tutorials/tcod/part-2">Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.</a></p>
+  <script src="/js/codetabs.js"></script>
+</div>

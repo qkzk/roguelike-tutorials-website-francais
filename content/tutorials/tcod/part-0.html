@@ -1,0 +1,125 @@
+---
+title: "Partie 0 - Configuration"
+date: 2019-03-30T09:53:48-07:00
+draft: false
+---
+<div>
+
+  <h4 id="connaissances-préalables">Connaissances préalables</h4>
+  <p>Ce tutoriel suppose quelques connaissances en programmation en général et avec Python. Si vous n'avez jamais utilisé Python, ce tutoriel peut vous sembler confus. Il existe de nombreuses ressources en ligne pour apprendre la programmation et
+    Python (trop pour être citées ici) et je vous recommande de découvrir au minimum les objets et les fonctions en Python avant de commencer la lecture de ce tutoriel.</p>
+  <p>... Bien sûr, nombreux sont ceux qui n'ont pas tenu compte de ce conseil et s'en sont sortis indemne aussi, ignorez ce dernier paragraphe si vous êtes audacieux !</p>
+  <h4 id="installation">Installation</h4>
+  <p>To do this tutorial, you'll need Python version 3.5 or higher. The latest version of Python is recommended (currently 3.7 as of March 2019). <strong>Note: Python 2 is not compatible.</strong></p>
+  <p>Pour faire ce tutoriel, vous aurez besoin de Python 3.5 au moins. La dernière version de Python est recommander (3.7 en mars 2019). <strong>Remarque : ce tutoriel n'est pas compatible avec Python 2</strong></p>
+  <p><a href="https://www.python.org/downloads/">Téléchargez Python ici</a>.</p>
+  <p>Vous aurez aussi besoin de la dernière version de la librairie TCOD sur laquelle ce tutoriel est conçu.</p>
+  <p><a href="https://python-tcod.readthedocs.io/en/latest/installation.html">Les instructions pour installer TCOD sont disponibles ici.</a></p>
+  <p>While you can certainly install TCOD and complete this tutorial without it, I'd highly recommend using a virtual environment. <a href="https://docs.python.org/3/library/venv.html">Documentation on how to do that can be found here.</a></p>
+  <p>Bien qu'il soit parfaitement possible d'installer TCOD et de réaliser ce tutoriel autrement, je vous recommande d'utiliser un environnement virtuel. <a href="https://docs.python.org/3/library/venv.html">Documentation sur ce sujet ici.</a></p>
+  <h4 id="éditeurs">Éditeurs</h4>
+  <p>N'importe quel éditeur permet d'écrire du Python. Vous pouvez même utilisez Notepad si vous le souhaitez. En ce qui me concerne, je suis fan de <a href="https://www.jetbrains.com/pycharm/">Pycharm</a> et de <a
+      href="https://code.visualstudio.com/">Visual Studio Code</a> . Quelque soit votre choix, je vous recommande d'en utiliser un qui soit au moins capable de détecter les erreurs de syntaxe. Je travaille en Python depuis plus de cinq ans et je fais
+    encore ce type d'erreurs tout le temps.</p>
+  <h4 id="vous-assurer-que-python-fonctionne">Vous assurer que Python fonctionne</h4>
+  <p>Pour vérifier que votre installation de Python 3 et TCOD fonctionne, créer un nouveau fichier (dans n'importe quel dossier que vous prévoyez d'employer pour ce tutoriel) appelé <code>engine.py</code>, en saisissez le texte suivant :</p>
+  <div class="sourceCode" id="cb1">
+    <pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> tcod <span class="im">as</span> libtcod</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="kw">def</span> main():</span>
+<span id="cb1-5"><a href="#cb1-5"></a>    <span class="bu">print</span>(<span class="st">&#39;Hello World!&#39;</span>)</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:</span>
+<span id="cb1-9"><a href="#cb1-9"></a>    main()</span></code></pre>
+  </div>
+  <p>Exécuter ce fichier dans votre terminal (ou dans votre éditeur, si possible):</p>
+  <p><code>python engine.py</code></p>
+  <p>Si vous n'utilisez pas d'environement virtuel, la commande ressemblera sûrement à :</p>
+  <p><code>python3 engine.py</code></p>
+  <p>Vous devriez vous "Hello World!" affiché dans votre terminal. Si vous avez une erreur, il y a sûrement un problème avec votre installation de Python ou de TCOD.</p>
+  <h3 id="télécharger-le-fichier-image">Télécharger le fichier image</h3>
+  <p>Pour ce tutoriel, nous aurons besoin d'une image. Celle par défaut est fournie ici.</p>
+  <p><img src="/images/arial10x10.png" title="Arial 10x10" alt="Font File" /></p>
+  <p>Faîtes un clic droit sur l'image et enregistrez la dans le dossier où vous souhaitez écrire votre code. Si l'image ci-dessus ne s'affiche pas, elle est <a
+      href="https://raw.githubusercontent.com/TStand90/roguelike_tutorial_revised/master/arial10x10.png">aussi disponible ici</a>.</p>
+  <h3 id="à-propos-de-ce-site">À propos de ce site</h3>
+  <p>Les extraits de code de ce site sont présentés de façon à exposer exactement ce que l'utilisateur doit ajouter à un fichier à chaque moment. Quand un utilisateur doit créer un fichier depuis zéro et y saisir du code, il sera présenté avec la
+    syntaxe usuelle de Python, ainsi :</p>
+  <p>{{&lt; highlight py3 &gt;}} class Fighter: def <strong>init</strong>(self, hp, defense, power): self.max_hp = hp self.hp = hp self.defense = defense self.power = power {{&lt;/ highlight &gt;}}</p>
+  <p>*<em>Extrait de la partie 6</em>.</p>
+  <p>La plupart du temps, vous éditerez un fichier qui contiendra déjà du code. Dans ce cas, le code sera affiché ainsi :</p>
+  <p>{{&lt; codetab &gt;}} {{&lt; diff-tab &gt;}} {{&lt; highlight diff &gt;}} class Entity:</p>
+  <ul>
+    <li>def <strong>init</strong>(self, x, y, char, color, name, blocks=False):</li>
+  </ul>
+  <ul>
+    <li>def <strong>init</strong>(self, x, y, char, color, name, blocks=False, fighter=None, ai=None): self.x = x self.y = y self.char = char self.color = color self.name = name self.blocks = blocks</li>
+    <li>
+      <pre><code>  self.fighter = fighter
+</code></pre>
+    </li>
+    <li>
+      <pre><code>  self.ai = ai
+</code></pre>
+    </li>
+    <li></li>
+    <li>
+      <pre><code>  if self.fighter:
+</code></pre>
+    </li>
+    <li>
+      <pre><code>      self.fighter.owner = self
+</code></pre>
+    </li>
+    <li></li>
+    <li>
+      <pre><code>  if self.ai:
+</code></pre>
+    </li>
+    <li>
+      <pre><code>      self.ai.owner = self
+</code></pre>
+    </li>
+  </ul>
+  <p>{{&lt;/ highlight &gt;}} {{&lt;/ diff-tab &gt;}} {{&lt; original-tab &gt;}}</p>
+  <pre>class Entity:
+    <span class="crossed-out-text">def __init__(self, x, y, char, color, name, blocks=False):</span>
+    <span class="new-text">def __init__(self, x, y, char, color, name, blocks=False, fighter=None, ai=None):</span>
+        self.x = x
+        self.y = y
+        self.char = char
+        self.color = color
+        self.name = name
+        self.blocks = blocks
+        <span class="new-text">self.fighter = fighter
+        self.ai = ai
+
+        if self.fighter:
+            self.fighter.owner = self
+
+        if self.ai:
+            self.ai.owner = self</span></pre>
+
+  <p>{{&lt;/ original-tab &gt;}} {{&lt;/ codetab &gt;}}</p>
+  <p>*<em>Aussi extrait de la partie 6.</em></p>
+  <p>Cliquer un des boutons au dessus des sections de code change le "style" non seulement pour ce bloc de code mais aussi pour le site entier. Vous pouvez alterner quand vous le souhaitez.</p>
+  <p>Dans l'extrait ci-dessus, vous devriez retirer l'ancienne définition de <code>__init__</code> et la remplacer par la nouvelle. Ensuite, vous devriez ajouter les lignes nécessaires en dessous. Les deux styles présentent la même idée.</p>
+  <p>Mais quelle différence ? Le style "Diff" montre le code tel que vous le verriez dans un diff Git (d'où le nom). Cela montre des plus et des moins sur le côté pour montrer si vous devriez ajouter ou soustraire des lignes d'un fichier. Le style
+    "Original" montre la même chose mais les lignes à retirer sont barrées et il n'y a ni plus ni moins.</p>
+  <p>L'avantage du style "Diff" est qu'il ne dépend d'aucune couleurs pour souligner ce qui doit être ajouté, le rendant plus accessible en général. L'inconvénient est qu'il est parfois impossible d'afficher correctement l'indentation. Les plus et
+    moins prennent de la place ainsi, dans une section de code telle que celle-ci, prenez soin de laisser un espace pour le plus dans votre code (il ne doit pas y avoir d'espace avant "from"):</p>
+  <p>{{&lt; codetab &gt;}} {{&lt; diff-tab &gt;}} {{&lt; highlight diff &gt;}} import tcod as libtcod</p>
+  <p>+from input_handlers import handle_keys {{&lt;/ highlight &gt;}} {{&lt;/ diff-tab &gt;}} {{&lt; original-tab &gt;}}
+    <pre>import tcod as libtcod</p>
+<p><span class="new-text">from input_handlers import handle_keys</span></pre> {{&lt;/ original-tab &gt;}} {{&lt;/ codetab &gt;}}</p>
+  <p>Le style "Original" n'utilise pas de symboles + et - et n'a pas de problème d'indentation, simplifiant quelque peu les copiers coller de code.</p>
+  <p>Le style que vous employez est une question de préférence personnelle. Le code en lui même de ce tutoriel reste le même.</p>
+  <h3 id="obtenir-de-laide">Obtenir de l'aide</h3>
+  <h2 id="nhésite-pas-à-consulter-le-roguelike-development-subreddit-pour-de-laide-il-y-a-aussi-un-lien-vers-le-canal-discord">N'hésite pas à consulter le <a href="https://www.reddit.com/r/roguelikedev">Roguelike Development Subreddit</a> pour de
+    l'aide. Il y a aussi un lien vers le canal Discord.</h2>
+  <h3 id="prêt-à-démarrer-">Prêt à démarrer ?</h3>
+  <p>Une fois que vous êtes prêts, vous pouvez vous rendre dans la <a href="/tutorials/tcod/part-1">Partie 1</a>.</p>
+  <script src="/js/codetabs.js"></script>
+</div>
