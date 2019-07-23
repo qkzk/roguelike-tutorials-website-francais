@@ -17,7 +17,10 @@ This translation is made for my high school students who study computer science.
 
 The original repo is available [here](https://github.com/TStand90/roguelike-tutorials-website)
 
-## Fichiers déjà traduits :
+## Fichiers traduits
+
+Tous les fichiers contenant des explications sont traduits.
+Le code est laissé intact mais je ne crois pas que cela pose problème.
 
 * [about.md](./content/about.md)
 * [_index.md](./content/_index.md)
@@ -36,3 +39,11 @@ The original repo is available [here](https://github.com/TStand90/roguelike-tuto
 * [part-11.md](./content/tutorials/tcod/part-11.md)
 * [part-12.md](./content/tutorials/tcod/part-12.md)
 * [part-13.md](./content/tutorials/tcod/part-13.md)
+
+## Publier le site
+
+Les fichiers sont principalement en markdown et je vais essayer d'en faire
+un site fonctionnel.
+
+Je ne sais pas ce que les auteurs ont employé comme technologies hormis
+ce qui transparait dans les fichiers donc je ne promets rien.
