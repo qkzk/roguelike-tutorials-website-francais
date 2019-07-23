@@ -15,5 +15,5 @@ draft: false
   - [Part 9 - Lancer des sorts](/tutorials/tcod/part-9)
   - [Part 10 - Sauvegarder et recharger](/tutorials/tcod/part-10)
   - [Part 11 - Explorer les profondeurs du donjons](/tutorials/tcod/part-11)
-  - [Part 12 - Augmenter la difficultée](/tutorials/tcod/part-12)
+  - [Part 12 - Augmenter la difficulté](/tutorials/tcod/part-12)
   - [Part 13 - S'équiper](/tutorials/tcod/part-13)

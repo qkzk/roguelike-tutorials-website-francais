@@ -1,28 +1,26 @@
 ---
-title: "Part 12 - Increasing Difficulty"
+title: "Part 12 - Augmenter la difficulté"
 date: 2019-03-30T09:34:08-07:00
 draft: false
 ---
-Right now, our game doesn't feel like much of a roguelike. It's far too
-easy\! On top of that, the game doesn't get harder as you progress.
-We'll remedy that in this chapter, by making enemies stronger, and
-staggering enemies and equipment drops through deeper levels of the
-dungeon.
+Notre jeu ne ressemble plus vraiment à un Roguelike : il est bien trop facile \!
+Qui plus est la difficulté n'augmente quand l'on progresse. Nous allons
+y remédier dans ce chapitre en rendant les ennemis plus fort et en répartissant
+les ennemis et les objets à travers les niveaux de profondeur.
 
-Before we do that though, let's address something in our design that
-will likely cause headache in the future: our random choice selection
-for monsters and items. Right now, we're picking a random number between
-0 and 100, and checking if that number is less than the "chances" for a
-certain item. This works alright for just a few options, but chances
-are, you'll want a lot more enemies than just two, and more items than
-just four.
+Avant de s'attaquer à ça, nous allons résoudre un problème de design qui nous
+causera des soucis plus tard : notre fonction de choix aléatoire pour les
+monstres et les objets. Pour l'instant on tire un entier entre 1 et 100 et
+on vérifie si ce nombre est inférieur à une certaine "chance" pour un certain
+objet. Cela convient pour un nombre limité d'options mais vous voudrez
+certainement ajouter plus de deux ennemis et plus de quatre objets.
 
-A better way to accomplish this is to assign each item a "weight", which
-determines how likely the enemy/item is to be created. We could then
-pass the choices and their weights to a function, which would pick one
-at random and return the selection.
+Il est plus judicieux de tirer au sort en attribuant à chaque objet un "poids"
+qui indique sa probabilité d'apparaître. Nous pourrions les options et leurs
+poids à une fonction qui en choisirait un aléatoirement et renverrait la
+réponse.
 
-Create a new file called `random_utils.py` and put the following in it:
+Créez un fichier appelé `random_utils.py` et ajoutez-y :
 
 {{< highlight py3 >}}
 from random import randint
@@ -203,20 +201,20 @@ from render_functions import RenderOrder
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We assign each enemy or item to a weight, and then get the selection
-from our new function. Note that while our weights still sum up to 100,
-they don't have to.
+On attribue à chaque ennemi ou objet un poids et la sélection est effectuée par
+notre nouvelle fonction. Remarquez que le cumul des poids est 100 mais cela
+n'est pas indispensable.
 
-This is a lot more extensible than our previous solution, but we still
-haven't achieved what we set out to. What we really want is variable
-weights depending on the dungeon floor. That is, the deeper you go, the
-more likely you run into Trolls instead of Orcs, and the more likely you
-are to find useful items rather than just healing potions.
+C'est beaucoup plus extensible que notre solution précédente mais nous n'avons
+pas encore atteint notre objectif. Nous aimerions avoir des poids dépendant
+du niveau de profondeur. Ainsi, plus on descend et plus on a de chances de
+rencontrer des Trolls plutôt que des Orcs et plus on a de chance de trouver
+des objets utiles plutôt que seulement des potions de soin.
 
-Let's create a new function that will accept a range of values that tell
-us when a certain thing appears in the dungeon, and with what weight.
-The function returns the weight appropriate for the dungeon level. It
-should go in `random_utils.py` and it looks like this:
+Créons une nouvelle fonction qui prendra un intervalle de valeurs indiquant
+quand une chose apparaît dans le donjon et avec quel poids.
+La fonction renvoie le poids correspondant au niveau du donjon. Elle va
+dans `random_utils.py` et ressemble à ça :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 from random import randint
@@ -251,10 +249,10 @@ def random_choice_index(chances):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-This might not make sense right away, but let's put it into practice and
-see what happens. We can remove the `max_monsters_per_room` and
-`max_items_per_room` variables, since they'll be determined by the
-dungeon level instead of being passed to the function.
+Cela n'a peut-être pas beaucoup de sens maintenant mais mettons la en action.
+On peut retirer les variables `max_monsters_per_room` et `max_items_per_room`
+qui sont maintenant déterminées par le niveau de profondeur et non plus passées
+directement à la fonction.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -327,7 +325,8 @@ from render_functions import RenderOrder</pre>
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We'll also need to update our call to `place_entities` in `make_map`
+Nous aurons aussi besoin de mettre à jour notre appel à `place_entities` depuis
+`make_map`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
                         ...
@@ -352,8 +351,8 @@ We'll also need to update our call to `place_entities` in `make_map`
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Because we've removed `max_monsters_per_room` and `max_items_per_room`
-from the function call, we can also remove them from the definition of
+Parce que nous avons retiré `max_monsters_per_room` et `max_items_per_room` de
+l'appel de la fonction, nous pouvons aussi les retirer de la définition de
 `make_map`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
@@ -370,7 +369,7 @@ from the function call, we can also remove them from the definition of
 {{</ original-tab >}}
 {{</ codetab >}}
 
-We should also remove these variables from the calls to `make_map` in
+Nous devrions aussi retirer ces variables des appels de `make_map` dans
 `initialize_new_game.py`...
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
@@ -410,11 +409,11 @@ We should also remove these variables from the calls to `make_map` in
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now our dungeon gets more dangerous as we go deeper\! Mission
-accomplished\! The game itself is still pretty easy though, so let's
-change that by modifying the default values for each entity's `Fighter`
-component, including the player. We'll also modify the values for the
-healing potion, fireball scroll, and lightning scroll.
+Notre nouveau donjon devient plus dangereux au fur et à mesure de notre
+descente \! Le jeu reste très facile néanmoins aussi changeons ça en modifiant
+les valeurs par défaut pour chaque composant de l'entité `Fighter` notamment
+le joueur lui même. Nous allons aussi modifier les valeurs des potions
+de soin, du parchemin boule de feu et du parchemin d'éclair.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 def get_game_variables(constants):
@@ -538,13 +537,11 @@ def get_game_variables(constants):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-That's all for today's tutorial. The next part will be the last one.
-We're almost there\!
+Et voilà pour aujourd'hui. La prochaine partie sera la dernière, nous y sommes
+presque.
 
-If you want to see the code so far in its entirety, [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part12).
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part-12.
 
-[Click here to move on to the next part of this
-tutorial.](/tutorials/tcod/part-13)
+[Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.](/tutorials/tcod/part-13)
 
 <script src="/js/codetabs.js"></script>
