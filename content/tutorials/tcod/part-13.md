@@ -1,21 +1,19 @@
 ---
-title: "Part 13 - Gearing up"
+title: "Part 13 - S'équiper"
 date: 2019-03-30T09:34:10-07:00
 draft: false
 ---
-For the final part of our tutorial series, we'll take a look at
-implementing some equipment. Equipment is a subtype of items that the
-player can equip for some stat boosts. Obviously it can get more
-complicated than that, depending on the game, but I'll leave it up to
-you to implement that depending on your needs. For this tutorial,
-equipping a weapon will increase attack power, and equipping a shield
-will increase defense.
+Pour la dernière partie de notre tutoriel nous allons ajouter de l'équipement.
+L'équipement est un genre d'objet qui le joueur peut porter pour améliorer ses
+statistiques. De toute évidence cela peut-être plus complexe, selon le jeu, mais
+je vous laisse le soin de l'implémenter selon vos besoins. Pour ce tutoriel,
+équiper une arme améliore la puissance d'attaque et équiper un bouclier
+améliore la défense.
 
-You might've already guessed at this point, but we'll need a new
-component that tells us which items are equippable, and what the effects
-of equipping them are. This component we'll call `Equippable`, and we'll
-put it in a file called `equippable.py`, which, of course, lives in the
-`components` directory.
+Vous l'avez peut-être deviné, nous avons besoin d'un nouveau composant qui
+nous indique quels objets sont équipables et quels effets ils procurent.
+Ce composant s'appelera `Equippable` et nous l'incluerons à un fichier
+appelé `equippable.py` qui ira dans le dossier `components`.
 
 {{< highlight py3 >}}
 class Equippable:
@@ -26,17 +24,17 @@ class Equippable:
         self.max_hp_bonus = max_hp_bonus
 {{</ highlight >}}
 
-`power_bonus`, `defense_bonus`, and `max_hp_bonus` will be the bonuses
-that the player gets from equipping a certain item. A weapon will give a
-power bonus, and a shield will give a defense bonus. We won't add
-anything with an HP bonus in this tutorial, but you could use this for
-something like armor or a ring that increases health.
+`power_bonus`, `defense_bonus` et `max_hp_bonus` sont les gains que le joueur
+obtient en portant certains objets. Une arme donne un bonus d'attaque et un
+boucle donne un bonus de défense. Nous n'inclurons aucun objet donnant un
+de points de vie mais vous pouvez ajouter une armure ou une bague qui améliore
+la santé.
 
-But what about `slot`? That describes what the equipment piece gets
-equipped to. The player will have two different equipment slots
-available: the main hand (for weapons) and off hand (for shields). We'll
-implement that as an `enum`. Create a file called `equipment_slots.py`
-in the base directory, and add the following to it:
+Qu'est-ce que `slot` ? Cela décrit l'endroit où sera porté l'objet. Le joueur
+aura deux emplacements différents disponibles : la main principale pour l'arme
+et la main secondaire pour le bouclier. Nous implémenterons ça à l'aide d'un
+`enum`. Créez un fichier appelé `equipment_slots.py` dans le dossier de base
+et ajoutez-y :
 
 {{< highlight py3 >}}
 from enum import Enum
@@ -47,13 +45,13 @@ class EquipmentSlots(Enum):
     OFF_HAND = 2
 {{</ highlight >}}
 
-You can extend this as much as you want, to give the player slots for
-things like head, body, legs, or fingers for rings.
+Vous pouvez étendre ça autant que vous le souhaitez en donnant au joueur
+des emplacements comme la tête, le corps, les jambes et les doigts.
 
-Now we have what we need in place for items to become "equippable", but
-what do they become equipped to? For that, we'll need another component,
-which we'll call `Equipment`. Put the following in a new file, in the
-`components` folder, called `equipment.py`:
+On a maintenant ce qu'il nous faut pour rendre les objets équipables. Mais
+que va-t-on porter ? Pour ça il nous faut un autre composant appelé `Equipment`.
+Ajoutez la suite à un nouveau fichier du dossier `components` appelé
+`equipment.py` :
 
 {{< highlight py3 >}}
 from equipment_slots import EquipmentSlots
@@ -129,28 +127,27 @@ class Equipment:
         return results
 {{</ highlight >}}
 
-That's a lot of code all at once, so let's break things down a bit.
+Cela fait beaucoup de code d'un coup aussi nous allons le découper un peu.
 
-The two variables `main_hand` and `off_hand` will hold the entities that
-we're equipping. If they are set to `None`, then that means nothing is
-equipped to that slot.
+Les deux variables `main_hand` et `off_hand` vont contenir les entités qui
+sont équipées. Si elles pointes vers `None`, cela signifie que rien n'est
+porté dans cet emplacement.
 
-The three properties all do essentially the same thing: they sum up the
-"bonuses" from both the main hand and off hand equipment, and return the
-value. Since we're using properties, these values can be accessed like a
-regular variable, which will come in handy soon enough. If the player
-has equipment in both the main hand and off hand that increases attack,
-for instance, then we'll get the bonus the same either way.
+Les trois propriétés font toutes sensiblement la même chose : elles ajoutent
+les "bonus" de la main principale et de la main secondaire et renvoie la valeur.
+Comme nous employons des propriétés on peut y accéder comme à une variable
+ce qui sera rapidement commode. Si le joueur porte un objet en main principale
+et en main secondaire qui améliore l'attaque, par exemple, on récupère le bonus
+de la même manière.
 
-`toggle_equip` is what we'll call when we're either equipping or
-dequipping an item. If the item was not previously equipped, we equip
-it, removing any previously equipped item. If it's equipped already,
-we'll assume the player meant to remove it, and just dequip it. We
-return the results of this operation similarly to how we've done with
-other functions, which the `engine` will process.
+`toggle_equip` (basculer l'équipement) est ce qu'on appelle quand on met
+ou qu'on enlève un objet dans l'emplacement. Si l'objet n'était pas déjà
+porté, on l'équipe et s'il était déjà équipé on l'enlève. On renvoie le
+résultat de cette opération comme précédemment et c'est `engine` qui va
+se charger de la suite du procédé.
 
-Like the other components we've created, we'll need to add these new
-ones to the `Entity` class.
+Comme pour les autres composants crées, nous aurons besoin d'ajouter ces
+nouveaux à la classe `Entity`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -278,13 +275,12 @@ class Entity:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Notice that if the entity does not have an `Item` component, then we add
-one. This is because every piece of equipment is also an item by
-definition, because it gets added to the inventory, picked up, and
-dropped.
+Remarquez que si l'entité n'a pas de composant `Item` on lui en ajoute un.
+Cela s'explique car chaque pièce d'équipement est aussi un objet qu'on ajoute
+à l'inventaire, ramasse et dépose.
 
-Let's add the new `Equipment` component to the player, in
-`initialize_new_game.py`:
+Ajoutons un nouveau composant `Equipment` au joueur dans
+`initialize_new_game.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     ...
@@ -313,7 +309,7 @@ Let's add the new `Equipment` component to the player, in
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Be sure to import the component in this file as well.
+Assurez-vous d'importer le composant dans le fichier :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -336,10 +332,10 @@ from components.level import Level
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So how does the player actually go about equipping a piece of equipment?
-Well, the equipment will be viewable from the inventory screen like any
-usable item, so why not just extend that? We can modify the `use` method
-in `Inventory` to equip an item if its equippable, like this:
+Aussi, comment le joueur procède-t-il pour porter un objet ? L'équipement sera
+sivible depuis l'écran d'inventaire comme n'importe quel objet utilisable aussi
+pourquoi ne pas étendre cette fonctionnalité ? Nous pouvons modifier la méthode
+`use` de `Inventory` pour équiper un objet si c'est possible :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -371,11 +367,11 @@ in `Inventory` to equip an item if its equippable, like this:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now the method checks if the item is equippable, and if so, we return
-the equip result. If not, we display the warning message about it not
-being usable, as usual.
+Maintenant la méthode vérifie si l'objet est équipable et, si c'est le cas,
+nous renvoyons le résultat. Sinon, nous affichons un avertissement nous
+indiquant que c'est impossible, comme d'habitude.
 
-Let's up the `toggle_equip` method into action, in `engine.py`:
+Mettons la méthode `toggle_equip` en action. Dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
             ...
@@ -447,10 +443,10 @@ Let's up the `toggle_equip` method into action, in `engine.py`:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-There's a little bug with our current implementation. The player can
-drop an item from the inventory, yet still have it "equipped"\! That's
-obviously not right, so let's fix that in the `Inventory` method
-`drop_item`:
+Il y a un petit bug dans notre implémentation. Le joueur peut déposer un objet
+depuis l'inventaire mais continuer à le porter sur lui \! Ce n'est pas correct
+aussi nous allons résoudre ce problème dans la méthode `drop_item` de
+`Inventory` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
    ...
@@ -477,17 +473,17 @@ obviously not right, so let's fix that in the `Inventory` method
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So what does equipping something actually *do*? It *should* give bonuses
-to the player's fighting ability, but it's not actually doing that right
-now. Why? Because our `Fighter` component doesn't take equipment bonuses
-into account\! Let's fix that now.
+Mais qu'est ce qu'équiper un objet *fait* réellement ? Cela *devrait* donner un
+bonus au joueur mais cela ne fait rien pour l'instant. Pourquoi ? Parce que
+notre composant `FIghter` ne tient pas compte du bonus d'équipement pour
+l'instant. Réglons ça :
 
-We need do adjust the way we get the values from `Fighter`. It'd be
-better if the `max_hp`, `power`, and `defense` were properties, so we
-could calculate them as their base plus the bonus at any given time.
-Let's change the initialization function to set the bases of each of
-these values, and we'll add properties for each to take the place of our
-old variables.
+Nous devons ajuster la manière d'obtenir les valeurs de `Fighter`. Il serait
+plus judicieux que `max_hp`, `power` et `defense` soient des propriétés
+afin qu'on puisse les calculer comme une base ajouté à un bonus.
+Changeons la fonction d'initialisation pour régler les bases de chacune de
+ces valeurs et nous ajouterons les propriétés à chacun pour remplacer nos
+anciennes variables.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 class Fighter:
@@ -576,14 +572,14 @@ class Fighter:
 {{</ original-tab >}}
 {{</ codetab >}}
 
-So now when we query for the player's `power`, for example, we'll be
-taking into account what equipment is equipped.
+Ainsi maintenant quand nous nous relevons la valeur de `power`, par exemple,
+nous prendrons en compte l'équipement du joueur.
 
-For the most part, this just works. The only thing that doesn't is our
-previous level up code, because we were increasing the `max_hp`,
-`power`, and `defense` values directly, whereas now we need to increase
-their bases. It's a pretty easy fix though, just open `engine.py` and
-make the following adjustment.
+Dans la plupart des cas cela suffit. La seule chose qui pose encore problème
+dans le code précédent est le gain d'un niveau parce qu'on nous augmentons
+directement les valeurs de `max_hp`, `defense` et `power` alors qu'on devrait
+augmenter leurs valeurs de base. C'est plutôt simple à résoudre, ouvrez
+`engine.py` et apportez les modifications suivantes :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -618,10 +614,10 @@ make the following adjustment.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-With all that in place, let's actually put some equipment on the map\!
-Open up `game_map.py` and modify the `place_entities` function to place
-some equipment in the dungeon. Remember to import the needed components
-at the top.
+Ceci étant en place, mettons de l'équipement sur la carte \! Ouvrez
+`game_map.py` et modifiez la fonction `place_entities` pour ajouter de
+l'équipement dans la donjon. Souvenvez-vous d'importer les composants
+nécessaire en haut.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...
@@ -698,11 +694,10 @@ from components.fighter import Fighter
 {{</ original-tab >}}
 {{</ codetab >}}
 
-One thing we can do to make the game a bit more interesting is give the
-player a default weapon to start with. Nothing too powerful of course;
-this is a roguelike after all. Let's modify the `get_game_variables`
-function in `initialize_new_game.py` to give the player a dagger at the
-start.
+Une chose qu'on peut faire pour rendre le jeu plus intéressant est de donner
+une arme de base au joueur. Rien de trop puissant, bien sûr, c'est un
+roguelike après tout. Modifions la fonction `get_game_variables` dans
+`initialize_new_game.py` pour donne au joueur une dague au début de partie.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 import tcod as libtcod
@@ -777,16 +772,15 @@ def get_game_variables(constants):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Note that we also modified the player's starting power. We don't want
-the player to start off too strong\!
+Remarquez qu'on modifie aussi la puissance de départ. Nous ne voulons pas que
+le joueur soit trop fort au départ \!
 
-One last bit of polish to add: let's show in the inventory screen which
-items are equipped. We can do this by modifying the `inventory_menu`
-function in `menus.py` to check if each item is equipped or not. We'll
-have to make a change in the function's arguments though; we need to
-pass the `player` instead of just the inventory. Modify the function
-like
-    so:
+Une dernière amélioration à ajouter : affichons dans l'inventaire l'équipement
+porté par le joueur. Nous pouvons le faire en modifiant la fonction
+`inventory_menu` dans `menus.py` pour vérifier si chaque objet est équipé ou
+non. Nous devrons faire quelques chanchements dans les arguments de la fonction,
+nous devons passer `player` et non plus seulement l'inventaire. Modifiez la
+fonction ainsi :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 -def inventory_menu(con, header, inventory, inventory_width, screen_width, screen_height):
@@ -831,8 +825,8 @@ like
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Because we changed the arguments of this function, we'll need to adjust
-the call we make to it in `render_all`.
+Parce que nous avons changé les arguments de cette fonction nous devons
+adapter son appel dans `render_all`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         ...
@@ -863,7 +857,11 @@ main tutorial. If you're wanting more, feel free to check out the extras
 section, which I'll try to update now and then with some new content.
 Now go forth, and create the roguelike of your dreams\!
 
-If you want to see the code in its entirety [click
-here](https://github.com/TStand90/roguelike_tutorial_revised/tree/part13).
+Avec ça, nous avons un système d'équiment qui fonctionne \! Cela conclut
+le tutoriel principal. Si vous en voulez davantage, n'hésitez pas à vérifier
+les extras que j'essayerai de mettre à jour de temps en temps.
+Maintenant continuez sur votre lancée et créez le roguelike de vos rêves.
+
+Si vous voulez voir le code actuel entièrement, [cliquez ici](https://github.com/TStand90/roguelike_tutorial_revised/tree/part-13.
 
 <script src="/js/codetabs.js"></script>
