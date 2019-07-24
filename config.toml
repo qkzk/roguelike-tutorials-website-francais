@@ -17,7 +17,7 @@ pygmentsCodeFencesGuessSyntax = true
     name = "Home"
     weight = 1
   [[languages.en.menu.main]]
-    url = "/tutoriels/tcod/"
+    url = "/tutorials/tcod/"
     name = "Tutoriel TCOD"
     weight = 2
   [[languages.en.menu.main]]
