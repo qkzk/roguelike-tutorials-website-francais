@@ -1,27 +1,27 @@
 # baseURL = "http://rogueliketutorials.com/"
 baseURL = "/"
-languageCode = "fr"
+languageCode = "en"
 title = "Tutoriel Roguelike"
 
 theme = "hugo-bootstrap"
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
 
-[languages.fr]
-  languageName = "Francais"
+[languages.en]
+  languageName = "English"
 
   copyright = "Dernière mise à jour le 24 juillet 2019"
 
-  [[languages.fr.menu.main]]
+  [[languages.en.menu.main]]
     url = "/"
     name = "Home"
     weight = 1
-  [[languages.fr.menu.main]]
+  [[languages.en.menu.main]]
     url = "/tutoriels/tcod/"
     name = "Tutoriel TCOD"
     weight = 2
-  [[languages.fr.menu.main]]
-    url = "/apropos/"
+  [[languages.en.menu.main]]
+    url = "/about/"
     name = "A propos"
     weight = 3
 

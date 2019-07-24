@@ -1,5 +1,5 @@
 ---
-title: "Tutoriel Roguelike Revisté - Version TCOD"
+title: "Tutoriel Roguelike mis à jour : Version TCOD"
 date: 2019-03-30T09:53:48-07:00
 draft: false
 ---

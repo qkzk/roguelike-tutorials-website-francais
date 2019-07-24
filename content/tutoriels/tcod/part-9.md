@@ -10,10 +10,6 @@ ajouter quelques parchemins qui donneront au joueur une attaque à distance à
 usage unique. Cela permet plus d'options tactiques ce qui est une direction
 que vous devez chercher à améliorer dans un jeu.
 
-Let's start simple, with a spell that just hits the closest enemy. We'll
-create a scroll of lightning, which automatically targets an enemy
-nearby the player. Start by adding the function to `item_functions.py`:
-
 Commençons simplement par un sort qui frappe l'ennemi le plus proche. Nous
 allons créer un simple parchemin d'éclair (scoll of lightning) qui va viser
 automatiquement l'adversaire le plus proche. Commencez par ajouter la fonction

@@ -153,8 +153,7 @@ les remplacer pour voir ce que cela donne). Ensuite nous affichons le symbole
         libtcod.console_flush()
 {{</ highlight >}}
 
-This is the part that presents everything on the screen. Pretty
-straightforward.
+C'est la partie qui affiche tout à l'écran. Plutôt directe.
 
 {{< highlight py3 >}}
         key = libtcod.console_check_for_keypress()

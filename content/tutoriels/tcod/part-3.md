@@ -239,8 +239,7 @@ from map_objects.tile import Tile</pre>
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Finally, modify `engine.py` to actually call the new `make_map`
-function.
+Enfin, modifiez `engine.py` pour appeler la nouvelle fonction `make_map`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     game_map = GameMap(map_width, map_height)

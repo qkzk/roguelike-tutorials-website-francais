@@ -363,11 +363,6 @@ appelé `render_all`.
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Run the project now. The player's field of view is now visible\! But,
-despite being able to "see" the FOV, it still doesn't really *do*
-anything. We can still see the entire map, along with our NPC. Luckily,
-the changes we have to make to fix this are fairly minimal.
-
 Lancez le projet maintenant. Le champ de vision du joueur est maintenant
 visible \! Mais bien qu'on soit capable de "voir" le FOV, cela ne *change rien*.
 On peut toujours voir l'intégralité de la carte ainsi que notre NPC.

@@ -441,7 +441,7 @@ suite à la fin de `game_map.py` :
         return entities
 {{</ highlight >}}
 
-La fonction commencen par incrémenter le niveau du donjon. La liste `entities`
+La fonction commence par incrémenter le niveau du donjon. La liste `entities`
 est crée depuis zéro, elle ne contient que le joueur. Ensuite nous appelons
 `make_map` pour générer un nouveau niveau comme nous l'avons fait au début du
 jeu. Nous rendons aussi au joueur la moitié de ses HP pour le récompenser de
@@ -1447,7 +1447,7 @@ from menus import <span class="new-text">character_screen,</span> inventory_menu
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Now, add the menu to the bottom of `render_all`.
+Maintenant, ajoutez le menu à la fin de `render_all`.
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
     elif game_state == GameStates.LEVEL_UP:
@@ -1522,7 +1522,7 @@ def handle_player_turn_keys(key):
 {{</ original-tab >}}
 {{</ codetab >}}
 
-Then, in `engine.py`:
+Maintenant dans `engine.py` :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
         move = action.get('move')

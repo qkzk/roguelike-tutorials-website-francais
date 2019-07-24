@@ -46,8 +46,8 @@ def random_choice_from_dict(choice_dict):
     return choices[random_choice_index(chances)]
 {{</ highlight >}}
 
-Let's put this new functions to use. Open `game_map.py` and modify it
-like this:
+Ajoutons mettons cette nouvelle fonction en action. Ouvrez `game_map.py` et 
+modifiez ainsi :
 
 {{< codetab >}} {{< diff-tab >}} {{< highlight diff >}}
 ...

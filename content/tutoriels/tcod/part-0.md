@@ -19,11 +19,7 @@ audacieux \!
 
 #### Installation
 
-To do this tutorial, you'll need Python version 3.5 or higher. The
-latest version of Python is recommended (currently 3.7 as of March
-2019). **Note: Python 2 is not compatible.**
-
-Pour faire ce tutoriel, vous aurez besoin de Python 3.5 au moins. La dernière
+Pour suivre ce tutoriel, vous aurez besoin de Python 3.5 au moins. La dernière
 version de Python est recommander (3.7 en mars 2019).
 **Remarque : ce tutoriel n'est pas compatible avec Python 2**
 
@@ -35,11 +31,6 @@ ce tutoriel est conçu.
 [Les instructions pour installer TCOD sont disponibles ici.](https://python-tcod.readthedocs.io/en/latest/installation.html)
 
 
-While you can certainly install TCOD and complete this tutorial without
-it, I'd highly recommend using a virtual environment. [Documentation on
-how to do that can be found
-here.](https://docs.python.org/3/library/venv.html)
-
 Bien qu'il soit parfaitement possible d'installer TCOD et de réaliser ce
 tutoriel autrement, je vous recommande d'utiliser un environnement virtuel.
 [Documentation sur ce sujet ici.](https://docs.python.org/3/library/venv.html)
@@ -49,8 +40,7 @@ tutoriel autrement, je vous recommande d'utiliser un environnement virtuel.
 N'importe quel éditeur permet d'écrire du Python. Vous pouvez même utilisez
 Notepad si vous le souhaitez. En ce qui me concerne, je suis fan de
 [Pycharm](https://www.jetbrains.com/pycharm/) et de [Visual Studio Code](https://code.visualstudio.com/)
-. Quelque soit votre choix, je vous recommande d'en utiliser un qui soit au moins
-capable de détecter les erreurs de syntaxe. Je travaille en Python depuis plus
+. Quel que soit votre choix, je vous recommande d'en utiliser permettant de détecter les erreurs de syntaxe. Je travaille en Python depuis plus
 de cinq ans et je fais encore ce type d'erreurs tout le temps.
 
 #### Vous assurer que Python fonctionne
@@ -204,8 +194,8 @@ en lui même de ce tutoriel reste le même.
 
 ### Obtenir de l'aide
 
-N'hésite pas à consulter le [Roguelike Development Subreddit](https://www.reddit.com/r/roguelikedev)
-pour de l'aide. Il y a aussi un lien vers le canal Discord.
+N'hésite pas à consulter le [Roguelike Development Subreddit](https://www.reddit.com/r/roguelikedev) pour de l'aide. Il y a aussi un lien vers le canal Discord.
+
 -----
 
 ### Prêt à démarrer ?
