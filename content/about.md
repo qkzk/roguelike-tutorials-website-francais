@@ -34,9 +34,7 @@ Sur la page [Github page](https://github.com/TStand90/roguelike-tutorials-websit
 Ce tutoriel n'aurait pu être réalisé sans l'aide de :
 
 
-* The authors and contributors to the [Roguebasin Python tutorial](http://www.roguebasin.com/index.php?title=Complete_Roguelike_Tutorial,_using_python%2Blibtcod). Without that tutorial, this one would never exist.
 * Les auteurs et participants de [Roguebasin Python tutorial](http://www.roguebasin.com/index.php?title=Complete_Roguelike_Tutorial,_using_python%2Blibtcod). Sans ce tutoriel, celui-ci n'existerait pas.
-* The people who have contributed to and maintained [libtcod](https://github.com/libtcod/libtcod) now and over the years. Without their hard work, so many wonderful roguelikes would not exist, and many of us would never have the ability to complete a game.
 * Les auteurs de [libtcod](https://github.com/libtcod/libtcod). Sans leur travail, de nombreux roguelike n'auraient jamais vu le jour et beaucoup d'entre nous n'auraient pu concevoir un jeu.
 * Tous ceux qui on proposé de l'aide sur ce tutoriel et ce site web. Vous êtes tous plus aimables et patient que je ne le mérite.
 * Tous les participants de l'événement annuel "Roguelikedev fait le tutoriel roguelike en complet", année après année.
