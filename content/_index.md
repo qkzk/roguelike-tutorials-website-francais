@@ -7,7 +7,7 @@ draft: false
 Pour débuter avec le tutoriel TCOD, [cliquez ici](/tutorials/tcod/).
 
 Besoin d'aide ? N'hésitez pas à consulter le
-[Subreddit de développement Roguelike](https://www.reddit.com/r/roguelikedev)
+[Subreddit de développement dédié aux Roguelike](https://www.reddit.com/r/roguelikedev)
 pour de l'aide. Il y a aussi un lien vers le canal Discord. Mon nom d'utilisateur sur les deux est
 TStand90. Envoyez mon un message ou un ping si quelque chose vous semble étrange.
 
