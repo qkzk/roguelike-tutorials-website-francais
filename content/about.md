@@ -29,7 +29,6 @@ J'ai d'abord essayé de le faire sur Roguebasin mais me suis fait bannir pour av
 
 Sur la page [Github page](https://github.com/TStand90/roguelike-tutorials-website). Vous pouvez aussi me trouver sur Reddit et Discord sous le nom TStand90
 
-## Credits and thanks
 ## Remerciements
 
 Ce tutoriel n'aurait pu être réalisé sans l'aide de :

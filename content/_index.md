@@ -13,3 +13,19 @@ TStand90. Envoyez mon un message ou un ping si quelque chose vous semble étrang
 
 Si vous préférez le tutoriel d'origine en Python avec libtcod, vous pouvez
 [le consulter sur Roguebasin](http://www.roguebasin.com/index.php?title=Complete_Roguelike_Tutorial,_using_python%2Blibtcod).
+
+### Traduction
+
+Ce site présente une version traduite en français par [qkzk](http://qkzk.xyz)
+à destination des élèves de terminale NSI.
+
+Le site d'origine, en anglais est disponible
+[ici](http://rogueliketutorials.com/).
+
+* N'étant ni développeur ni traducteur, vous trouverez certainement certaines
+  phrases maladroites. Si vous maîtrisez l'anglais, n'hésitez pas à consulter
+  la version d'origine.
+
+* Seules les explications sont traduites en français. Le code source et les
+  commentaires sont en anglais. Cela ne devrait pas poser de problème à un
+  utilisateur aguerri de Python.
