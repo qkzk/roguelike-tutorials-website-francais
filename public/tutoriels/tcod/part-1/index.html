@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Partie 1 - Dessiner le caractère ‘@’ et le déplacer" />
+<meta property="og:description" content="Bienvenue dans la partie 1 du Tutoriel Roguelike revesité ! Cette série va vous aider à créer votre tout premier jeu roguelike, écrit en Python.
+Ce tutoriel est largement inspiré de celui trouvé sur Roguebasin. Une grande partie des décisions de conception furent prises afin de conserver une progression commune avec celui-ci (du moins en ce concerne la composition des chapitres et la direction générale). Ce tutoriel n&rsquo;aurait pu être possible sans le travail des concepteurs d&rsquo;origine ainsi que celui des merveilleux contributeurs de libtcod et python-tcod." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/tutoriels/tcod/part-1/" />
+<meta property="article:published_time" content="2019-03-30T08:39:15-07:00"/>
+<meta property="article:modified_time" content="2019-03-30T08:39:15-07:00"/>
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Partie 1 - Dessiner le caractère ‘@’ et le déplacer"/>
+<meta name="twitter:description" content="Bienvenue dans la partie 1 du Tutoriel Roguelike revesité ! Cette série va vous aider à créer votre tout premier jeu roguelike, écrit en Python.
+Ce tutoriel est largement inspiré de celui trouvé sur Roguebasin. Une grande partie des décisions de conception furent prises afin de conserver une progression commune avec celui-ci (du moins en ce concerne la composition des chapitres et la direction générale). Ce tutoriel n&rsquo;aurait pu être possible sans le travail des concepteurs d&rsquo;origine ainsi que celui des merveilleux contributeurs de libtcod et python-tcod."/>
+
+
+
+    <link rel="canonical" href="/tutoriels/tcod/part-1/">
+
+    <title>
+      
+        Partie 1 - Dessiner le caractère ‘@’ et le déplacer | Tutoriel Roguelike
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="/css/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <a class="navbar-brand" href="/">
+            Tutoriel Roguelike
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/tutoriels/tcod/">Tutoriel TCOD</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/about/">A propos</a>
+                    
+                </li>
+                
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-8 blog-main">
+
+          
+
+<header>
+    <h2 class="blog-post-title">
+    <a class="text-dark" href="/tutoriels/tcod/part-1/">Partie 1 - Dessiner le caractère ‘@’ et le déplacer</a>
+</h2>
+
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        <time datetime="2019-03-30">Mar 30, 2019</time>
+    
+    
+</div>
+
+    
+    
+    <hr>
+</header>
+<article class="blog-post">
+    <p>Bienvenue dans la partie 1 du <strong>Tutoriel Roguelike revesité !</strong> Cette série va
+vous aider à créer votre tout premier jeu roguelike, écrit en Python.</p>
+
+<p>Ce tutoriel est largement inspiré de celui <a href="http://www.roguebasin.com/index.php?title=Complete_Roguelike_Tutorial,_using_python%2Blibtcod">trouvé sur Roguebasin</a>. Une grande
+partie des décisions de conception furent prises afin de conserver une
+progression commune avec celui-ci (du moins en ce concerne la composition des
+chapitres et la direction générale). Ce tutoriel n&rsquo;aurait pu être possible sans
+le travail des concepteurs d&rsquo;origine ainsi que celui des merveilleux
+contributeurs de libtcod et python-tcod.</p>
+
+<p>Nous supposons dans cette partie que vous avez déjà effectué la <a href="/tutorials/tcod/part-0">partie 0</a>
+et être prêt à commencer. Sinon, rendez-vous sur cette page est vérifiez votre
+installation de Python et de TCOD. Assurez-vous d&rsquo;avoir un fichier <code>engine.py</code>
+dans le dossier choisi pour votre travail.</p>
+
+<p>Supposant que vous avez accompli tout ça, commençons. Modifiez (ou créez si
+vous ne l&rsquo;avez pas déjà fait) le fichier <code>engine.py</code> pour qu&rsquo;il ressemble à ça :</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3"><span style="color:#f92672">import</span> tcod <span style="color:#66d9ef">as</span> libtcod
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    print(<span style="color:#e6db74">&#39;Hello World!&#39;</span>)
+
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+    main()</code></pre></div>
+
+<p>Vous pouvez exécuter le programme comme n&rsquo;importe quel programme Python mais,
+pour les novices, vous le faîtes en tapant <code>python engine.py</code> dans le terminal.
+Si vous avez à la fois Python 2 et 3 d&rsquo;installé sur votre machine, il se peut
+que vous deviez taper <code>python3 engine.py</code> pour le lancer (cela dépend de votre
+python par défaut et vous utilisez un environnement virtuel ou non).</p>
+
+<p>D&rsquo;accord, ce n&rsquo;est pas le programme le plus enthousiasmant qui soit, je le
+reconnais, mais nous avons déjà une différence majeure avec l&rsquo;autre tutoriel.
+C&rsquo;est cette chose étrange ici :</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3"><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+    main()</code></pre></div>
+
+<p>Qu&rsquo;est-ce que ça fait ? Simplement, nous disons que nous n&rsquo;allons lancer
+la fonction principale &ldquo;main&rdquo; que si nous lançons explicitement le script avec
+la commande <code>python engine.py</code>. Ce n&rsquo;est pas fondamental que vous compreniez ça
+maintenant mais si vous tenez à comprendre, cette réponse sur <a href="https://stackoverflow.com/a/419185">Stackoverflow</a> donne un bon aperçu.</p>
+
+<p>Assurez-vous que le programme précédent tourne (sinon, c&rsquo;est probablement un
+soucis d&rsquo;installation de libtcod). Une fois que cela est accompli, nous pouvons
+allez vers des étapes un peu plus intéressantes. La première étape importante
+dans la conception d&rsquo;un roguelike est d&rsquo;obtenir un caractère &lsquo;@&rsquo; à l&rsquo;écran et
+de le déplacer aussi allons-y.</p>
+
+<p>Modifiez <code>engine.py</code> pour qu&rsquo;il ressemble à ça :</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3"><span style="color:#f92672">import</span> tcod <span style="color:#66d9ef">as</span> libtcod
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+    screen_width <span style="color:#f92672">=</span> <span style="color:#ae81ff">80</span>
+    screen_height <span style="color:#f92672">=</span> <span style="color:#ae81ff">50</span>
+
+    libtcod<span style="color:#f92672">.</span>console_set_custom_font(<span style="color:#e6db74">&#39;arial10x10.png&#39;</span>, libtcod<span style="color:#f92672">.</span>FONT_TYPE_GREYSCALE <span style="color:#f92672">|</span> libtcod<span style="color:#f92672">.</span>FONT_LAYOUT_TCOD)
+
+    libtcod<span style="color:#f92672">.</span>console_init_root(screen_width, screen_height, <span style="color:#e6db74">&#39;libtcod tutorial revised&#39;</span>, <span style="color:#66d9ef">False</span>)
+
+    <span style="color:#66d9ef">while</span> <span style="color:#f92672">not</span> libtcod<span style="color:#f92672">.</span>console_is_window_closed():
+        libtcod<span style="color:#f92672">.</span>console_set_default_foreground(<span style="color:#ae81ff">0</span>, libtcod<span style="color:#f92672">.</span>white)
+        libtcod<span style="color:#f92672">.</span>console_put_char(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#39;@&#39;</span>, libtcod<span style="color:#f92672">.</span>BKGND_NONE)
+        libtcod<span style="color:#f92672">.</span>console_flush()
+
+        key <span style="color:#f92672">=</span> libtcod<span style="color:#f92672">.</span>console_check_for_keypress()
+
+        <span style="color:#66d9ef">if</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_ESCAPE:
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">True</span>
+
+
+<span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+    main()</code></pre></div>
+
+<p>Exécutez <code>engine.py</code> à nouveau et vous devriez vous un &lsquo;@&rsquo; à l&rsquo;écran. Une fois
+que vous êtes complètement repu de la gloire provoquée par l&rsquo;écran devant vous,
+vous pouvez presser la touche `Esc` pour quitter le programme.</p>
+
+<p>Il se passe beaucoup de choses ici, aussi découpons ligne par ligne.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">    screen_width <span style="color:#f92672">=</span> <span style="color:#ae81ff">80</span>
+    screen_height <span style="color:#f92672">=</span> <span style="color:#ae81ff">50</span></code></pre></div>
+
+<p>C&rsquo;est assez simple. On définit quelques variables pour la dimension de l&rsquo;écran.
+Éventuellement, nous pourrions charger ces valeurs depuis un fichier JSON plutôt
+que de les coder en dur dans les sources, mais nous ne en soucierons pas avant
+d&rsquo;avoir plus de variables.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">    libtcod<span style="color:#f92672">.</span>console_set_custom_font(<span style="color:#e6db74">&#39;arial10x10.png&#39;</span>, libtcod<span style="color:#f92672">.</span>FONT_TYPE_GREYSCALE <span style="color:#f92672">|</span> libtcod<span style="color:#f92672">.</span>FONT_LAYOUT_TCOD)</code></pre></div>
+
+<p>Ici, nous disons à libtcod quelle police employer. La partie <code>'arial10x10.png'</code>
+est le fichier qu&rsquo;on lit (il devrait exister dans votre dossier de projet). Les
+deux autres parties disent à libtcod quel type de fichier nous lisons.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">    libtcod<span style="color:#f92672">.</span>console_init_root(SCREEN_WIDTH, SCREEN_HEIGHT, <span style="color:#e6db74">&#39;libtcod tutorial revised&#39;</span>, <span style="color:#66d9ef">False</span>)</code></pre></div>
+
+<p>Cette ligne est ce qui crée l&rsquo;écran. Nous lui donnons les valeurs <code>screen_width</code>
+et <code>screen_height</code> définies plus haut (80 et 50, respectivement), ainsi qu&rsquo;un
+titre (changez le si vous connaissez déjà le nom de votre jeu) et une valeur
+booléenne qui indique à libtcod si le jeu est plein écran ou non.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">    <span style="color:#66d9ef">while</span> <span style="color:#f92672">not</span> libtcod<span style="color:#f92672">.</span>console_is_window_closed():</code></pre></div>
+
+<p>C&rsquo;est ce qu&rsquo;on appelle la &lsquo;boucle de jeu&rsquo;. C&rsquo;est simplement une boucle qui ne va
+jamais s&rsquo;interrompre tant qu&rsquo;on n&rsquo;aura pas fermé la fenêtre. Chaque jeu a une
+boucle de jeu d&rsquo;une manière ou d&rsquo;une autre.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">        libtcod<span style="color:#f92672">.</span>console_set_default_foreground(<span style="color:#ae81ff">0</span>, libtcod<span style="color:#f92672">.</span>white)</code></pre></div>
+
+<p>Cette ligne indique à libtcod de régler la couleur de notre symbole &lsquo;@&rsquo;. Si vous
+souhaitez qu&rsquo;il soit d&rsquo;une autre couleur, remplacez <code>libtcod.white</code> par quelque
+chose comme <code>libtcod.red</code> et voyez ce que cela donne. Le &lsquo;0&rsquo; dans cette fonction
+est la console sur laquelle nous écrivons. Nous en reparlerons plus tard.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">        libtcod<span style="color:#f92672">.</span>console_put_char(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">1</span>, <span style="color:#e6db74">&#39;@&#39;</span>, libtcod<span style="color:#f92672">.</span>BKGND_NONE)</code></pre></div>
+
+<p>Le premier argument est &lsquo;0&rsquo; (à nouveau, la console sur laquelle nous écrivons).
+Les deux suivants sont des coordonnées x et y, dans ce cas 1 et 1 (essayez de
+les remplacer pour voir ce que cela donne). Ensuite nous affichons le symbole
+&lsquo;@&rsquo; et réglons le fond sur &lsquo;none&rsquo; avec <code>libtcod.BKGND_NONE</code>.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">        libtcod<span style="color:#f92672">.</span>console_flush()</code></pre></div>
+
+<p>C&rsquo;est la partie qui affiche tout à l&rsquo;écran. Plutôt directe.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">        key <span style="color:#f92672">=</span> libtcod<span style="color:#f92672">.</span>console_check_for_keypress()
+
+        <span style="color:#66d9ef">if</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_ESCAPE:
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">True</span></code></pre></div>
+
+<p>Cette partie nous permet de quitter gracieusement le jeu (sans planter) en
+pressant la touche <code>Esc</code>. La fonction <code>libtcod.console_check_for_keypress()</code>
+récupère une saisie clavier du programme que nous stockons dans la variable
+<code>key</code>. Ensuite, nous vérifions si la touche pressée est <code>Esc</code> ou non. Si c&rsquo;est
+le cas, nous quittons la boucle, ce qui termine le programme.</p>
+
+<p>Maintenant que nous avons notre symbole <code>@</code> dessiné, déplaçons le !</p>
+
+<p>Nous devons connaître la position du joueur, donc nous allons créer deux
+variables, <code>player_x</code> et <code>player_y</code>.</p>
+
+<div>
+  <button class="btn btn-primary data-toggle-tab active" data-toggle-tab="diff">
+    Diff
+  </button>
+  <button class="btn btn-secondary data-toggle-tab" data-toggle-tab="original">
+    Original
+  </button>
+
+  
+<div class="data-pane active" data-pane="diff">
+  
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">    ...
+    screen_height = 50
+<span style="color:#a6e22e">+
+</span><span style="color:#a6e22e">+   player_x = int(screen_width / 2)
+</span><span style="color:#a6e22e">+   player_y = int(screen_height / 2)
+</span><span style="color:#a6e22e">+
+</span><span style="color:#a6e22e"></span>    libtcod.console_set_custom_font(&#39;arial10x10.png&#39;, libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+    ...
+</code></pre></div>
+
+</div>
+<div class="data-pane" data-pane="original">
+  
+<pre>    ...
+    screen_height = 50
+    <span class="new-text">
+    player_x = int(screen_width / 2)
+    player_y = int(screen_height / 2)
+    </span>
+    libtcod.console_set_custom_font('arial10x10.png', libtcod.FONT_TYPE_GREYSCALE | libtcod.FONT_LAYOUT_TCOD)
+    ...</pre>
+
+</div>
+
+</div>
+
+
+<p><em>Remarque: Les trois points désignent une partie omise du code. J&rsquo;inclurai des
+lignes autour du code à insérer afin que vous sachiez exactement où écrire les
+nouvelles parties de code mais je ne montrerai pas le fichier entier à chaque
+fois. Les lignes vertes indiquent le code que vous devriez ajouter.</em></p>
+
+<p>Nous plaçons le joueur en plein milieu de l&rsquo;écran. Que fait la fonction <code>int()</code>
+? Et bien, Python 3 ne tronque pas automatiquement la division comme Python 2
+aussi nous devons convertir le résultat (un flottant) en entier. Sinon libtcod
+va renvoyer une erreur.</p>
+
+<p>Nous devons aussi modifier la commande affichant le symbole &lsquo;@&rsquo; afin d&rsquo;employer
+ces nouvelles coordonnées.</p>
+
+<div>
+  <button class="btn btn-primary data-toggle-tab active" data-toggle-tab="diff">
+    Diff
+  </button>
+  <button class="btn btn-secondary data-toggle-tab" data-toggle-tab="original">
+    Original
+  </button>
+
+  
+<div class="data-pane active" data-pane="diff">
+  
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">        ...
+        libtcod.console_set_default_foreground(0, libtcod.white)
+<span style="color:#f92672">-       libtcod.console_put_char(0, 1, 1, &#39;@&#39;, libtcod.BKGND_NONE)
+</span><span style="color:#f92672"></span><span style="color:#a6e22e">+       libtcod.console_put_char(0, player_x, player_y, &#39;@&#39;, libtcod.BKGND_NONE)
+</span><span style="color:#a6e22e"></span>        libtcod.console_flush()
+        ...
+</code></pre></div>
+
+</div>
+<div class="data-pane" data-pane="original">
+  
+<pre>        ...
+        libtcod.console_set_default_foreground(0, libtcod.white)
+        <span class="crossed-out-text">libtcod.console_put_char(0, 1, 1, '@', libtcod.BKGND_NONE)</span>
+        <span class="new-text">libtcod.console_put_char(0, player_x, player_y, '@', libtcod.BKGND_NONE)</span>
+        libtcod.console_flush()
+        ...</pre>
+
+</div>
+
+</div>
+
+
+<p><em>Remarque : les lignes en rouge signalent le code qui a été enlevé.</em></p>
+
+<p>Exécutez le programme maintenant et vous devriez voir le &lsquo;@&rsquo; au centre de
+l&rsquo;écran. Occupons nous maintenant de le rendre mobile.</p>
+
+<p>Ajoutez les deux lignes suivantes juste au dessus de la boucle principale.</p>
+
+<div>
+  <button class="btn btn-primary data-toggle-tab active" data-toggle-tab="diff">
+    Diff
+  </button>
+  <button class="btn btn-secondary data-toggle-tab" data-toggle-tab="original">
+    Original
+  </button>
+
+  
+<div class="data-pane active" data-pane="diff">
+  
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">    ...
+    libtcod.console_init_root(screen_width, screen_height, &#39;libtcod tutorial revised&#39;, False)
+
+<span style="color:#a6e22e">+   key = libtcod.Key()
+</span><span style="color:#a6e22e">+   mouse = libtcod.Mouse()
+</span><span style="color:#a6e22e"></span>
+    while not libtcod.console_is_window_closed():
+    ...
+</code></pre></div>
+
+</div>
+<div class="data-pane" data-pane="original">
+  
+<pre>    ...
+    libtcod.console_init_root(screen_width, screen_height, 'libtcod tutorial revised', False)
+
+    <span class="new-text">key = libtcod.Key()
+    mouse = libtcod.Mouse()</span>
+
+    while not libtcod.console_is_window_closed():
+    ...</pre>
+
+</div>
+
+</div>
+
+
+<p>Ainsi que les noms le suggèrent, ces variables vont contenir nos saisies clavier
+et souris. Nous n&rsquo;implémenterons pas la souris immédiatement mais la fonction
+que nous allons ajouter en tient compte aussi nous pouvons l&rsquo;ajouter.</p>
+
+<div>
+  <button class="btn btn-primary data-toggle-tab active" data-toggle-tab="diff">
+    Diff
+  </button>
+  <button class="btn btn-secondary data-toggle-tab" data-toggle-tab="original">
+    Original
+  </button>
+
+  
+<div class="data-pane active" data-pane="diff">
+  
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">    ...
+    while not libtcod.console_is_window_closed():
+<span style="color:#a6e22e">+       libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
+</span><span style="color:#a6e22e"></span>
+        libtcod.console_set_default_foreground(0, libtcod.white)
+    ...
+</code></pre></div>
+
+</div>
+<div class="data-pane" data-pane="original">
+  
+<pre>    ...
+    while not libtcod.console_is_window_closed():
+        <span class="new-text">libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)</span>
+
+        libtcod.console_set_default_foreground(0, libtcod.white)
+    ...</pre>
+
+</div>
+
+</div>
+
+
+<p>C&rsquo;est la fonction qui capture les nouveaux &ldquo;événements&rdquo; (saisie clavier).
+Elle va mettre à jour les variables <code>key</code> et <code>mouse</code> avec ce que saisit
+l&rsquo;utilisateur. À nouveau seule <code>key</code> nous intéresse pour l&rsquo;instant.</p>
+
+<p>D&rsquo;accord, nous mettons <code>key</code> à jour avec la saisie de l&rsquo;utilisateur. Mais qu&rsquo;en
+<em>faisons</em> nous ? Cela va traduire les saisies en action de jeu.</p>
+
+<p>Pour l&rsquo;instant, ce tutoriel n&rsquo;a pas vraiment divergé de celui d&rsquo;origine mais
+voici un changement radical. Nous sommes sur le point de définir une fonction
+appelée <code>handle_keys</code> qui va gérer les saisies clavier. Nous <em>pourrions</em>
+l&rsquo;ajouter à notre fichier <code>engine.py</code>&hellip; mais est-ce la place de cette
+fonction ? Je pense que non. Le moteur (la boucle principale) capture les
+saisies et devrait en faire quelque chose mais traduire de l&rsquo;un vers l&rsquo;autre
+ne le concerne pas.</p>
+
+<p>Aussi, plutôt que d&rsquo;ajouter la fonction <code>handle_keys</code> à <code>engine.py</code>, créez un
+nouveau fichier, appelé <code>input_handlers.py</code>. Placez le code suivant dans ce
+nouveau fichier.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3"><span style="color:#f92672">import</span> tcod <span style="color:#66d9ef">as</span> libtcod
+
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">handle_keys</span>(key):
+    <span style="color:#75715e"># Movement keys</span>
+    <span style="color:#66d9ef">if</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_UP:
+        <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;move&#39;</span>: (<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)}
+    <span style="color:#66d9ef">elif</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_DOWN:
+        <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;move&#39;</span>: (<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">1</span>)}
+    <span style="color:#66d9ef">elif</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_LEFT:
+        <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;move&#39;</span>: (<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>)}
+    <span style="color:#66d9ef">elif</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_RIGHT:
+        <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;move&#39;</span>: (<span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>)}
+
+    <span style="color:#66d9ef">if</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_ENTER <span style="color:#f92672">and</span> key<span style="color:#f92672">.</span>lalt:
+        <span style="color:#75715e"># Alt+Enter: toggle full screen</span>
+        <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;fullscreen&#39;</span>: <span style="color:#66d9ef">True</span>}
+
+    <span style="color:#66d9ef">elif</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_ESCAPE:
+        <span style="color:#75715e"># Exit the game</span>
+        <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;exit&#39;</span>: <span style="color:#66d9ef">True</span>}
+
+    <span style="color:#75715e"># No key was pressed</span>
+    <span style="color:#66d9ef">return</span> {}</code></pre></div>
+
+<p>C&rsquo;est un gros morceau à comprendre en une seule fois aussi, à nouveau, découpons
+le en différentes parties.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">handle_keys</span>(key):</code></pre></div>
+
+<p>On crée une fonction appelée <code>handle_keys</code> qui prend un paramètre, <code>key</code>. <code>key</code>
+désigne cette fois la touche capturée plus tôt.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">    <span style="color:#66d9ef">if</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_UP:</code></pre></div>
+
+<p>Cette expression if (ainsi que les autres elifs) nous dit quelle touche a été
+pressée. Pour l&rsquo;instant, c&rsquo;est l&rsquo;une des flèches pour le mouvement. Ce qui est
+plus intéressant est le code dans cette expression if.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">    <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;move&#39;</span>: (<span style="color:#ae81ff">0</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)}</code></pre></div>
+
+<p>Que faisons nous ici ? Quand nous retournons de cette fonction, le moteur va
+devoir faire quelque chose. Dans ce cas, nous voulons déplacer notre personnage.
+Mais si nous voulons utiliser une autre touche ? Alors nous ne voulons peut-être
+pas bouger mais utiliser un item, lancer un sort ou quitter le jeu. Une manière
+de traiter toutes ces possibilités est de renvoyer un dictionnaire depuis cette
+fonction. Le moteur le lira et décidera ce qu&rsquo;il en fera.</p>
+
+<p>Pour ce faire, nous retournons un dictionnaire avec la clé <code>'move'</code> et pour
+valeur une paire de nombres. Ces nombres dirons au moteur dans quelle direction
+déplacer le joueur. Par exemple, la touche &lsquo;haut&rsquo; va déplacer le joueur de &lsquo;0&rsquo;
+selon les x et &lsquo;-1&rsquo; selon les y.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">    <span style="color:#66d9ef">if</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_ENTER <span style="color:#f92672">and</span> key<span style="color:#f92672">.</span>lalt:
+        <span style="color:#75715e"># Alt+Enter: toggle full screen</span>
+        <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;fullscreen&#39;</span>: <span style="color:#66d9ef">True</span>}
+    <span style="color:#66d9ef">elif</span> key<span style="color:#f92672">.</span>vk <span style="color:#f92672">==</span> libtcod<span style="color:#f92672">.</span>KEY_ESCAPE:
+        <span style="color:#75715e"># Exit the game</span>
+        <span style="color:#66d9ef">return</span> {<span style="color:#e6db74">&#39;exit&#39;</span>: <span style="color:#66d9ef">True</span>}</code></pre></div>
+
+<p>Voici les actions sans mouvement que nous acceptons pour l&rsquo;instant. Si
+l&rsquo;utilisateur presse &lsquo;ALT+enter&rsquo;, le jeu va passer en mode plein écran. Si
+l&rsquo;utilisateur presse &lsquo;Esc&rsquo;, le jeu va quitter.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-py3" data-lang="py3">    <span style="color:#66d9ef">return</span> {}</code></pre></div>
+
+<p>Parce que notre moteur attend un dictionnaire, nous devons renvoyer
+<em>quelque chose</em>, même si rien ne s&rsquo;est produit.</p>
+
+<p>Cela peut sembler surprenant mais cela prendra sens dans quelques insants.
+Retournons à ntore fichier <code>engine.py</code> pour appeler la fonction <code>handle_keys</code>.</p>
+
+<div>
+  <button class="btn btn-primary data-toggle-tab active" data-toggle-tab="diff">
+    Diff
+  </button>
+  <button class="btn btn-secondary data-toggle-tab" data-toggle-tab="original">
+    Original
+  </button>
+
+  
+<div class="data-pane active" data-pane="diff">
+  
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">        ...
+        libtcod.console_flush()
+
+<span style="color:#f92672">-       key = libtcod.console_check_for_keypress()
+</span><span style="color:#f92672"></span><span style="color:#a6e22e">+       action = handle_keys(key)
+</span><span style="color:#a6e22e">+
+</span><span style="color:#a6e22e">+       move = action.get(&#39;move&#39;)
+</span><span style="color:#a6e22e">+       exit = action.get(&#39;exit&#39;)
+</span><span style="color:#a6e22e">+       fullscreen = action.get(&#39;fullscreen&#39;)
+</span><span style="color:#a6e22e"></span>
+<span style="color:#a6e22e">+       if move:
+</span><span style="color:#a6e22e">+           dx, dy = move
+</span><span style="color:#a6e22e">+           player_x += dx
+</span><span style="color:#a6e22e">+           player_y += dy
+</span><span style="color:#a6e22e"></span>
+<span style="color:#f92672">-       if key.vk == libtcod.KEY_ESCAPE:
+</span><span style="color:#f92672"></span><span style="color:#a6e22e">+       if exit:
+</span><span style="color:#a6e22e">+           return True
+</span><span style="color:#a6e22e">+
+</span><span style="color:#a6e22e">+       if fullscreen:
+</span><span style="color:#a6e22e">+           libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())
+</span><span style="color:#a6e22e"></span>        ...
+</code></pre></div>
+
+</div>
+<div class="data-pane" data-pane="original">
+  
+<pre>        ...
+        libtcod.console_flush()
+
+        <span class="crossed-out-text">key = libtcod.console_check_for_keypress()</span>
+        <span class="new-text">action = handle_keys(key)
+
+        move = action.get('move')
+        exit = action.get('exit')
+        fullscreen = action.get('fullscreen')</span>
+
+        <span class="new-text">if move:
+            dx, dy = move
+            player_x += dx
+            player_y += dy</span>
+
+        <span class="crossed-out-text">if key.vk == libtcod.KEY_ESCAPE:</span>
+        <span class="new-text">if exit:
+            return True
+
+        if fullscreen:
+            libtcod.console_set_fullscreen(not libtcod.console_is_fullscreen())</span>
+        ...</pre>
+
+</div>
+
+</div>
+
+
+<p>Remarque : Je ferai apparaître en rouge les lignes effacées. Dans ce cas,
+retirez les lignes : <code>key = libtcod.console_check_for_keypress()</code> et <code>if key.vk ==
+libtcod.KEY_ESCAPE</code></p>
+
+<p>Aussi, assurez-vous d&rsquo;importer les fonctions <code>handle_keys</code> en haut de
+<code>engine.py</code></p>
+
+<div>
+  <button class="btn btn-primary data-toggle-tab active" data-toggle-tab="diff">
+    Diff
+  </button>
+  <button class="btn btn-secondary data-toggle-tab" data-toggle-tab="original">
+    Original
+  </button>
+
+  
+<div class="data-pane active" data-pane="diff">
+  
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">import tcod as libtcod
+
+<span style="color:#a6e22e">+from input_handlers import handle_keys
+</span></code></pre></div>
+
+</div>
+<div class="data-pane" data-pane="original">
+  
+    <pre>import tcod as libtcod
+
+<span class="new-text">from input_handlers import handle_keys</span></pre>
+
+</div>
+
+</div>
+
+
+<p>Esperons maintenant que le dictionnaire de <code>handle_keys</code> prenne un peu plus de
+sens. On capture la valeur de retour de <code>handle_keys</code> dans la variable
+<code>action</code> (qui devrait être un dictionnaire, quoi qu&rsquo;on ait pressé) et on
+vérifie quelle touche quelle touche elle contient. Si elle contient une clé
+appelée <code>move</code> alors on sait qu&rsquo;il faut chercher les coordonnées (x, y).
+Si elle contient &lsquo;exit&rsquo;, alors on sait qu&rsquo;il faut quitter le jeu.</p>
+
+<p>Essayez d&rsquo;exécuter le fichier engine.py maintenant. Vous devriez pouvoir vous
+déplacer. Amusant !</p>
+
+<p>Une dernière étape avant d&rsquo;avancer. Regardez la fonction de dessin. Remarquez
+le premier argument qui est &lsquo;0&rsquo;. Cela représente la console dans laquelle on
+écrit. 0 est celle par défaut. Plutôt que d&rsquo;écrire sur celle par défaut nous
+voulons préciser sur quelle console écrire après en avoir crée une nouvelle.
+La raison derrière est qu&rsquo;il sera plus facile d&rsquo;en créer pour dessiner dessus
+plus tard. Cela sera particulièrement utile quand nous aborderons la partie
+relative à l&rsquo;interface graphique de cette série.</p>
+
+<p>Modifiez le fichier <code>engine.py</code> ainsi :</p>
+
+<div>
+  <button class="btn btn-primary data-toggle-tab active" data-toggle-tab="diff">
+    Diff
+  </button>
+  <button class="btn btn-secondary data-toggle-tab" data-toggle-tab="original">
+    Original
+  </button>
+
+  
+<div class="data-pane active" data-pane="diff">
+  
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-diff" data-lang="diff">    ...
+    libtcod.console_init_root(screen_width, screen_height, &#39;libtcod tutorial revised&#39;, False)
+
+<span style="color:#a6e22e">+   con = libtcod.console_new(screen_width, screen_height)
+</span><span style="color:#a6e22e"></span>
+    key = libtcod.Key()
+    mouse = libtcod.Mouse()
+
+    while not libtcod.console_is_window_closed():
+        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
+<span style="color:#a6e22e">+
+</span><span style="color:#a6e22e">+       libtcod.console_set_default_foreground(con, libtcod.white)
+</span><span style="color:#a6e22e">+       libtcod.console_put_char(con, player_x, player_y, &#39;@&#39;, libtcod.BKGND_NONE)
+</span><span style="color:#a6e22e">+       libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)
+</span><span style="color:#a6e22e"></span><span style="color:#f92672">-       libtcod.console_set_default_foreground(0, libtcod.white)
+</span><span style="color:#f92672">-       libtcod.console_put_char(0, player_x, player_y, &#39;@&#39;, libtcod.BKGND_NONE)
+</span><span style="color:#f92672"></span>        libtcod.console_flush()
+<span style="color:#a6e22e">+
+</span><span style="color:#a6e22e">+       libtcod.console_put_char(con, player_x, player_y, &#39; &#39;, libtcod.BKGND_NONE)
+</span><span style="color:#a6e22e"></span><span style="color:#f92672">-       libtcod.console_put_char(0, player_x, player_y, &#39; &#39;, libtcod.BKGND_NONE)
+</span></code></pre></div>
+
+</div>
+<div class="data-pane" data-pane="original">
+  
+<pre>    ...
+    libtcod.console_init_root(screen_width, screen_height, 'libtcod tutorial revised', False)
+
+    <span class="new-text">con = libtcod.console_new(screen_width, screen_height)</span>
+
+    key = libtcod.Key()
+    mouse = libtcod.Mouse()
+
+    while not libtcod.console_is_window_closed():
+        libtcod.sys_check_for_event(libtcod.EVENT_KEY_PRESS, key, mouse)
+        <span class="new-text">
+        libtcod.console_set_default_foreground(con, libtcod.white)
+        libtcod.console_put_char(con, player_x, player_y, '@', libtcod.BKGND_NONE)
+        libtcod.console_blit(con, 0, 0, screen_width, screen_height, 0, 0, 0)</span>
+        <span class="crossed-out-text">libtcod.console_set_default_foreground(0, libtcod.white)</span>
+        <span class="crossed-out-text">libtcod.console_put_char(0, player_x, player_y, '@', libtcod.BKGND_NONE)</span>
+        libtcod.console_flush()
+        <span class="new-text">
+        libtcod.console_put_char(con, player_x, player_y, ' ', libtcod.BKGND_NONE)</span>
+        <span class="crossed-out-text">libtcod.console_put_char(0, player_x, player_y, ' ', libtcod.BKGND_NONE)</span></pre>
+
+</div>
+
+</div>
+
+
+<p>Cela conclut la première partie de ce tutoriel ! Si vous utilisez git ou une
+autre forme de contrôle de version (et je vous le recommande), vous devriez
+faire un commit de vos changements maintenant.</p>
+
+<p>Si vous voulez voir le code actuel entièrement, <a href="https://github.com/TStand90/roguelike_tutorial_revised/tree/part1">cliquez ici</a>.
+Les fichiers que vous souhaitez consulter sont <code>engine.py</code> et
+<code>input_handlers.py</code>.</p>
+
+<p><a href="/tutorials/tcod/part-2">Cliquez ici pour vous rendre à la partie suivante de ce tutoriel.</a></p>
+
+<script src="/js/codetabs.js"></script>
+
+
+    
+
+    
+
+
+</article>
+
+
+
+        </div>
+
+        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+    
+        <section>
+    
+        
+    
+        
+    
+</section>
+    
+</aside>
+
+      </div>
+    </div>
+    
+
+    
+      
+
+
+
+
+
+
+
+<footer class="blog-footer w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Dernière mise à jour le 24 juillet 2019</p>
+        <p class="w-100 text-center"><a href="#">Back to top</a></p>
+    </nav>
+</footer>
+
+    
+
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>
