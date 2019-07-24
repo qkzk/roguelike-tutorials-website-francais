@@ -1,8 +1,9 @@
-baseURL = "http://rogueliketutorials.com/"
+# baseURL = "http://rogueliketutorials.com/"
+baseURL = "/"
 languageCode = "en-us"
 title = "Roguelike Tutorials"
 
-theme = "bootstrap"
+theme = "hugo-bootstrap"
 pygmentsCodeFences = true
 pygmentsCodeFencesGuessSyntax = true
 
@@ -29,6 +30,6 @@ pygmentsCodeFencesGuessSyntax = true
 
   [params.sidebar]
     showRecent = false
-  
+
   [params.header]
     colorScheme = "dark"

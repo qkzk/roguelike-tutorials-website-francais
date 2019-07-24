@@ -47,3 +47,10 @@ un site fonctionnel.
 
 Je ne sais pas ce que les auteurs ont employé comme technologies hormis
 ce qui transparait dans les fichiers donc je ne promets rien.
+
+## Pistes pour publier le site
+
+* [hugo](https://gohugo.io/getting-started/installing)
+* [hugo bootstrap](https://themes.gohugo.io//theme/hugo-bootstrap/)
+* [pygment : syntax highlightning for hugo](http://pygments.org/)
+* [github pages with hugo](https://gohugo.io/hosting-and-deployment/hosting-on-github/)
