@@ -45,8 +45,15 @@ Le code est laissé intact mais je ne crois pas que cela pose problème.
 Les fichiers sont principalement en markdown et je vais essayer d'en faire
 un site fonctionnel.
 
-Je ne sais pas ce que les auteurs ont employé comme technologies hormis
-ce qui transparait dans les fichiers donc je ne promets rien.
+~Je ne sais pas ce que les auteurs ont employé comme technologies hormis
+ce qui transparait dans les fichiers donc je ne promets rien.~
+
+Les auteurs ont utilisé HUGO pour créer le site rapidement et je l'ai hébergé sur github.
+
+Le site est disponible [ici](https://qkzk.github.io)
+
+J'ai suivi les tutoriels pour créer le site localement et l'intégrer à github. Le site devrait fonctionner
+convenablement maintenant.
 
 ## Pistes pour publier le site
 
@@ -54,3 +61,4 @@ ce qui transparait dans les fichiers donc je ne promets rien.
 * [hugo bootstrap](https://themes.gohugo.io//theme/hugo-bootstrap/)
 * [pygment : syntax highlightning for hugo](http://pygments.org/)
 * [github pages with hugo](https://gohugo.io/hosting-and-deployment/hosting-on-github/)
+* [dev to tutoriel](https://dev.to/dgavlock/creating-a-hugo-site-on-github-pages-3cjo)
