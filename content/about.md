@@ -1,6 +1,7 @@
 ---
 title: "About"
 draft: false
+url: /about/
 ---
 
 ## À qui s'adresse ce tutoriel ?
